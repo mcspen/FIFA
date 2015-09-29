@@ -8,7 +8,7 @@ import TeamsMenu
 import ManageMenu
 
 
-def open_start_menu(window_x, window_y, player_db, formation_db, player_list, formation_list, team_list):
+def open_start_menu(window_x, window_y, db_dict):
 
     # ========== Window ==========
     win_start = Window()
@@ -69,8 +69,7 @@ def open_start_menu(window_x, window_y, player_db, formation_db, player_list, fo
 
         players_btn.enabled = 1"""
         win_start.hide()
-        SearchMenu.open_search_menu(win_start.left, win_start.top,
-                                    player_db, formation_db, player_list, formation_list, team_list)
+        SearchMenu.open_search_menu(win_start.x, win_start.y, db_dict)
 
     def players_btn_func():
         """print "Players players players"
@@ -84,8 +83,7 @@ def open_start_menu(window_x, window_y, player_db, formation_db, player_list, fo
 
         players_btn.enabled = 1"""
         win_start.hide()
-        PlayersMenu.open_players_menu(win_start.left, win_start.top,
-                                      player_db, formation_db, player_list, formation_list, team_list)
+        PlayersMenu.open_players_menu(win_start.x, win_start.y, db_dict)
 
     def formations_btn_func():
         """print "Formations formations formations"
@@ -93,18 +91,15 @@ def open_start_menu(window_x, window_y, player_db, formation_db, player_list, fo
         formations_btn.enabled = 0
         teams_btn.enabled = 1"""
         win_start.hide()
-        FormationsMenu.open_formations_menu(win_start.left, win_start.top,
-                                            player_db, formation_db, player_list, formation_list, team_list)
+        FormationsMenu.open_formations_menu(win_start.x, win_start.y, db_dict)
 
     def teams_btn_func():
         win_start.hide()
-        TeamsMenu.open_teams_menu(win_start.left, win_start.top,
-                                  player_db, formation_db, player_list, formation_list, team_list)
+        TeamsMenu.open_teams_menu(win_start.x, win_start.y, db_dict)
 
     def manage_btn_func():
         win_start.hide()
-        ManageMenu.open_manage_menu(win_start.left, win_start.top,
-                                    player_db, formation_db, player_list, formation_list, team_list)
+        ManageMenu.open_manage_menu(win_start.x, win_start.y, db_dict)
 
     # ========== Buttons ==========
     search_btn.x = (win_width - len(button_list)*button_width - (len(button_list)-1)*button_spacing) / 2

@@ -152,6 +152,9 @@ class PlayerDB:
                     else:
                         attribute_tuple += (0,)
 
+                elif attr == 'custom_name':
+                    attribute_tuple += (current_player['lastName'],)
+
                 else:
                     print "Invalid Attribute: %s" % attr
 
@@ -367,15 +370,19 @@ class PlayerDB:
                               " " * (35 - len(player_name)),
                               player['rating'])
 
-    def print_compare_info(self):
+    def print_compare_info(self, num_results=0):
         """
         Print out summary info for a player to help compare
         Input: A list of dicts of the players to print the info of to compare
         Output: None  -  prints the results to the console
         """
 
+        # Ensure num_results is valid and set default/invalid to all results
+        if num_results < 1 or num_results > len(self.db):
+            num_results = len(self.db)
+
         # Iterate through players to print out
-        for index, player in enumerate(self.db):
+        for index, player in enumerate(self.db[:num_results]):
 
             # Get player's common name
             common_name = unicodedata.normalize('NFKD', player['commonName']).encode('ascii', 'ignore')

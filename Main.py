@@ -27,14 +27,22 @@ if __name__ == '__main__':
     team_list = TeamDB()
 
     temp_time = time.time()
-    player_db.load(default_dbs['players'])
-    formation_db.load(default_dbs['formations'])
-    player_list.load(default_dbs['player_list'])
-    formation_list.load(default_dbs['formation_list'])
-    team_list.load(default_dbs['team_list'])
+    player_db.load(default_dbs['all_players'])
+    formation_db.load(default_dbs['my_players'])
+    player_list.load(default_dbs['all_formations'])
+    formation_list.load(default_dbs['my_formations'])
+    team_list.load(default_dbs['teams'])
     print "Time to load DBs: %f" % (time.time()-temp_time)
 
-    FifaApp.start_app(player_db, formation_db, player_list, formation_list, team_list)
+    db_dict = {
+        'all_players': (default_dbs['all_players'], player_db),
+        'my_players': (default_dbs['my_players'], formation_db),
+        'all_formations': (default_dbs['all_formations'], player_list),
+        'my_formations': (default_dbs['my_formations'], formation_list),
+        'teams': (default_dbs['teams'], team_list)
+    }
+
+    FifaApp.start_app(db_dict)
 
     # -------------------------PLAYERDB EXAMPLES---------------------------
     # Initialize DB

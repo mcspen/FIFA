@@ -79,6 +79,7 @@ small_button_color = red
 small_button_top_spacing = 10
 
 # ========== Textfields ==========
+title_tf_font = Font("Times", 1.6 * system_font.size, ['bold'])
 std_tf_font = Font("Times", 1.5 * system_font.size)
 std_tf_width = 200
 std_tf_height = 20

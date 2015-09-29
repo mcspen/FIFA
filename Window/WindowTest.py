@@ -4,7 +4,7 @@ from AppConfig import *
 import StartMenu
 
 
-def open_test_window(window_x, window_y, player_db, formation_db, player_list, formation_list, team_list):
+def open_test_window(window_x, window_y, db_dict):
 
     # ========== Window ==========
     win_test = Window()
@@ -38,8 +38,7 @@ def open_test_window(window_x, window_y, player_db, formation_db, player_list, f
 
     # ========== Button Functions ==========
     def back_btn_func():
-        StartMenu.open_start_menu(win_test.left, win_test.top,
-                                  player_db, formation_db, player_list, formation_list, team_list)
+        StartMenu.open_start_menu(win_test.x, win_test.y, db_dict)
         win_test.hide()
 
     # ========== Buttons ==========

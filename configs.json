@@ -1,10 +1,10 @@
 {
   "default_databases": {
-	"players": "player_db_16",
-	"formations": "formation_db",
-    "player_list": "my_players_db_16",
-    "formation_list": "my_formations",
-	"team_list": "team_db_2015-09-04"
+	"all_players": "player_db_16_3",
+	"my_players": "my_players_db_16",
+	"all_formations": "formation_db",
+	"my_formations": "my_formations",
+	"teams": "team_db_2015-09-04"
   },
 
   "window": {

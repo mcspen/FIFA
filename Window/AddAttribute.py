@@ -1,14 +1,10 @@
 from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
-
 from AppConfig import *
-
 import SearchMenu
-
 import json
 
 
-def open_attribute_window(window_x, window_y, player_db, formation_db, player_list,
-                          formation_list, team_list, attr_dict):
+def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, attr_type, settings):
 
     # ========== Window ==========
     win_attribute = Window()
@@ -46,12 +42,15 @@ def open_attribute_window(window_x, window_y, player_db, formation_db, player_li
         enter_btn.enabled = 1
 
     # ========== Radio Buttons ==========
-    radio_group = RadioGroup(action = get_attribute)
+    radio_group = RadioGroup(action=get_attribute)
     radio_button_list = []
 
     with open('configs.json', 'r') as f:
             attributes_list = json.load(f)['player_attributes']
             f.close()
+
+    erase_option = 'ERASE LIST'
+    attributes_list.append(erase_option)
 
     for idx, attribute in enumerate(attributes_list):
         button = RadioButton(attribute)
@@ -74,56 +73,79 @@ def open_attribute_window(window_x, window_y, player_db, formation_db, player_li
         valid = False
         return_value = None
 
-        # Value checks
-        if radio_group.value in ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY", "DIV", "HAN", "KIC", "REF", "SPD", "POS",
-                                 "acceleration", "aggression", "agility", "balance", "ballcontrol", "crossing", "curve",
-                                 "dribbling", "finishing", "freekickaccuracy", "gkdiving", "gkhandling", "gkkicking",
-                                 "gkpositioning", "gkreflexes", "headingaccuracy", "interceptions", "jumping",
-                                 "longpassing", "longshots", "marking", "penalties", "positioning", "potential",
-                                 "rating", "reactions", "shortpassing", "shotpower", "skillMoves", "slidingtackle",
-                                 "sprintspeed", "stamina", "standingtackle", "strength", "vision", "volleys",
-                                 "weakFoot"]:
-            # Value should be an integer between 0 and 100
-            if value_tf.value.isdigit():
-                return_value = int(value_tf.value)
-                if 0 < return_value < 100:
+        if attr_type == 'sort':
+            if radio_group.value == erase_option:
+                del attr_list[:]
+            else:
+                attr_list.append(radio_group.value)
+
+            SearchMenu.open_search_menu(win_attribute.x, win_attribute.y,
+                                        db_dict, attr_dict, attr_list, settings)
+            win_attribute.hide()
+
+        elif attr_type == 'search':
+            # Value checks
+            if radio_group.value in ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY", "DIV", "HAN", "KIC", "REF", "SPD", "POS",
+                                     "acceleration", "aggression", "agility", "balance", "ballcontrol", "crossing",
+                                     "curve", "dribbling", "finishing", "freekickaccuracy", "gkdiving", "gkhandling",
+                                     "gkkicking", "gkpositioning", "gkreflexes", "headingaccuracy", "interceptions",
+                                     "jumping", "longpassing", "longshots", "marking", "penalties", "positioning",
+                                     "potential", "rating", "reactions", "shortpassing", "shotpower", "skillMoves",
+                                     "slidingtackle", "sprintspeed", "stamina", "standingtackle", "strength", "vision",
+                                     "volleys", "weakFoot"]:
+                # Value should be an integer between 0 and 100
+                if value_tf.value.isdigit():
+                    return_value = int(value_tf.value)
+                    if 0 < return_value < 100:
+                        valid = True
+
+            elif radio_group.value in ["age", "baseId", "clubId", "height", "id", "leagueId", "nationId", "weight"]:
+                # Value should be an integer
+                if value_tf.value.isdigit():
+                    return_value = int(value_tf.value)
                     valid = True
 
-        elif radio_group.value in ["age", "baseId", "clubId", "height", "id", "leagueId", "nationId", "weight"]:
-            # Value should be an integer
-            if value_tf.value.isdigit():
-                return_value = int(value_tf.value)
-                valid = True
+            elif radio_group.value in ["atkWorkRate", "birthdate", "club", "color", "commonName", "defWorkRate",
+                                       "firstName", "foot", "itemType", "lastName", "league", "modelName", "name",
+                                       "name_custom", "nation", "playStyle", "playerType", "position", "positionFull",
+                                       "quality"]:
+                # Value should be a string
+                if type(value_tf.value) is str:
+                    return_value = value_tf.value
+                    valid = True
 
-        elif radio_group.value in ["atkWorkRate", "birthdate", "club", "color", "commonName", "defWorkRate",
-                                   "firstName", "foot", "itemType", "lastName", "league", "modelName", "name",
-                                   "name_custom", "nation", "playStyle", "playerType", "position", "positionFull",
-                                   "quality"]:
-            # Value should be a string
-            if type(value_tf.value) is str:
-                return_value = value_tf.value
-                valid = True
+            elif radio_group.value in ["isGK", "isSpecialType"]:
+                # Value should be a string
+                if value_tf.value.upper() in ['T', 'F', 'TRUE', 'FALSE']:
+                    if value_tf.value.upper()[0] == 'T':
+                        return_value = True
+                    else:
+                        return_value = False
+                    valid = True
 
-        elif radio_group.value in ["isGK", "isSpecialType"]:
-            # Value should be a string
-            if value_tf.value.upper() in ['T', 'F', 'TRUE', 'FALSE']:
-                if value_tf.value.upper()[0] == 'T':
-                    return_value = True
-                else:
-                    return_value = False
-                valid = True
+            if radio_group.value == erase_option:
+                attr_dict.clear()
+                SearchMenu.open_search_menu(win_attribute.x, win_attribute.y, db_dict,
+                                            attr_dict, attr_list, settings)
+                win_attribute.hide()
 
-        if valid:
-            attr_dict[radio_group.value] = return_value
-            SearchMenu.open_search_menu(window_x, window_y, player_db, formation_db, player_list,
-                                        formation_list, team_list, attr_dict)
-            win_attribute.hide()
+            elif valid:
+                attr_dict[radio_group.value] = return_value
+                SearchMenu.open_search_menu(win_attribute.x, win_attribute.y, db_dict,
+                                            attr_dict, attr_list, settings)
+                win_attribute.hide()
+            else:
+                print "Invalid attribute value."
+
         else:
-            print "Invalid attribute value."
+            print 'Invalid attr_type for AddAttribute.'
+            SearchMenu.open_search_menu(win_attribute.x, win_attribute.y,
+                                        db_dict, attr_dict, attr_list, settings)
+            win_attribute.hide()
 
     def back_btn_func():
-        SearchMenu.open_search_menu(window_x, window_y, player_db, formation_db, player_list,
-                                        formation_list, team_list, attr_dict)
+        SearchMenu.open_search_menu(win_attribute.x, win_attribute.y,
+                                    db_dict, attr_dict, attr_list, settings)
         win_attribute.hide()
 
     # ========== Buttons ==========
@@ -160,7 +182,11 @@ def open_attribute_window(window_x, window_y, player_db, formation_db, player_li
     view.add(title)
     view.add(enter_btn)
     view.add(back_btn)
-    view.add(value_tf)
+
+    # Shows only for getting attribute for search, not sort
+    if attr_type == 'search':
+        view.add(value_tf)
+
     for button in radio_button_list:
         view.add(button)
 

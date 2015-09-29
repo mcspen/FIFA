@@ -22,7 +22,7 @@ class FifaApp(Application):
         print 'Auto key'
 
 
-def start_app(player_db, formation_db, player_list, formation_list, team_list):
+def start_app(db_dict):
     app = FifaApp()
-    StartMenu.open_start_menu(300, 55, player_db, formation_db, player_list, formation_list, team_list)
+    StartMenu.open_start_menu(300, 55, db_dict)
     app.run()

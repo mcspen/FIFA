@@ -4,7 +4,7 @@ from AppConfig import *
 import StartMenu
 
 
-def open_players_menu(window_x, window_y, player_db, formation_db, player_list, formation_list, team_list):
+def open_players_menu(window_x, window_y, db_dict):
 
     # ========== Window ==========
     win_players = Window()
@@ -108,8 +108,7 @@ def open_players_menu(window_x, window_y, player_db, formation_db, player_list, 
         #win_players.hide()
 
     def back_btn_func():
-        StartMenu.open_start_menu(win_players.left, win_players.top,
-                                  player_db, formation_db, player_list, formation_list, team_list)
+        StartMenu.open_start_menu(win_players.x, win_players.y, db_dict)
         win_players.hide()
 
     # ========== Toolbar Buttons ==========
