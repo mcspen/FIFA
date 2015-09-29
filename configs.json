@@ -1,0 +1,26 @@
+{
+  "default_databases": {
+	"players": "player_db_16",
+	"formations": "formation_db",
+    "player_list": "my_players_db_16",
+    "formation_list": "my_formations",
+	"team_list": "team_db_2015-09-04"
+  },
+
+  "window": {
+	"width": 800,
+	"height": 700,
+	"x_pos": 300,
+	"y_pos": 100
+  },
+
+  "player_attributes": ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY", "DIV", "HAN", "KIC", "REF", "SPD", "POS",
+	"acceleration", "age", "aggression", "agility", "atkWorkRate", "balance", "ballcontrol", "baseId", "birthdate",
+	"club", "clubId", "color", "commonName", "crossing", "curve", "defWorkRate", "dribbling", "finishing", "firstName",
+	"foot", "freekickaccuracy", "gkdiving", "gkhandling", "gkkicking", "gkpositioning", "gkreflexes", "headingaccuracy",
+	"height", "id", "interceptions", "isGK", "isSpecialType", "itemType", "jumping", "lastName", "league", "leagueId",
+	"longpassing", "longshots", "marking", "modelName", "name", "name_custom", "nation", "nationId", "penalties",
+	"playStyle", "playerType", "position", "positionFull", "positioning", "potential", "quality", "rating", "reactions",
+	"shortpassing", "shotpower", "skillMoves", "slidingtackle", "sprintspeed", "stamina", "standingtackle", "strength",
+	"vision", "volleys", "weakFoot", "weight"]
+}

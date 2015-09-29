@@ -1,0 +1,79 @@
+{
+	"style": "attack",
+	"name": "3-4-1-2",
+	
+	"positions": {
+		"CB": {
+			"index": 2,
+			"symbol": "CB",
+			"name": "Center Back",
+			"links": ["GK", "LCB", "RCB", "LCM", "RCM"]
+		},
+		"LM": {
+			"index": 4,
+			"symbol": "LM",
+			"name": "Left Midfielder",
+			"links": ["LCB", "LCM", "LST"]
+		},
+		"RCM": {
+			"index": 7,
+			"symbol": "CM",
+			"name": "Right Center Midfielder",
+			"links": ["CB", "RM", "LCM", "CAM"]
+		},
+		"LST": {
+			"index": 9,
+			"symbol": "ST",
+			"name": "Left Striker",
+			"links": ["LM", "CAM", "RST"]
+		},
+		"LCB": {
+			"index": 1,
+			"symbol": "CB",
+			"name": "Left Center Back",
+			"links": ["GK", "CB", "LM"]
+		},
+		"CAM": {
+			"index": 6,
+			"symbol": "CAM",
+			"name": "Center Attacking Midfielder",
+			"links": ["LCM", "RCM", "LST", "RST"]
+		},
+		"RST": {
+			"index": 10,
+			"symbol": "ST",
+			"name": "Right Striker",
+			"links": ["RM", "CAM", "LST"]
+		},
+		"RM": {
+			"index": 8,
+			"symbol": "RM",
+			"name": "Right Midfielder",
+			"links": ["RCB", "RCM", "RST"]
+		},
+		"LCM": {
+			"index": 5,
+			"symbol": "CM",
+			"name": "Left Center Midfielder",
+			"links": ["CB", "LM", "RCM", "CAM"]
+		},
+		"GK": {
+			"index": 0,
+			"symbol": "GK",
+			"name": "Goalkeeper",
+			"links": ["LCB", "CB", "RCB"]
+		},
+		"RCB": {
+			"index": 3,
+			"symbol": "CB",
+			"name": "Right Center Back",
+			"links": ["GK", "CB", "RM"]
+		}
+	},
+	
+	"num_links": 19,
+	"num_defenders": 3,
+	"num_attackers": 2,
+	"num_midfielders": 5,
+	"description": "3-4-1-2 is a variant of 3-5-2 where the wingers are more withdrawn in favour of one of the central midfielders being pushed further upfield into the \"number 10\" playmaker position."
+}

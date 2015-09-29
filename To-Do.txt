@@ -1,0 +1,30 @@
+Add more options to TeamDB search
+Add team names?
+
+Finish PlayerDB search/sort.  Remove redundacy in other search/sort classes.
+
+Add try loops for printing out names for those exception cases
+
+Add option for manager and/or option for team not requiring manager
+
+Optimize ultimate team function to go faster
+
+Finish special_sort function for PlayerDB to search for specific stats for each position
+
+Improve team picking function (take more details into account, not just rating)
+Change picking function to also return multiple teams
+Fix find_team_ultimate using updated function to return list of teams.
+
+
+Add Subs and Reserves - just best rated remainders, or distribute for position balance
+Update Team Rating based on Subs
+
+
+New player recommendations to improve team
+ - find weak link and recommend players that will keep max chemistry
+
+
+Change nation/league/club name comparisons to id comparisons? (avoid mix ups by clubs with same name)
+
+Change save to account for an existing file by adding something to the end of the name
+Change load to account for no file by creating a blank one
