@@ -370,6 +370,88 @@ class PlayerDB:
                               " " * (35 - len(player_name)),
                               player['rating'])
 
+    @staticmethod
+    def player_info_labels(attributes):
+        """
+        Gets the labels of the players info to be displayed
+        Input: The list of attributes
+        Output: A list of the labels of the players info
+        """
+
+        # Player's base info
+        labels = ['Name (Full Name)', 'Rating', 'Position', 'Card Color', 'Nation', 'Club']
+
+        # Remove attributes already displayed
+        for attr in ['club', 'color', 'commonName', 'firstName', 'lastName', 'name',
+                     'name_custom', 'nation', 'position', 'positionFull', 'rating']:
+            while attributes.count(attr) > 0:
+                attributes.remove(attr)
+
+        # Add attributes from list
+        for attribute in attributes:
+            if attribute == 'league':
+                labels.append('League')
+            else:
+                labels.append(str(attribute).capitalize())
+
+        return labels
+
+    @staticmethod
+    def player_info(player, attributes):
+        """
+        Gets the name and attributes of the given player and specified attributes
+        Input: The player and list of attributes
+        Output: A list of the players info
+        """
+
+        player_info = []
+
+        # Get player's common name
+        common_name = unicodedata.normalize('NFKD', player['commonName']).encode('ascii', 'ignore')
+
+        # Get player's name
+        player_name = unicodedata.normalize('NFKD', player['firstName']).encode('ascii', 'ignore') + ' ' + \
+                      unicodedata.normalize('NFKD', player['lastName']).encode('ascii', 'ignore')
+
+        # If the player has a common name, print it out first
+        if len(common_name) > 0:
+            player_info.append(common_name + " (" + player_name + ")")
+        else:
+            player_info.append(player_name)
+
+        # Player's rating
+        player_info.append(str(player['rating']))
+
+        # Player's position
+        player_info.append(player['position'])
+
+        # Player's card color
+        player_info.append(player['color'])
+
+        # Player's nation
+        nation = unicodedata.normalize('NFKD', player['nation']['name']).encode('ascii', 'ignore')
+        player_info.append(nation)
+
+        # Get player's club
+        club = unicodedata.normalize('NFKD', player['club']['name']).encode('ascii', 'ignore')
+        player_info.append(club)
+
+        # Remove attributes already displayed
+        for attr in ['club', 'color', 'commonName', 'firstName', 'lastName', 'name',
+                     'name_custom', 'nation', 'position', 'positionFull', 'rating']:
+            while attributes.count(attr) > 0:
+                attributes.remove(attr)
+
+        # Add attributes from list
+        for attribute in attributes:
+            if attribute == 'league':
+                league = unicodedata.normalize('NFKD', player['league']['name']).encode('ascii', 'ignore')
+                player_info.append(league)
+            else:
+                player_info.append(str(player[attribute]))
+
+        return player_info
+
     def print_compare_info(self, num_results=0):
         """
         Print out summary info for a player to help compare

@@ -28,16 +28,16 @@ if __name__ == '__main__':
 
     temp_time = time.time()
     player_db.load(default_dbs['all_players'])
-    formation_db.load(default_dbs['my_players'])
-    player_list.load(default_dbs['all_formations'])
+    player_list.load(default_dbs['my_players'])
+    formation_db.load(default_dbs['all_formations'])
     formation_list.load(default_dbs['my_formations'])
     team_list.load(default_dbs['teams'])
     print "Time to load DBs: %f" % (time.time()-temp_time)
 
     db_dict = {
         'all_players': (default_dbs['all_players'], player_db),
-        'my_players': (default_dbs['my_players'], formation_db),
-        'all_formations': (default_dbs['all_formations'], player_list),
+        'my_players': (default_dbs['my_players'], player_list),
+        'all_formations': (default_dbs['all_formations'], formation_db),
         'my_formations': (default_dbs['my_formations'], formation_list),
         'teams': (default_dbs['teams'], team_list)
     }

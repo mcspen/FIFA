@@ -78,7 +78,18 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             search_results.sort(attr_list, sort_order_radio_group.value)
             search_results.print_compare_info(10)
 
-            display_players(search_results, 0)
+            # Get attributes list and avoid duplicates
+            attributes_list = []
+
+            for attr in attr_list:
+                if attributes_list.count(attr) == 0:
+                    attributes_list.append(attr)
+
+            for attr_key in attr_dict.iterkeys():
+                if attributes_list.count(attr_key) == 0:
+                    attributes_list.append(attr_key)
+
+            display_players(search_results, attributes_list, 0)
 
         # Start button corresponds to formations
         elif settings['mode'] == 'formations':
@@ -465,22 +476,34 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     # Display players from search
     players_displayed = []
 
-    def display_players(display_player_db, start_index):
+    def display_players(display_player_db, attributes, start_index):
         # Remove messages off page
         for message in players_displayed:
             view.remove(message)
         del players_displayed[:]
 
+        # Print out labels
+        labels = display_player_db.player_info_labels(attributes)
+        msg_x = 50
         msg_y = ascend_radio_btn.bottom + start_message_border
-
-        for player in display_player_db.db[start_index:start_index+20]:
-            player_name = unicodedata.normalize('NFKD', player['firstName']).encode('ascii', 'ignore') + ' ' + \
-                          unicodedata.normalize('NFKD', player['lastName']).encode('ascii', 'ignore')
-            player_text = player_name
-            player_label = Label(text=player_text, font=std_tf_font, width=200,
-                               height=std_tf_height, x=100, y=msg_y, color=title_color)
-            msg_y += std_tf_height
+        for info_label in labels:
+            player_label = Label(text=info_label, font=title_tf_font, width=700,
+                               height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
             players_displayed.append(player_label)
+            msg_x += 100
+
+        msg_y += std_tf_height + 5
+
+        # Print out players
+        for player in display_player_db.db[start_index:start_index+20]:
+            msg_x = 50
+            player_info = display_player_db.player_info(player, attributes)
+            for player_stat in player_info:
+                player_label = Label(text=player_stat, font=small_button_font, width=700,
+                                   height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
+                msg_x += 100
+                players_displayed.append(player_label)
+            msg_y += std_tf_height
 
         for label in players_displayed:
             view.add(label)
