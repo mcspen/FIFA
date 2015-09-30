@@ -109,8 +109,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             stuff = 0
 
     def back_btn_func():
-        StartMenu.open_start_menu(win_search.x, win_search.y, db_dict)
         win_search.hide()
+        StartMenu.open_start_menu(win_search.x, win_search.y, db_dict)
 
     # ========== Search Type Button Functions ==========
     def players_btn_func():
@@ -169,14 +169,22 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     # ========== Tool Button Functions ==========
     def attribute_btn_func():
+        # Delete results
+        del settings['messages']['results'][:]
+
+        # Open new window and close current window
+        win_search.hide()
         AddAttribute.open_attribute_window(win_search.x, win_search.y,
                                            db_dict, attr_dict, attr_list, 'search', settings)
-        win_search.hide()
 
     def sort_btn_func():
+        # Delete results
+        del settings['messages']['results'][:]
+
+        # Open new window and close current window
+        win_search.hide()
         AddAttribute.open_attribute_window(win_search.x, win_search.y, db_dict,
                                            attr_dict, attr_list, 'sort', settings)
-        win_search.hide()
 
     def reset_btn_func():
         # Remove messages off page
@@ -198,8 +206,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         win_search.become_target()
 
     def player_bio_btn_func(player):
-        PlayerBio.open_player_bio_window(window_x, window_y, db_dict, attr_dict, attr_list, settings, player)
         win_search.hide()
+        PlayerBio.open_player_bio_window(window_x, window_y, player, win_search)
 
     # ========== Action Buttons ==========
     start_btn.x = (win_width - 2*small_button_width - small_button_spacing) / 2

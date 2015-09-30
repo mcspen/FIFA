@@ -14,13 +14,28 @@
 	"y_pos": 100
   },
 
-  "player_attributes": ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY", "DIV", "HAN", "KIC", "REF", "SPD", "POS",
-	"acceleration", "age", "aggression", "agility", "atkWorkRate", "balance", "ballcontrol", "baseId", "birthdate",
-	"club", "clubId", "color", "commonName", "crossing", "curve", "defWorkRate", "dribbling", "finishing", "firstName",
-	"foot", "freekickaccuracy", "gkdiving", "gkhandling", "gkkicking", "gkpositioning", "gkreflexes", "headingaccuracy",
-	"height", "id", "interceptions", "isGK", "isSpecialType", "itemType", "jumping", "lastName", "league", "leagueId",
-	"longpassing", "longshots", "marking", "modelName", "name", "name_custom", "nation", "nationId", "penalties",
-	"playStyle", "playerType", "position", "positionFull", "positioning", "potential", "quality", "rating", "reactions",
-	"shortpassing", "shotpower", "skillMoves", "slidingtackle", "sprintspeed", "stamina", "standingtackle", "strength",
-	"vision", "volleys", "weakFoot", "weight"]
+  "player_attributes": {
+    "all": ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY", "DIV", "HAN", "KIC", "REF", "SPD", "POS", "acceleration", "age",
+      "aggression", "agility", "atkWorkRate", "balance", "ballcontrol", "baseId", "birthdate", "club", "clubId",
+      "color", "commonName", "crossing", "curve", "defWorkRate", "dribbling", "finishing", "firstName", "foot",
+      "freekickaccuracy", "gkdiving", "gkhandling", "gkkicking", "gkpositioning", "gkreflexes", "headingaccuracy",
+      "height", "id", "interceptions", "isGK", "isSpecialType", "itemType", "jumping", "lastName", "league", "leagueId",
+      "longpassing", "longshots", "marking", "modelName", "name", "name_custom", "nation", "nationId", "penalties",
+      "playStyle", "playerType", "position", "positionFull", "positioning", "potential", "quality", "rating",
+      "reactions", "shortpassing", "shotpower", "skillMoves", "slidingtackle", "sprintspeed", "stamina",
+      "standingtackle", "strength", "vision", "volleys", "weakFoot", "weight"],
+
+    "personal": ["rating", "potential", "club", "league", "nation", "position", "positionFull", "age", "birthdate",
+      "height", "weight", "quality", "color", "playerType", "playStyle"],
+
+    "db": ["id", "baseId", "clubId", "leagueId", "nationId", "itemType", "modelName", "isGK", "isSpecialType"],
+    "characteristics": ["foot", "atkWorkRate", "defWorkRate", "weakFoot", "skillMoves"],
+    "pace": ["acceleration", "sprintspeed"],
+    "dribbling": ["agility", "balance", "reactions", "ballcontrol", "dribbling"],
+    "shooting": ["positioning", "finishing", "shotpower", "longshots", "volleys", "penalties"],
+    "defending": ["interceptions", "headingaccuracy", "marking", "standingtackle", "slidingtackle"],
+    "passing": ["vision", "crossing", "freekickaccuracy", "shortpassing", "longpassing", "curve"],
+    "physicality": ["jumping", "stamina", "strength", "aggression"],
+    "goalkeeping": ["gkdiving", "gkhandling", "gkkicking", "gkpositioning", "gkreflexes"]
+  }
 }

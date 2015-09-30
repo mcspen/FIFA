@@ -47,7 +47,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     radio_button_list = []
 
     with open('configs.json', 'r') as f:
-            attributes_list = json.load(f)['player_attributes']
+            attributes_list = json.load(f)['player_attributes']['all']
             f.close()
 
     erase_option = 'ERASE LIST'
