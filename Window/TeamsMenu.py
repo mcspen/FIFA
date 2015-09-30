@@ -8,7 +8,7 @@ def open_teams_menu(window_x, window_y, db_dict):
 
     # ========== Window ==========
     win_teams = Window()
-    win_teams.title = win_teams_title
+    win_teams.title = teams_win_title
     win_teams.auto_position = False
     win_teams.position = (window_x, window_y)
     win_teams.size = (win_width, win_height)

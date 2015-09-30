@@ -379,20 +379,17 @@ class PlayerDB:
         """
 
         # Player's base info
-        labels = ['Name (Full Name)', 'Rating', 'Position', 'Card Color', 'Nation', 'Club']
+        labels = ['Name', 'Rat.', 'Pos.', 'Color', 'Nation', 'League', 'Club']
 
         # Remove attributes already displayed
-        for attr in ['club', 'color', 'commonName', 'firstName', 'lastName', 'name',
+        for attr in ['club', 'color', 'commonName', 'firstName', 'lastName', 'league', 'name',
                      'name_custom', 'nation', 'position', 'positionFull', 'rating']:
             while attributes.count(attr) > 0:
                 attributes.remove(attr)
 
         # Add attributes from list
         for attribute in attributes:
-            if attribute == 'league':
-                labels.append('League')
-            else:
-                labels.append(str(attribute).capitalize())
+            labels.append(str(attribute[:3]).capitalize()+'.')
 
         return labels
 
@@ -413,9 +410,9 @@ class PlayerDB:
         player_name = unicodedata.normalize('NFKD', player['firstName']).encode('ascii', 'ignore') + ' ' + \
                       unicodedata.normalize('NFKD', player['lastName']).encode('ascii', 'ignore')
 
-        # If the player has a common name, print it out first
+        # If the player has a common name, use it
         if len(common_name) > 0:
-            player_info.append(common_name + " (" + player_name + ")")
+            player_info.append(common_name)
         else:
             player_info.append(player_name)
 
@@ -430,11 +427,15 @@ class PlayerDB:
 
         # Player's nation
         nation = unicodedata.normalize('NFKD', player['nation']['name']).encode('ascii', 'ignore')
-        player_info.append(nation)
+        player_info.append(nation[:20])
+
+        # Player's league
+        league = unicodedata.normalize('NFKD', player['league']['name']).encode('ascii', 'ignore')
+        player_info.append(league[:20])
 
         # Get player's club
         club = unicodedata.normalize('NFKD', player['club']['name']).encode('ascii', 'ignore')
-        player_info.append(club)
+        player_info.append(club[:20])
 
         # Remove attributes already displayed
         for attr in ['club', 'color', 'commonName', 'firstName', 'lastName', 'name',
@@ -444,9 +445,22 @@ class PlayerDB:
 
         # Add attributes from list
         for attribute in attributes:
-            if attribute == 'league':
-                league = unicodedata.normalize('NFKD', player['league']['name']).encode('ascii', 'ignore')
-                player_info.append(league)
+            # Attributes for non-goalkeepers
+            if attribute in ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY']:
+                if not player['isGK']:
+                    index = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'].index(attribute)
+                    player_value = player['attributes'][index]['value']
+                else:
+                    player_value = 0
+                player_info.append(str(player_value))
+            # Attributes for goalkeepers
+            elif attribute in ['DIV', 'HAN', 'KIC', 'REF', 'SPD', 'POS']:
+                if player['isGK']:
+                    index = ['DIV', 'HAN', 'KIC', 'REF', 'SPD', 'POS'].index(attribute)
+                    player_value = player['attributes'][index]['value']
+                else:
+                    player_value = 0
+                player_info.append(str(player_value))
             else:
                 player_info.append(str(player[attribute]))
 

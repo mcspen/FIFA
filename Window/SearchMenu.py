@@ -3,6 +3,7 @@ import unicodedata
 from AppConfig import *
 import StartMenu
 import AddAttribute
+import PlayerBio
 from Logic import PlayerDB
 from Logic import FormationDB
 from Logic import TeamDB
@@ -22,12 +23,17 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             'p_db_rg': 'all_players',
             'f_db_rg': 'all_formations',
             'precision_rg': 'higher',
-            'order_rg': True
+            'order_rg': True,
+            'messages': {
+                'search': [],
+                'sort': [],
+                'results': []
+            }
         }
 
     # ========== Window ==========
     win_search = Window()
-    win_search.title = win_search_title
+    win_search.title = search_win_title
     win_search.auto_position = False
     win_search.position = (window_x, window_y)
     win_search.size = (win_width, win_height)
@@ -174,20 +180,26 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     def reset_btn_func():
         # Remove messages off page
-        for message in search_messages:
-            view.remove(message)
-        for message in sort_messages:
-            view.remove(message)
-        for message in players_displayed:
-            view.remove(message)
+        for msg in settings['messages']['search']:
+            view.remove(msg)
+        for msg in settings['messages']['sort']:
+            view.remove(msg)
+        for msg in settings['messages']['results']:
+            view.remove(msg)
 
         # Delete the attribute parameters for search and sort
         attr_dict.clear()
         del attr_list[:]
-        del players_displayed[:]
+        del settings['messages']['results'][:]
 
         # Disable start button
         start_btn.enabled = 0
+
+        win_search.become_target()
+
+    def player_bio_btn_func(player):
+        PlayerBio.open_player_bio_window(window_x, window_y, db_dict, attr_dict, attr_list, settings, player)
+        win_search.hide()
 
     # ========== Action Buttons ==========
     start_btn.x = (win_width - 2*small_button_width - small_button_spacing) / 2
@@ -281,9 +293,11 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     # ========== DB Radio Buttons ==========
     def get_attribute_p_db_rg():
         settings['p_db_rg'] = p_db_radio_group.value
+        win_search.become_target()
 
     def get_attribute_f_db_rg():
         settings['f_db_rg'] = f_db_radio_group.value
+        win_search.become_target()
 
     p_db_radio_group = RadioGroup(action=get_attribute_p_db_rg)
     f_db_radio_group = RadioGroup(action=get_attribute_f_db_rg)
@@ -361,6 +375,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     # ========== Precision Radio Buttons ==========
     def get_attribute_precision_rg():
         settings['precision_rg'] = precision_radio_group.value
+        win_search.become_target()
 
     precision_radio_group = RadioGroup(action=get_attribute_precision_rg)
 
@@ -396,9 +411,10 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     precision_radio_group.value = settings['precision_rg']
 
-    # ========== Precision Radio Buttons ==========
+    # ========== Sort Order Radio Buttons ==========
     def get_attribute_sort_order_rg():
         settings['order_rg'] = sort_order_radio_group.value
+        win_search.become_target()
 
     sort_order_radio_group = RadioGroup(action=get_attribute_sort_order_rg)
 
@@ -432,12 +448,12 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     attr_msg_offset = 50
 
-    search_messages = []
-    sort_messages = []
-
     # Attribute Messages
+    del settings['messages']['search'][:]
+    del settings['messages']['sort'][:]
+
     if len(attr_dict) > 0:
-        search_messages.append(Label(text=("Search Attributes:"), font=title_tf_font, width=std_tf_width,
+        settings['messages']['search'].append(Label(text=("Search Attributes:"), font=title_tf_font, width=std_tf_width,
                                height=std_tf_height, x=attr_msg_offset, y=lowest_msg_l, color=title_color))
         lowest_msg_l += std_tf_height
 
@@ -445,14 +461,10 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             attr_label = Label(text=(key + ": " + str(value)), font=std_tf_font, width=std_tf_width,
                                height=std_tf_height, x=attr_msg_offset, y=lowest_msg_l, color=title_color)
             lowest_msg_l += std_tf_height
-            search_messages.append(attr_label)
-
-        for message in search_messages:
-            view.add(message)
-        win_search.add(view)
+            settings['messages']['search'].append(attr_label)
 
     if len(attr_list) > 0:
-        sort_messages.append(Label(text=("Sort Attributes:"), font=title_tf_font, width=std_tf_width,
+        settings['messages']['sort'].append(Label(text=("Sort Attributes:"), font=title_tf_font, width=std_tf_width,
                                    height=std_tf_height, x=teams_btn.right + attr_msg_offset, y=lowest_msg_r,
                                    color=title_color))
         lowest_msg_r += std_tf_height
@@ -461,11 +473,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             attr_label = Label(text=(str(value)), font=std_tf_font, width=std_tf_width, height=std_tf_height,
                                x=teams_btn.right + attr_msg_offset, y=lowest_msg_r, color=title_color)
             lowest_msg_r += std_tf_height
-            sort_messages.append(attr_label)
-
-        for message in sort_messages:
-            view.add(message)
-        win_search.add(view)
+            settings['messages']['sort'].append(attr_label)
 
     # Disable start button if no search or sort parameters
     if len(attr_dict) == 0 and len(attr_list) == 0:
@@ -474,40 +482,54 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         start_btn.enabled = 1
 
     # Display players from search
-    players_displayed = []
-
     def display_players(display_player_db, attributes, start_index):
         # Remove messages off page
-        for message in players_displayed:
+        for message in settings['messages']['results']:
             view.remove(message)
-        del players_displayed[:]
+        del settings['messages']['results'][:]
 
         # Print out labels
         labels = display_player_db.player_info_labels(attributes)
-        msg_x = 50
+        stat_index = 0
+        spacing_list = [125, 40, 40, 65, 115, 115, 115, 40]
+        left_border = (win_width - sum(spacing_list[:-1]) - (len(labels) - len(spacing_list) + 1) * spacing_list[-1])/2
+        msg_x = left_border
         msg_y = ascend_radio_btn.bottom + start_message_border
+
         for info_label in labels:
-            player_label = Label(text=info_label, font=title_tf_font, width=700,
+            player_label = Label(text=info_label, font=std_tf_font_bold, width=win_width-(2*left_border),
                                height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
-            players_displayed.append(player_label)
-            msg_x += 100
+            settings['messages']['results'].append(player_label)
+            msg_x += spacing_list[stat_index]
+
+            if stat_index < len(spacing_list)-1:
+                stat_index += 1
 
         msg_y += std_tf_height + 5
 
         # Print out players
         for player in display_player_db.db[start_index:start_index+20]:
-            msg_x = 50
+            msg_x = left_border
             player_info = display_player_db.player_info(player, attributes)
+
+            bio_btn = Button('', width=13, height=13, x=msg_x-25, y=msg_y, action=lambda:player_bio_btn_func(player))
+            settings['messages']['results'].append(bio_btn)
+
+            stat_index = 0
+
             for player_stat in player_info:
-                player_label = Label(text=player_stat, font=small_button_font, width=700,
-                                   height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
-                msg_x += 100
-                players_displayed.append(player_label)
+                player_label = Label(text=player_stat, font=small_button_font, width=win_width-(2*left_border),
+                                     height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
+
+                msg_x += spacing_list[stat_index]
+                settings['messages']['results'].append(player_label)
+                if stat_index < len(spacing_list)-1:
+                    stat_index += 1
+
             msg_y += std_tf_height
 
-        for label in players_displayed:
-            view.add(label)
-        win_search.add(view)
+        for msg in settings['messages']['results']:
+            view.add(msg)
 
     # ========== Add components to view and add view to window ==========
     view.add(title)
@@ -527,6 +549,13 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     view.add(descend_radio_btn)
     view.add(ascend_radio_btn)
     view.add(asc_desc_rg_msg)
+
+    for msg in settings['messages']['search']:
+        view.add(msg)
+    for msg in settings['messages']['sort']:
+        view.add(msg)
+    for msg in settings['messages']['results']:
+        view.add(msg)
 
     win_search.add(view)
     view.become_target()

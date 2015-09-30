@@ -8,12 +8,12 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
     # ========== Window ==========
     win_attribute = Window()
-    win_attribute.title = win_attribute_title
+    win_attribute.title = attribute_win_title
     win_attribute.auto_position = False
     win_attribute.position = (window_x, window_y)
     win_attribute.size = (win_width, 450)
     win_attribute.resizable = 0
-    win_attribute.name = "Attribute Window"
+    win_attribute.name = attribute_title + " Window"
     win_attribute.show()
 
     # ========== Window Image View ==========
@@ -40,6 +40,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     # ========== Radio Button Action ==========
     def get_attribute():
         enter_btn.enabled = 1
+        win_attribute.become_target()
 
     # ========== Radio Buttons ==========
     radio_group = RadioGroup(action=get_attribute)
@@ -74,10 +75,13 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         return_value = None
 
         if attr_type == 'sort':
+            # Erase option
             if radio_group.value == erase_option:
                 del attr_list[:]
             else:
-                attr_list.append(radio_group.value)
+                # Check for doubles
+                if attr_list.count(radio_group.value) == 0:
+                    attr_list.append(radio_group.value)
 
             SearchMenu.open_search_menu(win_attribute.x, win_attribute.y,
                                         db_dict, attr_dict, attr_list, settings)

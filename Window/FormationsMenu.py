@@ -8,7 +8,7 @@ def open_formations_menu(window_x, window_y, db_dict):
 
     # ========== Window ==========
     win_formations = Window()
-    win_formations.title = win_formations_title
+    win_formations.title = formations_win_title
     win_formations.auto_position = False
     win_formations.position = (window_x, window_y)
     win_formations.size = (win_width, win_height)

@@ -12,7 +12,7 @@ def open_start_menu(window_x, window_y, db_dict):
 
     # ========== Window ==========
     win_start = Window()
-    win_start.title = win_start_title
+    win_start.title = start_win_title
     win_start.auto_position = False
     win_start.position = (window_x, window_y)
     win_start.size = (win_width, win_height)

@@ -8,7 +8,7 @@ def open_manage_menu(window_x, window_y, db_dict):
 
     # ========== Window ==========
     win_manage = Window()
-    win_manage.title = win_manage_title
+    win_manage.title = manage_win_title
     win_manage.auto_position = False
     win_manage.position = (window_x, window_y)
     win_manage.size = (win_width, win_height)

@@ -8,7 +8,7 @@ def open_players_menu(window_x, window_y, db_dict):
 
     # ========== Window ==========
     win_players = Window()
-    win_players.title = win_players_title
+    win_players.title = players_win_title
     win_players.auto_position = False
     win_players.position = (window_x, window_y)
     win_players.size = (win_width, win_height)

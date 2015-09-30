@@ -12,15 +12,17 @@ formations_title = 'Formations'
 teams_title = 'Teams'
 manage_title = 'Manage Files'
 attribute_title = 'Add Attribute'
+player_bio_title = 'Player Bio'
 
 # Titles on the window bar at the top
-win_start_title = 'FIFA Squad Builder'
-win_search_title = win_start_title + ' - ' + search_title
-win_players_title = win_start_title + ' - ' + players_title
-win_formations_title = win_start_title + ' - ' + formations_title
-win_teams_title = win_start_title + ' - ' + teams_title
-win_manage_title = win_start_title + ' - ' + manage_title
-win_attribute_title = win_start_title + ' - ' + attribute_title
+start_win_title = 'FIFA Squad Builder'
+search_win_title = start_win_title + ' - ' + search_title
+players_win_title = start_win_title + ' - ' + players_title
+formations_win_title = start_win_title + ' - ' + formations_title
+teams_win_title = start_win_title + ' - ' + teams_title
+manage_win_title = start_win_title + ' - ' + manage_title
+attribute_win_title = start_win_title + ' - ' + attribute_title
+player_bio_win_title = start_win_title + ' - ' + player_bio_title
 
 # ========== Colors ==========
 black = GUI.StdColors.black
@@ -53,6 +55,7 @@ formations_title_width = 165
 teams_title_width = 90
 manage_title_width = 190
 attribute_title_width = 200
+player_bio_title_width = 200
 title_height = 50
 title_font = Font("Times", 3 * system_font.size, ['bold'])
 title_color = white
@@ -81,5 +84,6 @@ small_button_top_spacing = 10
 # ========== Textfields ==========
 title_tf_font = Font("Times", 1.6 * system_font.size, ['bold'])
 std_tf_font = Font("Times", 1.5 * system_font.size)
+std_tf_font_bold = Font("Times", 1.5 * system_font.size, ['bold'])
 std_tf_width = 200
 std_tf_height = 20
