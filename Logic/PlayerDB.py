@@ -2,7 +2,8 @@ import copy
 import json
 import unicodedata
 import requests
-from Player import Player
+from Logic.Player import Player
+from Logic.HelperFunctions import ascii_text
 
 
 class PlayerDB:
@@ -228,17 +229,18 @@ class PlayerDB:
                 # Custom attribute used when user searching for players by any name
                 elif attribute == 'name_custom':
                     string_value = value.upper()
-                    name = unicodedata.normalize('NFKD', player['name']).encode('ascii', 'ignore').upper()
-                    common_name = unicodedata.normalize('NFKD', player['commonName']).encode('ascii', 'ignore').upper()
-                    first_name = unicodedata.normalize('NFKD', player['firstName']).encode('ascii', 'ignore').upper()
-                    last_name = unicodedata.normalize('NFKD', player['lastName']).encode('ascii', 'ignore').upper()
+                    name = ascii_text(player['name']).upper()
+                    common_name = ascii_text(player['commonName']).upper()
+                    first_name = ascii_text(player['firstName']).upper()
+                    last_name = ascii_text(player['lastName']).upper()
                     if len(string_value) == 1:
                         if not (name.startswith(string_value) or common_name.startswith(string_value) or
                                 first_name.startswith(string_value) or last_name.startswith(string_value)):
                             match = False
                     else:
                         if not (string_value in name or string_value in common_name or
-                                string_value in first_name or string_value in last_name):
+                                string_value in first_name or string_value in last_name or
+                                string_value in (first_name+' '+last_name)):
                             match = False
                 elif attribute in ['isGK', 'isSpecialType']:
                     if not player[attribute] == value:
@@ -369,102 +371,6 @@ class PlayerDB:
             print "%s%s%d" % (player_name,
                               " " * (35 - len(player_name)),
                               player['rating'])
-
-    @staticmethod
-    def player_info_labels(attributes):
-        """
-        Gets the labels of the players info to be displayed
-        Input: The list of attributes
-        Output: A list of the labels of the players info
-        """
-
-        # Player's base info
-        labels = ['Name', 'Rat.', 'Pos.', 'Color', 'Nation', 'League', 'Club']
-
-        # Remove attributes already displayed
-        for attr in ['club', 'color', 'commonName', 'firstName', 'lastName', 'league', 'name',
-                     'name_custom', 'nation', 'position', 'positionFull', 'rating']:
-            while attributes.count(attr) > 0:
-                attributes.remove(attr)
-
-        # Add attributes from list
-        for attribute in attributes:
-            labels.append(str(attribute[:3]).capitalize()+'.')
-
-        return labels
-
-    @staticmethod
-    def player_info(player, attributes):
-        """
-        Gets the name and attributes of the given player and specified attributes
-        Input: The player and list of attributes
-        Output: A list of the players info
-        """
-
-        player_info = []
-
-        # Get player's common name
-        common_name = unicodedata.normalize('NFKD', player['commonName']).encode('ascii', 'ignore')
-
-        # Get player's name
-        player_name = unicodedata.normalize('NFKD', player['firstName']).encode('ascii', 'ignore') + ' ' + \
-                      unicodedata.normalize('NFKD', player['lastName']).encode('ascii', 'ignore')
-
-        # If the player has a common name, use it
-        if len(common_name) > 0:
-            player_info.append(common_name)
-        else:
-            player_info.append(player_name)
-
-        # Player's rating
-        player_info.append(str(player['rating']))
-
-        # Player's position
-        player_info.append(player['position'])
-
-        # Player's card color
-        player_info.append(player['color'])
-
-        # Player's nation
-        nation = unicodedata.normalize('NFKD', player['nation']['name']).encode('ascii', 'ignore')
-        player_info.append(nation[:20])
-
-        # Player's league
-        league = unicodedata.normalize('NFKD', player['league']['name']).encode('ascii', 'ignore')
-        player_info.append(league[:20])
-
-        # Get player's club
-        club = unicodedata.normalize('NFKD', player['club']['name']).encode('ascii', 'ignore')
-        player_info.append(club[:20])
-
-        # Remove attributes already displayed
-        for attr in ['club', 'color', 'commonName', 'firstName', 'lastName', 'name',
-                     'name_custom', 'nation', 'position', 'positionFull', 'rating']:
-            while attributes.count(attr) > 0:
-                attributes.remove(attr)
-
-        # Add attributes from list
-        for attribute in attributes:
-            # Attributes for non-goalkeepers
-            if attribute in ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY']:
-                if not player['isGK']:
-                    index = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'].index(attribute)
-                    player_value = player['attributes'][index]['value']
-                else:
-                    player_value = 0
-                player_info.append(str(player_value))
-            # Attributes for goalkeepers
-            elif attribute in ['DIV', 'HAN', 'KIC', 'REF', 'SPD', 'POS']:
-                if player['isGK']:
-                    index = ['DIV', 'HAN', 'KIC', 'REF', 'SPD', 'POS'].index(attribute)
-                    player_value = player['attributes'][index]['value']
-                else:
-                    player_value = 0
-                player_info.append(str(player_value))
-            else:
-                player_info.append(str(player[attribute]))
-
-        return player_info
 
     def print_compare_info(self, num_results=0):
         """

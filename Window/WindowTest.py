@@ -27,11 +27,12 @@ def open_test_window(window_x, window_y, db_dict):
     # ========== Title ==========
     title = Label(text="Test Window - Go Back!")
     title.font = title_font
-    title.width = 350
+    title.width = title_width
     title.height = title_height
-    title.x = (win_width - 350) / 2
+    title.x = (win_width - title_width) / 2
     title.y = top_border
     title.color = title_color
+    title.just = 'center'
 
     # ========== Button Declarations ==========
     back_btn = Button("Back")

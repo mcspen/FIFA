@@ -3,6 +3,7 @@ import json
 import sys
 import time
 from multiprocessing import Pool
+from HelperFunctions import ascii_text
 
 from PlayerDB import PlayerDB
 
@@ -160,9 +161,9 @@ class Team:
                 self.formation['num_attackers']:
             for position, player in self.formation['positions'].iteritems():
                 if player['index'] == index:
-                    name = player['player']['firstName'] + " " + player['player']['lastName']
+                    name = ascii_text(player['player']['firstName']) + " " + ascii_text(player['player']['lastName'])
                     if player['player']['commonName'] != '':
-                        name = player['player']['commonName']
+                        name = ascii_text(player['player']['commonName'])
                     if symbol == 'normal':
                         symbol_to_print = player['symbol']
                     else:
@@ -183,9 +184,9 @@ class Team:
 
         # Print out goalkeeper info
         goalkeeper = self.formation['positions']['GK']['player']
-        name = goalkeeper['firstName'] + " " + goalkeeper['lastName']
+        name = ascii_text(goalkeeper['firstName']) + " " + ascii_text(goalkeeper['lastName'])
         if goalkeeper['commonName'] != '':
-            name = goalkeeper['commonName']
+            name = ascii_text(goalkeeper['commonName'])
         print "Goalkeeper: " + name
 
         # Print out defenders info
@@ -195,9 +196,9 @@ class Team:
             for player in self.formation['positions'].itervalues():
                 if player['index'] == index:
                     defender = player['player']
-                    name = defender['firstName'] + " " + defender['lastName']
+                    name = ascii_text(defender['firstName']) + " " + ascii_text(defender['lastName'])
                     if defender['commonName'] != '':
-                        name = defender['commonName']
+                        name = ascii_text(defender['commonName'])
                     sys.stdout.write('%s   ' % name)
                     index += 1
         sys.stdout.write('\n')
@@ -209,9 +210,9 @@ class Team:
             for player in self.formation['positions'].itervalues():
                 if player['index'] == index:
                     midfielder = player['player']
-                    name = midfielder['firstName'] + " " + midfielder['lastName']
+                    name = ascii_text(midfielder['firstName']) + " " + ascii_text(midfielder['lastName'])
                     if midfielder['commonName'] != '':
-                        name = midfielder['commonName']
+                        name = ascii_text(midfielder['commonName'])
                     sys.stdout.write('%s   ' % name)
                     index += 1
         sys.stdout.write('\n')
@@ -224,9 +225,9 @@ class Team:
             for player in self.formation['positions'].itervalues():
                 if player['index'] == index:
                     attacker = player['player']
-                    name = attacker['firstName'] + " " + attacker['lastName']
+                    name = ascii_text(attacker['firstName']) + " " + ascii_text(attacker['lastName'])
                     if attacker['commonName'] != '':
-                        name = attacker['commonName']
+                        name = ascii_text(attacker['commonName'])
                     sys.stdout.write('%s   ' % name)
                     index += 1
         sys.stdout.write('\n')
@@ -1046,9 +1047,9 @@ class Team:
                 if player['index'] == index:
 
                     # Get player's common name, if it exists, or the full name
-                    name = player['player']['firstName'] + " " + player['player']['lastName']
+                    name = ascii_text(player['player']['firstName']) + " " + ascii_text(player['player']['lastName'])
                     if player['player']['commonName'] != '':
-                        name = player['player']['commonName']
+                        name = ascii_text(player['player']['commonName'])
 
                     # Color info
                     # Determine individual chemistry color

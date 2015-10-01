@@ -25,10 +25,9 @@
       "reactions", "shortpassing", "shotpower", "skillMoves", "slidingtackle", "sprintspeed", "stamina",
       "standingtackle", "strength", "vision", "volleys", "weakFoot", "weight"],
 
-    "personal": ["rating", "potential", "club", "league", "nation", "position", "positionFull", "age", "birthdate",
-      "height", "weight", "quality", "color", "playerType", "playStyle"],
-
-    "db": ["id", "baseId", "clubId", "leagueId", "nationId", "itemType", "modelName", "isGK", "isSpecialType"],
+    "personal": ["rating", "club", "league", "nation", "age", "birthdate", "height", "playStyle", "potential",
+      "position", "positionFull", "quality", "color", "playerType", "weight"],
+    "db": ["id", "baseId", "clubId", "leagueId", "nationId", "itemType", "modelName", "isSpecialType", "isGK"],
     "characteristics": ["foot", "atkWorkRate", "defWorkRate", "weakFoot", "skillMoves"],
     "pace": ["acceleration", "sprintspeed"],
     "dribbling": ["agility", "balance", "reactions", "ballcontrol", "dribbling"],

@@ -1,7 +1,9 @@
-from GUI import Button, Label, View, Window
+from GUI import Button, Geometry, Image, Label, View, Window
 from AppConfig import *
+import cStringIO
 import json
-import unicodedata
+import urllib
+from Logic.HelperFunctions import ascii_text
 
 
 def open_player_bio_window(window_x, window_y, player, win_search):
@@ -21,17 +23,32 @@ def open_player_bio_window(window_x, window_y, player, win_search):
         def draw(self, c, r):
             c.backcolor = view_backcolor
             c.erase_rect(r)
+            image_pos = (player_title_label.left - player_headshot.width - 20,
+                         player_title_label.bottom - player_headshot.height)
+            src_rect = player_headshot.bounds
+            dst_rect = Geometry.offset_rect(src_rect, image_pos)
+            player_headshot.draw(c, src_rect, dst_rect)
 
     view = StartWindowImageView(size=win_player_bio.size)
+
+    # ========== Player Headshot ==========
+    image_url = player['headshotImgUrl']
+    print ascii_text(player['lastName'])
+    print image_url
+    #url_file = requests.get(image_url)
+    #url_image = open(StringIO(url_file.content))
+    #urllib.urlretrieve(image_url, 'C:\Users\mspencer\PycharmProjects\FIFA\Images')
+    player_headshot = Image(file = 'Images/headshot.png')
 
     # ========== Title ==========
     title = Label(text=player_bio_title)
     title.font = title_font
-    title.width = player_bio_title_width
+    title.width = title_width
     title.height = title_height
-    title.x = (win_width - player_bio_title_width) / 2
+    title.x = (win_width - title_width) / 2
     title.y = top_border
     title.color = title_color
+    title.just = 'center'
 
     # ========== Button Declarations ==========
     back_btn = Button("Back")
@@ -53,9 +70,6 @@ def open_player_bio_window(window_x, window_y, player, win_search):
     back_btn.just = 'right'
 
     # ========== Player Info ==========
-    def printable_text(input_text):
-        return unicodedata.normalize('NFKD', input_text).encode('ascii', 'ignore')
-
     player_info = []
 
     # Get attribute lists
@@ -63,17 +77,11 @@ def open_player_bio_window(window_x, window_y, player, win_search):
         attribute_lists = json.load(f)['player_attributes']
         f.close()
 
-    # Get player's common name
-    common_name = printable_text(player['commonName'])
+    # Get player's normal name
+    player_name = ascii_text(player['commonName'])
 
     # Get player's name
-    player_name = printable_text(player['firstName']) + ' ' + printable_text(player['lastName'])
-
-    # If the player has a common name, use it
-    if len(common_name) > 0:
-        player_info.append(common_name)
-    else:
-        player_info.append(player_name)
+    player_full_name = ascii_text(player['firstName']) + ' ' + ascii_text(player['lastName'])
 
     # Player's rating
     player_info.append(str(player['rating']))
@@ -85,18 +93,23 @@ def open_player_bio_window(window_x, window_y, player, win_search):
     player_info.append(player['color'])
 
     # Player's nation
-    nation = unicodedata.normalize('NFKD', player['nation']['name']).encode('ascii', 'ignore')
+    nation = ascii_text(player['nation']['name'])
     player_info.append(nation[:20])
 
     # Player's league
-    league = unicodedata.normalize('NFKD', player['league']['name']).encode('ascii', 'ignore')
+    league = ascii_text(player['league']['name'])
     player_info.append(league[:20])
 
     # Get player's club
-    club = unicodedata.normalize('NFKD', player['club']['name']).encode('ascii', 'ignore')
+    club = ascii_text(player['club']['name'])
     player_info.append(club[:20])
 
     # ========== Player Info Labels ==========
+    player_name_label = Label(font=title_font, width=400, height=title_height, x=(win_width - 400)/2,
+                               y=title.bottom + top_border, color=title_color, just='center')
+    player_name_label.text = str(player['rating']) + '  ' + player_name
+    view.add(player_name_label)
+
 
     # ========== Add buttons to window ==========
     view.add(title)

@@ -26,11 +26,12 @@ def open_players_menu(window_x, window_y, db_dict):
     # ========== Title ==========
     title = Label(text=players_title)
     title.font = title_font
-    title.width = players_title_width
+    title.width = title_width
     title.height = title_height
-    title.x = (win_width - players_title_width) / 2
+    title.x = (win_width - title_width) / 2
     title.y = top_border
     title.color = title_color
+    title.just = 'center'
 
     # ========== Messages ==========
     start_message = Label(text=start_message_text)

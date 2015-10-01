@@ -31,14 +31,18 @@ def open_start_menu(window_x, window_y, db_dict):
 
     view = StartWindowImageView(size=win_start.size)
 
+    # ========== Start Window Image ==========
+    start_window_image = Image(file = 'Images/messi.jpg')
+
     # ========== Title ==========
     title = Label(text=start_title)
     title.font = title_font
-    title.width = start_title_width
+    title.width = title_width
     title.height = title_height
-    title.x = (win_width - start_title_width) / 2
+    title.x = (win_width - title_width) / 2
     title.y = top_border
     title.color = title_color
+    title.just = 'center'
 
     # ========== Button Declarations ==========
     search_btn = Button("Search")
@@ -52,9 +56,6 @@ def open_start_menu(window_x, window_y, db_dict):
                    formations_btn,
                    teams_btn,
                    manage_btn]
-
-    # ========== Start Window Image ==========
-    start_window_image = Image(file = 'messi.jpg')
 
     # ========== Button Functions ==========
     def search_btn_func():

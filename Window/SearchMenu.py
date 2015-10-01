@@ -1,4 +1,5 @@
 from GUI import Button, Label, RadioButton, RadioGroup, View, Window
+import copy
 import unicodedata
 from AppConfig import *
 import StartMenu
@@ -7,6 +8,7 @@ import PlayerBio
 from Logic import PlayerDB
 from Logic import FormationDB
 from Logic import TeamDB
+from Logic.HelperFunctions import player_info_labels, player_info
 
 
 def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, settings=None):
@@ -51,11 +53,12 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     # ========== Title ==========
     title = Label(text=search_title)
     title.font = title_font
-    title.width = search_title_width
+    title.width = title_width
     title.height = title_height
-    title.x = (win_width - search_title_width) / 2
+    title.x = (win_width - title_width) / 2
     title.y = top_border
     title.color = title_color
+    title.just = 'center'
 
     # ========== Action Button Declarations ==========
     start_btn = Button("Start")
@@ -497,11 +500,11 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         del settings['messages']['results'][:]
 
         # Print out labels
-        labels = display_player_db.player_info_labels(attributes)
+        labels = player_info_labels(attributes)
         stat_index = 0
         spacing_list = [125, 40, 40, 65, 115, 115, 115, 40]
         left_border = (win_width - sum(spacing_list[:-1]) - (len(labels) - len(spacing_list) + 1) * spacing_list[-1])/2
-        msg_x = left_border
+        msg_x = left_border + 25
         msg_y = ascend_radio_btn.bottom + start_message_border
 
         for info_label in labels:
@@ -516,16 +519,16 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         msg_y += std_tf_height + 5
 
         # Print out players
-        for player in display_player_db.db[start_index:start_index+20]:
-            msg_x = left_border
-            player_info = display_player_db.player_info(player, attributes)
+        for idx, player in enumerate(display_player_db.db[start_index:start_index+20]):
+            msg_x = left_border + 25
+            player_stats = player_info(player, attributes)
 
-            bio_btn = Button('', width=13, height=13, x=msg_x-25, y=msg_y, action=lambda:player_bio_btn_func(player))
+            bio_btn = Button('', width=13, height=13, x=msg_x-25, y=msg_y, action=(player_bio_btn_func, player))
             settings['messages']['results'].append(bio_btn)
 
             stat_index = 0
 
-            for player_stat in player_info:
+            for player_stat in player_stats:
                 player_label = Label(text=player_stat, font=small_button_font, width=win_width-(2*left_border),
                                      height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
 

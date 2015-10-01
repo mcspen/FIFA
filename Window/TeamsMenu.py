@@ -26,11 +26,12 @@ def open_teams_menu(window_x, window_y, db_dict):
     # ========== Title ==========
     title = Label(text=teams_title)
     title.font = title_font
-    title.width = teams_title_width
+    title.width = title_width
     title.height = title_height
-    title.x = (win_width - teams_title_width) / 2
+    title.x = (win_width - title_width) / 2
     title.y = top_border
     title.color = title_color
+    title.just = 'center'
 
     # ========== Button Declarations ==========
     back_btn = Button("Back")

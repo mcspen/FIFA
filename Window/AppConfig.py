@@ -48,14 +48,7 @@ view_backcolor = black
 
 # ========== Title ==========
 title_border = 10
-search_title_width = 95
-start_title_width = 300
-players_title_width = 105
-formations_title_width = 165
-teams_title_width = 90
-manage_title_width = 190
-attribute_title_width = 200
-player_bio_title_width = 200
+title_width = 700
 title_height = 50
 title_font = Font("Times", 3 * system_font.size, ['bold'])
 title_color = white
