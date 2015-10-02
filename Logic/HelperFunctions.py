@@ -104,6 +104,8 @@ def player_info(player, attributes):
             else:
                 player_value = 0
             player_info.append(str(player_value))
+        elif attribute in ['clubId', 'leagueId', 'nationId']:
+            player_info.append(str(player[attribute[:-2]]['id']))
         else:
             player_info.append(str(player[attribute]))
 

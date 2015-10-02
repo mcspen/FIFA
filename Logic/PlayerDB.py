@@ -153,6 +153,9 @@ class PlayerDB:
                     else:
                         attribute_tuple += (0,)
 
+                elif attr in ['clubId', 'leagueId', 'nationId']:
+                    attribute_tuple += (current_player[attr[:-2]]['id'],)
+
                 elif attr == 'custom_name':
                     attribute_tuple += (current_player['lastName'],)
 

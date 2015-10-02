@@ -73,8 +73,6 @@ def open_player_bio_window(window_x, window_y, player, win_search):
     traits_list_label_width = 500 - traits_label_width
 
     section_label_width = 100
-    stat_title_label_width = 125
-    stat_label_width = 75
 
     # ========== Name and Rating ==========
     player_name_label = Label(font=title_font, width=name_width, height=title_height, x=(win_width - name_width)/2,
@@ -115,25 +113,81 @@ def open_player_bio_window(window_x, window_y, player, win_search):
                                     y=specialities_list_label.bottom, color=title_color, just='left')
     labels_list.append(specialities_list_label_2)
 
+    # ========== Attributes Under piecture Section ==========
+    '''attributes_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
+                               x=3*(win_width - 4*section_label_width)/5 + 2*section_label_width - 25,
+                               y=personal_label.top, color=title_color, just='center')
+    labels_list.append(attributes_label)
+
+    attr_title_label_width = 30
+    attr_label_width = 20
+    attribute_x_offset = 30
+    label_x = attributes_label.left + section_label_width/2 - attribute_x_offset
+    label_y = attributes_label.bottom
+
+    for idx, attr in enumerate(player['attributes']):
+        if idx == 3:
+            label_x = attributes_label.left + section_label_width/2 + attribute_x_offset
+            label_y = attributes_label.bottom
+
+        stat_title_label = Label(font=small_tf_font, width=attr_title_label_width, height=std_tf_height,
+                               x=label_x-attr_title_label_width, y=label_y, color=title_color, just='right')
+        stat_title_label.text = format_attr_name(attr['name'][-3:]) + ':'
+        labels_list.append(stat_title_label)
+
+        stat_label = Label(font=small_tf_font, width=attr_label_width, height=std_tf_height,
+                               x=label_x, y=label_y, color=title_color, just='right')
+        stat_label.text = str(attr['value'])
+        labels_list.append(stat_label)
+
+        label_y += std_tf_height'''
+
+
+    attr_title_label_width = 30
+    attr_label_width = 20
+    attribute_x_offset = 30
+    label_x = (player_name_label.left - player_headshot.width)/2 + player_headshot.width/2 - attribute_x_offset
+    label_y = player_name_label.top + player_headshot.height
+
+    for idx, attr in enumerate(player['attributes']):
+        if idx == 3:
+            label_x = (player_name_label.left - player_headshot.width)/2 + player_headshot.width/2 + attribute_x_offset
+            label_y = player_name_label.top + player_headshot.height
+
+        stat_title_label = Label(font=small_tf_font, width=attr_title_label_width, height=std_tf_height,
+                               x=label_x-attr_title_label_width, y=label_y, color=title_color, just='right')
+        stat_title_label.text = format_attr_name(attr['name'][-3:]) + ':'
+        labels_list.append(stat_title_label)
+
+        stat_label = Label(font=small_tf_font, width=attr_label_width, height=std_tf_height,
+                               x=label_x, y=label_y, color=title_color, just='right')
+        stat_label.text = str(attr['value'])
+        labels_list.append(stat_label)
+
+        label_y += std_tf_height
+
     # ========== Personal Section ==========
     personal_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
-                               x=(win_width - 3*section_label_width)/4,
-                               y=specialities_list_label_2.bottom + top_border, color=title_color, just='center')
+                           #x=(win_width - 3*section_label_width)/4,
+                           x=3*(win_width - 9*section_label_width)/10 + 2*section_label_width,
+                           y=specialities_list_label_2.bottom + top_border, color=title_color, just='center')
     labels_list.append(personal_label)
 
-    personal_x_offset = 100
-    label_x = personal_label.left + section_label_width/2 - personal_x_offset
     personal_title_stat_width = 100
     personal_stat_width = 55
     personal_stat_just = 'right'
+    personal_x_offset = personal_stat_width + 50
+    label_x = personal_label.left + section_label_width/2 - personal_x_offset
     label_y = personal_label.bottom
+
     for idx, personal in enumerate(attribute_lists['personal']):
         if idx == 7:
-            label_x = personal_label.left + section_label_width/2 + personal_x_offset - 60
-            label_y = personal_label.bottom
             personal_title_stat_width = 75
-            personal_stat_width = 150
+            personal_stat_width = 200
             personal_stat_just = 'left'
+            personal_x_offset = personal_title_stat_width - 50
+            label_x = personal_label.left + section_label_width/2 + personal_x_offset
+            label_y = personal_label.bottom
 
         # Skip these since other labels use them
         if personal == 'positionFull':
@@ -149,11 +203,11 @@ def open_player_bio_window(window_x, window_y, player, win_search):
         if personal == 'height':
             centimeters = player[personal]
             inches = centimeters/2.54
-            stat_label.text = '%d\'%d" (%d cm)' % (int(inches/12), inches%12, centimeters)
+            stat_label.text = '%d\'%.1f" (%d cm)' % (int(inches/12), inches % 12, centimeters)
         elif personal == 'weight':
             kilograms = player[personal]
             pounds = kilograms*2.20462
-            stat_label.text = '%d lb (%d kg)' % (pounds, kilograms)
+            stat_label.text = '%.1f lb (%d kg)' % (pounds, kilograms)
         elif personal in ['club', 'league', 'nation']:
             stat_label.text = ascii_text(player[personal]['name'])
         elif personal == 'birthdate':
@@ -167,17 +221,44 @@ def open_player_bio_window(window_x, window_y, player, win_search):
 
         label_y += std_tf_height
 
-    # ========== Attributes Section ==========
-    attributes_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
-                               x=(win_width/2) - (section_label_width/2),
-                               y=personal_label.top, color=title_color, just='center')
-    labels_list.append(attributes_label)
-
     # ========== Database Info Section ==========
     db_info_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
-                               x=3*(win_width - 3*section_label_width)/4 + 2*section_label_width,
-                               y=personal_label.top, color=title_color, just='center')
+                          #x=4*(win_width - 4*section_label_width)/5 + 3*section_label_width - 25,
+                          x=7*(win_width - 9*section_label_width)/10 + 6*section_label_width,
+                          y=personal_label.top, color=title_color, just='center')
     labels_list.append(db_info_label)
+
+    db_info_title_label_width = 80
+    db_info_label_width = 45
+    attribute_x_offset = 30
+    label_x = db_info_label.left + section_label_width/2 - attribute_x_offset
+    label_y = db_info_label.bottom
+
+    for idx, db_info in enumerate(attribute_lists['db']):
+        if idx == 5:
+            attribute_x_offset = 85
+            db_info_title_label_width = 60
+            db_info_label_width = 50
+            label_x = db_info_label.left + section_label_width/2 + attribute_x_offset
+            label_y = db_info_label.bottom
+
+        if db_info == 'modelName':
+                db_info_label_width = 95
+
+        stat_title_label = Label(font=small_tf_font, width=db_info_title_label_width, height=std_tf_height,
+                               x=label_x-db_info_title_label_width, y=label_y, color=title_color, just='right')
+        stat_title_label.text = format_attr_name(db_info) + ':'
+        labels_list.append(stat_title_label)
+
+        stat_label = Label(font=small_tf_font, width=db_info_label_width, height=std_tf_height,
+                               x=label_x, y=label_y, color=title_color, just='right')
+        if db_info in ['clubId', 'leagueId', 'nationId']:
+            stat_label.text = str(player[db_info[:-2]]['id'])
+        else:
+            stat_label.text = str(player[db_info])
+        labels_list.append(stat_label)
+
+        label_y += std_tf_height
 
     '''for characteristic in attribute_lists['characteristics']:
         stat_title_label = Label(font=std_tf_font, width=stat_title_label_width, height=std_tf_height,
@@ -253,7 +334,7 @@ def open_player_bio_window(window_x, window_y, player, win_search):
 
     # Player's Personal Info
     personal_label.text = "Personal"
-    attributes_label.text = "Attributes"
+    #attributes_label.text = "Attributes"
     db_info_label.text = "Database Info"
     '''characteristics_label.text = "Characteristics"
     pace_label.text = "Pace"

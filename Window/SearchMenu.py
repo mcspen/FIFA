@@ -8,7 +8,7 @@ import PlayerBio
 from Logic import PlayerDB
 from Logic import FormationDB
 from Logic import TeamDB
-from Logic.HelperFunctions import player_info_labels, player_info
+from Logic.HelperFunctions import format_attr_name, player_info_labels, player_info
 
 
 def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, settings=None):
@@ -210,7 +210,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     def player_bio_btn_func(player):
         win_search.hide()
-        PlayerBio.open_player_bio_window(window_x, window_y, player, win_search)
+        PlayerBio.open_player_bio_window(win_search.x, win_search.y, player, win_search)
 
     # ========== Action Buttons ==========
     start_btn.x = (win_width - 2*small_button_width - small_button_spacing) / 2
@@ -469,7 +469,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         lowest_msg_l += std_tf_height
 
         for key, value in attr_dict.iteritems():
-            attr_label = Label(text=(key + ": " + str(value)), font=std_tf_font, width=std_tf_width,
+            attr_label = Label(text=(format_attr_name(key) + ": " + str(value)), font=std_tf_font, width=std_tf_width,
                                height=std_tf_height, x=attr_msg_offset, y=lowest_msg_l, color=title_color)
             lowest_msg_l += std_tf_height
             settings['messages']['search'].append(attr_label)
@@ -481,7 +481,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         lowest_msg_r += std_tf_height
 
         for value in attr_list:
-            attr_label = Label(text=(str(value)), font=std_tf_font, width=std_tf_width, height=std_tf_height,
+            attr_label = Label(text=(format_attr_name(value)), font=std_tf_font, width=std_tf_width, height=std_tf_height,
                                x=teams_btn.right + attr_msg_offset, y=lowest_msg_r, color=title_color)
             lowest_msg_r += std_tf_height
             settings['messages']['sort'].append(attr_label)
