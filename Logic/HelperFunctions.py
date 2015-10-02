@@ -6,8 +6,10 @@ import unicodedata
 Helper functions that don't belong to any class
 """
 
+
 def ascii_text(input_text):
     return unicodedata.normalize('NFKD', input_text).encode('ascii', 'ignore')
+
 
 def player_info_labels(attributes):
     """
@@ -33,6 +35,7 @@ def player_info_labels(attributes):
             labels.append(attribute[:3].capitalize()+'.')
 
     return labels
+
 
 def player_info(player, attributes):
     """
@@ -105,6 +108,7 @@ def player_info(player, attributes):
             player_info.append(str(player[attribute]))
 
     return player_info
+
 
 def format_attr_name(attribute):
     if attribute in ["commonName", "firstName", "lastName", "birthdate", "weakFoot", "playerType", "positionFull",
