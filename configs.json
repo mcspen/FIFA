@@ -7,6 +7,11 @@
 	"teams": "team_db_2015-09-04"
   },
 
+  "default_search": {
+	"search_attributes": [["color", "legend", "not"]],
+	"sort_attributes": ["rating"]
+  },
+
   "window": {
 	"width": 800,
 	"height": 700,
@@ -25,8 +30,8 @@
       "reactions", "shortpassing", "shotpower", "skillMoves", "slidingtackle", "sprintspeed", "stamina",
       "standingtackle", "strength", "vision", "volleys", "weakFoot", "weight"],
 
-    "personal": ["rating", "potential", "quality", "color", "playerType", "playStyle", "age", "club", "league",
-      "nation", "position", "positionFull", "height", "weight", "birthdate"],
+    "personal": ["rating", "potential", "quality", "color", "playStyle", "age", "birthdate", "club", "league",
+      "nation", "position", "positionFull", "height", "weight", "playerType"],
     "db": ["id", "baseId", "itemType", "isSpecialType", "modelName", "clubId", "leagueId", "nationId", "isGK"],
     "characteristics": ["foot", "atkWorkRate", "defWorkRate", "weakFoot", "skillMoves"],
     "pace": ["acceleration", "sprintspeed"],

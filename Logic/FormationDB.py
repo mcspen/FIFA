@@ -93,7 +93,7 @@ class FormationDB:
 
         self.db = sorted(self.db, key=compare, reverse=descend)
 
-    def search(self, attributes, compare='exact'):
+    def search(self, attributes):
         """
         Search for formations
         Input: A dictionary the attributes and values, and the optional comparison type('higher', 'exact', 'lower')
@@ -105,13 +105,31 @@ class FormationDB:
 
         formations = []
 
-        if not (compare == 'higher' or compare == 'exact' or compare == 'lower'):
-            print "Compare field is not valid. Use 'higher', 'exact', or 'lower'."
-            return formations
-
         for formation in self.db:
             match = True
-            for attribute, value in attributes.iteritems():
+            for attribute, tup in attributes.iteritems():
+
+                if type(tup) is not tuple:
+                    print "Attributes parameter is not valid. Must be a dict with a tuple value."
+                    return []
+
+                # Assign attribute value
+                value = tup[0]
+
+                # Assign comparison value and set default
+                if len(tup) < 2:
+                    compare = 'exact'
+                # Treat 'not' like 'exact' and flip at the end
+                elif tup[1] == 'not':
+                    compare = 'exact'
+                else:
+                    compare = tup[1]
+
+                # Make sure the comparison value is valid
+                if compare not in ['higher', 'exact', 'lower', 'not']:
+                    print "Compare value is not valid. Use 'higher', 'exact', or 'lower'."
+                    return []
+
                 if attribute == 'name':
                     string_value = str(value.upper())
                     stat = str(formation['name'].upper())
@@ -179,6 +197,12 @@ class FormationDB:
                     match = False
                     break
 
+                # Switch matching boolean if comparison is 'not'
+                if len(tup) > 1:
+                    if tup[1] == 'not':
+                        match = not match
+
+                # If still matching, check next attribute
                 if not match:
                     break
 

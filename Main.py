@@ -262,7 +262,7 @@ if __name__ == '__main__':
 
     # -------------------------ULTIMATE TEAM EXAMPLE---------------------------
 
-    americans = PlayerDB(player_db.search({'nation': 'United States'}))
+    americans = PlayerDB(player_db.search({'nation': ('United States',)}))
 
     """player_db.sort({'firstName'}, False)
     #test1 = player_db.search({'nation': 'Germany', 'club': '1. FC Heidenheim', 'position': 'ST'})

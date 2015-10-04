@@ -31,12 +31,60 @@ gray = GUI.StdColors.grey
 light_gray = GUI.StdColors.light_grey
 white = GUI.StdColors.white
 red = GUI.StdColors.red
-green = GUI.StdColors.green
-blue = GUI.StdColors.blue
+orange = GUI.StdColors.rgb(1, 0.5, 0)
+dark_orange = GUI.StdColors.rgb(1, 0.55, 0)
 yellow = GUI.StdColors.yellow
+green = GUI.StdColors.green
+dark_green = GUI.StdColors.rgb(0, 0.55, 0)
+light_green = GUI.StdColors.rgb(0, 0.7, 0)
+blue = GUI.StdColors.blue
 cyan = GUI.StdColors.cyan
 magenta = GUI.StdColors.magenta
 clear = GUI.StdColors.clear
+gold = GUI.StdColors.rgb(1, 0.84, 0)
+light_gold = GUI.StdColors.rgb(0.83, 0.69, 0.22)
+silver = GUI.StdColors.rgb(0.75, 0.75, 0.75)
+dark_silver = GUI.StdColors.rgb(0.52, 0.52, 0.52)
+bronze = GUI.StdColors.rgb(0.8, 0.5, 0.2)
+dark_bronze = GUI.StdColors.rgb(0.59, 0.29, 0)
+
+
+def attr_color(value):
+    if value <= 50:
+        color = red
+    elif value <= 60:
+        color = dark_orange
+    elif value <= 70:
+        color = yellow
+    elif value <= 80:
+        color = light_green
+    else:
+        color = dark_green
+
+    return color
+
+
+def quality_color(value):
+    if value == 'bronze':
+        color = dark_bronze
+    elif value == 'rare_bronze':
+        color = bronze
+    elif value == 'silver':
+        color = dark_silver
+    elif value == 'rare_silver':
+        color = silver
+    elif value == 'gold':
+        color = light_gold
+    elif value == 'rare_gold':
+        color = gold
+    elif value == 'standard':
+        color = white
+    elif value == 'rare':
+        color = gold
+    else:
+        color = blue
+
+    return color
 
 # ========== Window ==========
 win_width = 800

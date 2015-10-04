@@ -200,27 +200,49 @@ class PlayerDB:
 
         self.db = sorted(self.db, key=compare, reverse=True)
 
-    def search(self, attributes, compare='exact'):
+    def search(self, attributes):
         """
         Search for one set of players
-        Input: A dictionary the attributes and values, and the optional comparison type('higher', 'exact', 'lower')
-        Example 1: arguments = {'attr1': value1}, 'exact'
+        Input: A dictionary of tuples of the attribute values and the optional comparison type
+        Comparison: 'higher', 'exact', 'lower', 'not'
+        Example 1: arguments = {'attr1': (value1, 'exact')}
         or without the comparison operator
-        Example 2: arguments = {'attr1': value1, 'attr2': value2, 'attr3': value3}
+        Example 2: arguments = {'attr1': (value1,), 'attr2': (value2,), 'attr3': (value3,)}
         Output: A list of all matching players
         """
 
         players = []
 
-        if not (compare == 'higher' or compare == 'exact' or compare == 'lower'):
-            print "Compare field is not valid. Use 'higher', 'exact', or 'lower'."
-            return players
-
         for player in self.db:
             match = True
-            for attribute, value in attributes.iteritems():
-                if attribute in ['id', 'baseId', 'nationId', 'leagueId', 'clubId']:
-                    if not player[attribute]['id'] == value:
+            for attribute, tup in attributes.iteritems():
+
+                if type(tup) is not tuple:
+                    print "Attributes parameter is not valid. Must be a dict with a tuple value."
+                    return []
+
+                # Assign attribute value
+                value = tup[0]
+
+                # Assign comparison value and set default
+                if len(tup) < 2:
+                    compare = 'exact'
+                # Treat 'not' like 'exact' and flip at the end
+                elif tup[1] == 'not':
+                    compare = 'exact'
+                else:
+                    compare = tup[1]
+
+                # Make sure the comparison value is valid
+                if compare not in ['higher', 'exact', 'lower', 'not']:
+                    print "Compare value is not valid. Use 'higher', 'exact', or 'lower'."
+                    return []
+
+                if attribute in ['id', 'baseId']:
+                    if not player[attribute] == str(value):
+                        match = False
+                elif attribute in ['nationId', 'leagueId', 'clubId']:
+                    if not player[attribute]['id'] == str(value):
                         match = False
                 elif attribute in ['name', 'quality', 'color', 'positionFull', 'itemType', 'modelName', 'playerType',
                                    'commonName', 'firstName', 'lastName', 'position', 'playStyle', 'foot',
@@ -312,33 +334,36 @@ class PlayerDB:
                     match = False
                     break
 
+                # Switch matching boolean if comparison is 'not'
+                if len(tup) > 1:
+                    if tup[1] == 'not':
+                        match = not match
+
+                # If still matching, check next attribute
                 if not match:
                     break
 
+            # If all attributes match, add to the list
             if match:
                 players.append(copy.deepcopy(player))
 
         return players
 
-    def multi_search(self, attribute_tuple_list):
+    def multi_search(self, attribute_dict_list):
         """
         Search for multiple sets of players
-        Input: List of tuples of the attributes and values and the optional comparison type ('higher', 'exact', 'lower')
-        Example: attribute_tuple_list =[({'attr1': value1}, comp1),
-                                        ({'attr2': value2, 'attr3': value3}, comp2),
-                                        ({'attr4': value4, 'attr5': value5, 'attr6': value6},)] <-- Needs trailing comma
+        Input: List of dicts of the attributes, values, and the optional comparison type ('higher', 'exact', 'lower', 'not')
+        Example: attribute_tuple_list =[{'attr1': (value1, comp1)},
+                                        {'attr2': (value2,), 'attr3': (value3, comp3)},
+                                        {'attr4': (value4,), 'attr5': (value5,), 'attr6': (value6,)}]
         Output: A list of all matching players without duplicates
         """
 
         players = []
 
-        for attributes in attribute_tuple_list:
+        for attributes in attribute_dict_list:
 
-            # Check for comparison choice and leave out if empty
-            if len(attributes) < 2:
-                temp_list = self.search(attributes[0])
-            else:
-                temp_list = self.search(attributes[0], attributes[1])
+            temp_list = self.search(attributes)
 
             # Combine lists
             players += temp_list

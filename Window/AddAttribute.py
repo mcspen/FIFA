@@ -12,7 +12,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     win_attribute.title = attribute_win_title
     win_attribute.auto_position = False
     win_attribute.position = (window_x, window_y)
-    win_attribute.size = (win_width, 450)
+    win_attribute.size = (win_width, 500)
     win_attribute.resizable = 0
     win_attribute.name = attribute_title + " Window"
     win_attribute.show()
@@ -44,7 +44,10 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         enter_btn.enabled = 1
         win_attribute.become_target()
 
-    # ========== Radio Buttons ==========
+    def comp_selection_made():
+        win_attribute.become_target()
+
+    # ========== Attribute Radio Buttons ==========
     radio_group = RadioGroup(action=selection_made)
     radio_button_list = []
 
@@ -143,7 +146,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                 win_attribute.hide()
 
             elif valid:
-                attr_dict[radio_group.value] = return_value
+                attr_dict[radio_group.value] = (return_value, compare_group.value)
                 SearchMenu.open_search_menu(win_attribute.x, win_attribute.y, db_dict,
                                             attr_dict, attr_list, settings)
                 win_attribute.hide()
@@ -191,6 +194,28 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     value_tf.height = 25
     value_tf.font = std_tf_font
 
+    # ========== Compare Radio Buttons ==========
+    compare_group = RadioGroup(action=comp_selection_made)
+    comp_button_list = []
+
+    comp_button_width = 55
+    comp_button_x = (win_attribute.width - 4*comp_button_width)/2
+
+    for value in ['higher', 'exact', 'lower', 'not']:
+        button = RadioButton(attribute)
+        button.width = comp_button_width
+        button.x = comp_button_x
+        button.y = value_tf.top - value_tf.height - title_border
+        button.group = compare_group
+        button.value = value
+        button.title = value.capitalize()
+
+        comp_button_x += comp_button_width + 5
+
+        comp_button_list.append(button)
+
+    compare_group.value = 'higher'
+
     # ========== Add buttons to window ==========
     view.add(title)
     view.add(enter_btn)
@@ -199,6 +224,9 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     # Shows only for getting attribute for search, not sort
     if attr_type == 'search':
         view.add(value_tf)
+
+        for button in comp_button_list:
+            view.add(button)
 
     for button in radio_button_list:
         view.add(button)
