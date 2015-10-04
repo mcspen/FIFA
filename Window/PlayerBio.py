@@ -38,8 +38,8 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     view = StartWindowImageView(size=win_player_bio.size)
 
     # ========== Player Headshot ==========
-    #player_headshot = Image(file = 'Images/headshot.png')
-    image_url = player['headshotImgUrl']
+    player_headshot = Image(file = 'Images/headshot.png')
+    """image_url = player['headshotImgUrl']
 
     from PIL import Image
     import urllib2
@@ -51,7 +51,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     image_info.save(image_filename)
     file.close()
 
-    player_headshot = Image(file=image_filename)
+    player_headshot = Image(file=image_filename)"""
 
     # ========== Button Declarations ==========
     add_player_btn = Button()
