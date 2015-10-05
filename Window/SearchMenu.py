@@ -13,6 +13,8 @@ from Logic.HelperFunctions import format_attr_name, player_info_labels, player_i
 
 def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, settings=None):
 
+    num_results = 20
+
     with open('configs.json', 'r') as f:
         default_search = json.load(f)['default_search']
         f.close()
@@ -30,7 +32,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             'mode': 'players',
             'p_db_rg': 'all_players',
             'f_db_rg': 'all_formations',
-            'precision_rg': 'higher',
+            #'precision_rg': 'higher',
             'order_rg': True,
             'messages': {
                 'search': [],
@@ -91,7 +93,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             search_results = db_dict[p_db_radio_group.value][1].search(attr_dict)
             search_results = PlayerDB.PlayerDB(search_results)
             search_results.sort(attr_list, sort_order_radio_group.value)
-            search_results.print_compare_info(10)
+            search_results.print_compare_info()  # num_results)
 
             # Get attributes list and avoid duplicates
             attributes_list = []
@@ -104,7 +106,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                 if attributes_list.count(attr_key) == 0:
                     attributes_list.append(attr_key)
 
-            display_players(search_results, attributes_list, 0)
+            display_players(search_results, attributes_list, (0, num_results))
 
         # Start button corresponds to formations
         elif settings['mode'] == 'formations':
@@ -197,12 +199,12 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     def reset_btn_func():
         # Remove messages off page
-        for msg in settings['messages']['search']:
-            view.remove(msg)
-        for msg in settings['messages']['sort']:
-            view.remove(msg)
-        for msg in settings['messages']['results']:
-            view.remove(msg)
+        for message in settings['messages']['search']:
+            view.remove(message)
+        for message in settings['messages']['sort']:
+            view.remove(message)
+        for message in settings['messages']['results']:
+            view.remove(message)
 
         # Delete the attribute parameters for search and sort
         attr_dict.clear()
@@ -470,20 +472,124 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     else:
         start_btn.enabled = 1
 
-    # Display players from search
-    def display_players(display_player_db, attributes, start_index):
-        # Remove messages off page
+    # ========== Previous, Add to List, Next Buttons ==========
+    previous_btn = Button("<<< Previous %d" % num_results)
+    add_to_list_btn = Button("Add Players to List")
+    next_btn = Button("Next %d >>>" % num_results)
+
+    def add_to_list_btn_func(player_list=None, func_type=None):
+        if func_type == 'add':
+            added_players = []
+            # Add current results to player list
+            for player in player_list:
+                if db_dict['my_players'][1].db.count(player) == 0:
+                    db_dict['my_players'][1].db.append(player)
+                    added_players.append(player)
+            # Sort
+            db_dict['my_players'][1].sort(['rating'])
+            # Save
+            db_dict['my_players'][1].save(db_dict['my_players'][0])
+
+            # Change button title and action
+            add_to_list_btn.title = "Remove Added Players"
+            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'remove')
+
+            # Keep track of just added players
+            settings['messages']['players_just_added'] = added_players
+
+        elif func_type == 'remove':
+            # Remove players just added
+            for player in settings['messages']['players_just_added']:
+                if db_dict['my_players'][1].db.count(player) > 0:
+                    db_dict['my_players'][1].db.remove(player)
+            # Sort
+            db_dict['my_players'][1].sort(['rating'])
+            # Save
+            db_dict['my_players'][1].save(db_dict['my_players'][0])
+
+            # Change button title and action
+            add_to_list_btn.title = "Add Players to List"
+            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'add')
+
+            # Delete the just added players list
+            settings['messages'].pop('players_just_added', None)
+
+    def previous_btn_func(display_player_db=None, attributes=None, index_range=None):
+        if display_player_db is not None:
+            # display previous results
+            display_players(display_player_db, attributes, index_range)
+
+    def next_btn_func(display_player_db=None, attributes=None, index_range=None):
+        if display_player_db is not None:
+            # display next results
+            display_players(display_player_db, attributes, index_range)
+
+    add_to_list_btn.x = attribute_btn.right + small_button_spacing
+    add_to_list_btn.y = descend_radio_btn.bottom + 5
+    add_to_list_btn.height = tiny_button_height
+    add_to_list_btn.width = small_button_width
+    add_to_list_btn.font = small_button_font
+    add_to_list_btn.action = add_to_list_btn_func
+    add_to_list_btn.style = 'default'
+    add_to_list_btn.color = small_button_color
+    add_to_list_btn.just = 'right'
+
+    previous_btn.height = tiny_button_height
+    previous_btn.width = small_button_width
+    previous_btn.x = add_to_list_btn.left - previous_btn.width - small_button_spacing
+    previous_btn.y = add_to_list_btn.top
+    previous_btn.font = small_button_font
+    previous_btn.action = previous_btn_func
+    previous_btn.style = 'default'
+    previous_btn.color = small_button_color
+    previous_btn.just = 'right'
+
+    next_btn.height = tiny_button_height
+    next_btn.width = small_button_width
+    next_btn.x = add_to_list_btn.right + small_button_spacing
+    next_btn.y = add_to_list_btn.top
+    next_btn.font = small_button_font
+    next_btn.action = next_btn_func
+    next_btn.style = 'default'
+    next_btn.color = small_button_color
+    next_btn.just = 'right'
+
+    # ========== Display players from search ==========
+    def display_players(display_player_db, attributes, index_range):
+        # Remove old messages off page
         for message in settings['messages']['results']:
             view.remove(message)
         del settings['messages']['results'][:]
+
+        # Add navigation buttons to page
+        add_to_list_btn.action = (add_to_list_btn_func, display_player_db.db, 'add')
+
+        previous_range = (index_range[0]-num_results, index_range[1]-num_results)
+        previous_btn.action = (previous_btn_func, display_player_db, attributes, previous_range)
+
+        next_range = (index_range[0]+num_results, index_range[1]+num_results)
+        next_btn.action = (next_btn_func, display_player_db, attributes, next_range)
+
+        if index_range[0] > 0:
+            previous_btn.enabled = 1
+        else:
+            previous_btn.enabled = 0
+        if index_range[1] <= len(display_player_db.db) - 1:
+            next_btn.enabled = 1
+        else:
+            next_btn.enabled = 0
+
+        view.add(add_to_list_btn)
+        view.add(previous_btn)
+        view.add(next_btn)
 
         # Print out labels
         labels = player_info_labels(attributes)
         stat_index = 0
         spacing_list = [125, 40, 40, 65, 115, 115, 115, 40]
         left_border = (win_width - sum(spacing_list[:-1]) - (len(labels) - len(spacing_list) + 1) * spacing_list[-1])/2
-        msg_x = left_border + 25
-        msg_y = ascend_radio_btn.bottom + start_message_border
+        msg_x = left_border
+        msg_y = add_to_list_btn.bottom + 5
 
         for info_label in labels:
             player_label = Label(text=info_label, font=std_tf_font_bold, width=win_width-(2*left_border),
@@ -497,8 +603,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         msg_y += std_tf_height + 5
 
         # Print out players
-        for idx, player in enumerate(display_player_db.db[start_index:start_index+20]):
-            msg_x = left_border + 25
+        for idx, player in enumerate(display_player_db.db[index_range[0]:index_range[1]]):
+            msg_x = left_border
             player_stats = player_info(player, attributes)
             stat_index = 0
 

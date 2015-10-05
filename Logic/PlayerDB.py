@@ -289,7 +289,7 @@ class PlayerDB:
                 elif attribute in ['nation', 'league', 'club']:
                     string_value = value.upper()
                     stat = player[attribute]['name'].upper()
-                    if not stat.startswith(string_value):
+                    if not string_value in stat:
                         match = False
                 elif attribute in ['headshot', 'headshotImgUrl']:
                     print "Not searching based on " + attribute
@@ -352,7 +352,8 @@ class PlayerDB:
     def multi_search(self, attribute_dict_list):
         """
         Search for multiple sets of players
-        Input: List of dicts of the attributes, values, and the optional comparison type ('higher', 'exact', 'lower', 'not')
+        Input: List of dicts of the attributes, values, and the optional comparison type
+        ('higher', 'exact', 'lower', 'not')
         Example: attribute_tuple_list =[{'attr1': (value1, comp1)},
                                         {'attr2': (value2,), 'attr3': (value3, comp3)},
                                         {'attr4': (value4,), 'attr5': (value5,), 'attr6': (value6,)}]
