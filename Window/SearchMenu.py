@@ -32,7 +32,6 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             'mode': 'players',
             'p_db_rg': 'all_players',
             'f_db_rg': 'all_formations',
-            #'precision_rg': 'higher',
             'order_rg': True,
             'messages': {
                 'search': [],

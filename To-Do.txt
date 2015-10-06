@@ -3,7 +3,7 @@ Add team names?
 
 Finish PlayerDB search/sort.  Remove redundacy in other search/sort classes.
 
-Add try loops for printing out names for those exception cases
+Add try loops for printing out names for those exception cases (non-ascii)
 
 Add option for manager and/or option for team not requiring manager
 
