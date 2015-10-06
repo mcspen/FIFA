@@ -1614,11 +1614,11 @@ class Team:
         return team_list[team_index]
 
     @staticmethod
-    def calculate_dependency_tuple_list(dependent_positions, roster):
+    def calculate_dependency_dict_list(dependent_positions, roster):
         """
         Calculate and create a tuple of the traits of players eligible to use based on dependencies
         Input: List of tuples of the positions of dependent players and chemistry needed and the roster
-        Output: A list of tuples of traits of players eligible based on dependencies
+        Output: A list of dicts of traits of players eligible based on dependencies
         """
 
         # Only one dependent player to add traits to search for
@@ -1626,22 +1626,22 @@ class Team:
 
             # Need at least one chemistry
             if dependent_positions[0][1] <= 1:
-                # Create position tuple list of one trait for the player dependency search
-                return [({'nation': roster[dependent_positions[0][0]]['nation']['name']},),
-                        ({'league': roster[dependent_positions[0][0]]['league']['name']},)]
+                # Create position dict list of one trait for the player dependency search
+                return [{'nation': (roster[dependent_positions[0][0]]['nation']['name'], 'exact'),
+                        'league': (roster[dependent_positions[0][0]]['league']['name'], 'exact')}]
 
             # Need at least two chemistry
             elif dependent_positions[0][1] == 2:
-                # Create position tuple list of two traits for the player dependency search
-                return [({'nation': roster[dependent_positions[0][0]]['nation']['name'],
-                          'league': roster[dependent_positions[0][0]]['league']['name']},),
-                        ({'club': roster[dependent_positions[0][0]]['club']['name']},)]
+                # Create position dict list of two traits for the player dependency search
+                return [{'nation': (roster[dependent_positions[0][0]]['nation']['name'], 'exact'),
+                         'league': (roster[dependent_positions[0][0]]['league']['name'], 'exact')},
+                        {'club': (roster[dependent_positions[0][0]]['club']['name'], 'exact')}]
 
             # Need three chemistry
             else:
-                # Create position tuple list of all three traits for the player dependency search
-                return [({'nation': roster[dependent_positions[0][0]]['nation']['name'],
-                          'club': roster[dependent_positions[0][0]]['club']['name']},)]
+                # Create position dict list of all three traits for the player dependency search
+                return [{'nation': (roster[dependent_positions[0][0]]['nation']['name'], 'exact'),
+                         'club': (roster[dependent_positions[0][0]]['club']['name'], 'exact')}]
 
         # Multiple dependent players to add traits to search for
         else:
@@ -1673,9 +1673,9 @@ class Team:
                         match = False
                         break
 
-                # All traits did match. Return dependency tuple
+                # All traits did match. Return dependency dict
                 if match:
-                    return [({'nation': nation, 'club': club},)]
+                    return [{'nation': (nation, 'exact'), 'club': (club, 'exact')}]
 
             # Need two chemistry for at least one dependency, and the remaining need one or two chemistry
             elif dependent_positions[0][1] > 1:
@@ -1700,10 +1700,10 @@ class Team:
                 if ((len(nations) == 1) and (len(leagues) == 1)) or (len(clubs) == 1):
                     # All nations and leagues match
                     if (len(nations) == 1) and (len(leagues) == 1):
-                        dependency_tuple_list.append(({'nation': nations[0], 'league': leagues[0]},))
+                        dependency_tuple_list.append({'nation': (nations[0], 'exact'), 'league': (leagues[0], 'exact')})
                     # All clubs match
                     if len(clubs) == 1:
-                        dependency_tuple_list.append(({'club': clubs[0]},))
+                        dependency_tuple_list.append({'club': (clubs[0], 'exact')})
 
                     return dependency_tuple_list
 
@@ -1753,7 +1753,9 @@ class Team:
 
                             # All traits did match. Return dependency tuple
                             if match:
-                                dependency_tuple_list.append(({'nation': nation, 'league': league, 'club': club},))
+                                dependency_tuple_list.append({'nation': (nation, 'exact'),
+                                                              'league': (league, 'exact'),
+                                                              'club': (club, 'exact')})
 
                     return dependency_tuple_list
 
@@ -1777,10 +1779,10 @@ class Team:
                 if (len(nations) == 1) or (len(leagues) == 1):
                     # All nations match
                     if len(nations) == 1:
-                        dependency_tuple_list.append(({'nation': nations[0]},))
+                        dependency_tuple_list.append({'nation': (nations[0], 'exact')})
                     # All leagues match
                     if len(leagues) == 1:
-                        dependency_tuple_list.append(({'league': leagues[0]},))
+                        dependency_tuple_list.append({'league': (leagues[0], 'exact')})
 
                     return dependency_tuple_list
 
@@ -1800,7 +1802,7 @@ class Team:
 
                             # All positions matched at least one trait
                             if match:
-                                dependency_tuple_list.append(({'nation': nation, 'league': league},))
+                                dependency_tuple_list.append({'nation': (nation, 'exact'), 'league': (league, 'exact')})
 
                     # Return the dependency tuple created
                     return dependency_tuple_list
@@ -1926,9 +1928,9 @@ class Team:
         if len(dependent_pos) < 1:
 
             # Create position tuple list for the player search
-            position_tuple_list = [({'position': position['symbol']},)]
+            position_tuple_list = [{'position': (position['symbol'], 'exact')}]
             for x in pos_list:
-                position_tuple_list.append(({'position': x},))
+                position_tuple_list.append({'position': (x, 'exact')})
 
             # Get all eligible players and create DB
             eligible_players = PlayerDB(players.multi_search(position_tuple_list))
@@ -1937,15 +1939,15 @@ class Team:
         else:
 
             # Get a list of tuples of traits of players eligible based on dependencies
-            dependency_tuple_list = Team.calculate_dependency_tuple_list(dependent_pos, roster)
+            dependency_tuple_list = Team.calculate_dependency_dict_list(dependent_pos, roster)
 
             # Get all players that match dependency and create DB
             dependency_match = PlayerDB(players.multi_search(dependency_tuple_list))
 
             # Create position tuple list for the player position search
-            position_tuple_list = [({'position': position['symbol']},)]
+            position_tuple_list = [{'position': (position['symbol'], 'exact')}]
             for x in pos_list:
-                position_tuple_list.append(({'position': x},))
+                position_tuple_list.append({'position': (x, 'exact')})
 
             # Get all eligible players from smaller pool matching dependency and create DB
             eligible_players = PlayerDB(dependency_match.multi_search(position_tuple_list))

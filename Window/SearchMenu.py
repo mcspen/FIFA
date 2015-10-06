@@ -119,6 +119,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         elif settings['mode'] == 'teams':
             stuff = 0
 
+        win_search.become_target()
+
     def back_btn_func():
         win_search.hide()
         StartMenu.open_start_menu(win_search.x, win_search.y, db_dict)
@@ -219,6 +221,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     def player_bio_btn_func(player):
         win_search.hide()
         PlayerBio.open_player_bio_window(win_search.x, win_search.y, player, db_dict, win_search)
+        win_search.become_target()
 
     # ========== Action Buttons ==========
     start_btn.x = (win_width - 2*small_button_width - small_button_spacing) / 2
@@ -514,15 +517,19 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             # Delete the just added players list
             settings['messages'].pop('players_just_added', None)
 
+        win_search.become_target()
+
     def previous_btn_func(display_player_db=None, attributes=None, index_range=None):
         if display_player_db is not None:
             # display previous results
             display_players(display_player_db, attributes, index_range)
+        win_search.become_target()
 
     def next_btn_func(display_player_db=None, attributes=None, index_range=None):
         if display_player_db is not None:
             # display next results
             display_players(display_player_db, attributes, index_range)
+        win_search.become_target()
 
     add_to_list_btn.x = attribute_btn.right + small_button_spacing
     add_to_list_btn.y = descend_radio_btn.bottom + 5

@@ -84,6 +84,8 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
             # Switch button title
             add_player_btn.title = "Remove Player from List"
 
+        win_player_bio.become_target()
+
     def back_btn_func():
         win_player_bio.hide()
         win_search.show()

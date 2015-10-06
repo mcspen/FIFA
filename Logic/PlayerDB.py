@@ -289,7 +289,7 @@ class PlayerDB:
                 elif attribute in ['nation', 'league', 'club']:
                     string_value = value.upper()
                     stat = player[attribute]['name'].upper()
-                    if not string_value in stat:
+                    if string_value not in stat:
                         match = False
                 elif attribute in ['headshot', 'headshotImgUrl']:
                     print "Not searching based on " + attribute
@@ -623,7 +623,7 @@ class PlayerDB:
                 print "Incorrect input - Try again"
                 continue
 
-            results = player_db.search({'rating': rating})
+            results = player_db.search({'rating': (rating, 'exact')})
 
             # Get player's name or initial
             input_var = raw_input("Name, Partial Name, or Initial: ")
@@ -634,7 +634,7 @@ class PlayerDB:
 
             # Search for player
             results = PlayerDB(results)
-            results = results.search({'name_custom': input_var})
+            results = results.search({'name_custom': (input_var, 'exact')})
 
             # No players found
             if len(results) == 0:
