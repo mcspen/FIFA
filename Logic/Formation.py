@@ -25,12 +25,6 @@ class Formation:
             self.num_attackers = input_dict['num_attackers']
             self.positions = input_dict['positions']
 
-            '''# Formation Info
-            self.goalkeeper = input_dict['goalkeeper']
-            self.defense = input_dict['defense']
-            self.midfield = input_dict['midfield']
-            self.offense = input_dict['offense']'''
-
     def create_formation(self, name, style, description, num_links,
                          num_defenders, num_midfielders, num_attackers, positions):
         """
@@ -59,20 +53,3 @@ class Formation:
         self.num_midfielders = num_midfielders
         self.num_attackers = num_attackers
         self.positions = positions
-
-        '''Old arguments:
-        (self, name, style, description, num_links,
-        goalkeeper, num_defense, defense_positions, num_midfield,
-        midfield_positions, num_offense, offense_positions):'''
-
-        '''# Goalkeeper Info
-        self.goalkeeper = {'num_goalkeepers': 1, 'goalkeeper': goalkeeper}
-
-        # Defense Info
-        self.defense = {'num_defenders': num_defense, 'defenders': defense_positions}
-
-        # Midfield Info
-        self.midfield = {'num_midfielders': num_midfield, 'midfielders': midfield_positions}
-
-        # Offense Info
-        self.offense = {'num_attackers': num_offense, 'attackers': offense_positions}'''

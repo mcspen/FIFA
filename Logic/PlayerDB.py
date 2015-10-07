@@ -234,7 +234,7 @@ class PlayerDB:
                     compare = tup[1]
 
                 # Make sure the comparison value is valid
-                if compare not in ['higher', 'exact', 'lower', 'not']:
+                if compare not in ['higher', 'exact', 'lower']:
                     print "Compare value is not valid. Use 'higher', 'exact', or 'lower'."
                     return []
 

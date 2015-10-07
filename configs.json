@@ -41,5 +41,9 @@
     "passing": ["vision", "crossing", "freekickaccuracy", "shortpassing", "longpassing", "curve"],
     "physicality": ["jumping", "stamina", "strength", "aggression"],
     "goalkeeping": ["gkdiving", "gkhandling", "gkkicking", "gkpositioning", "gkreflexes"]
-  }
+  },
+
+  "formation_attributes": ["name", "style", "description",
+    "num_links", "num_defenders", "num_midfielders", "num_attackers",
+    "positions", "custom_position"]
 }

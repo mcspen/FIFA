@@ -96,10 +96,11 @@ class FormationDB:
     def search(self, attributes):
         """
         Search for formations
-        Input: A dictionary the attributes and values, and the optional comparison type('higher', 'exact', 'lower')
-        Example 1: arguments = {'attr1': value1}, 'exact'
-        or without the comparison operator
-        Example 2: arguments = {'attr1': value1, 'attr2': value2, 'attr3': value3}
+        Input: A dictionary the attributes and values, and the optional comparison type
+        ('higher', 'exact', 'lower', 'not')
+        Example 1: arguments = {'attr1': (value1, 'exact')}
+        or multiple
+        Example 2: arguments = {'attr1': (value1, 'exact'), 'attr2': (value2, 'exact'), 'attr3': (value3, 'exact')}
         Output: A list of all matching formations
         """
 
@@ -126,7 +127,7 @@ class FormationDB:
                     compare = tup[1]
 
                 # Make sure the comparison value is valid
-                if compare not in ['higher', 'exact', 'lower', 'not']:
+                if compare not in ['higher', 'exact', 'lower']:
                     print "Compare value is not valid. Use 'higher', 'exact', or 'lower'."
                     return []
 
@@ -152,46 +153,27 @@ class FormationDB:
                     stat = formation['description'].upper()
                     if string_value not in stat:
                         match = False
-                elif attribute == 'num_links':
+                elif attribute in ['num_links', 'num_defenders', 'num_midfielders', 'num_attackers']:
                     if compare == 'higher':
-                        if not formation['num_links'] >= value:
+                        if not formation[attribute] >= value:
                             match = False
                     elif compare == 'exact':
-                        if not formation['num_links'] == value:
+                        if not formation[attribute] == value:
                             match = False
                     elif compare == 'lower':
-                        if not formation['num_links'] <= value:
+                        if not formation[attribute] <= value:
                             match = False
-                elif attribute == 'num_defenders':
-                    if compare == 'higher':
-                        if not formation['num_defenders'] >= value:
-                            match = False
-                    elif compare == 'exact':
-                        if not formation['num_defenders'] == value:
-                            match = False
-                    elif compare == 'lower':
-                        if not formation['num_defenders'] <= value:
-                            match = False
-                elif attribute == 'num_midfielders':
-                    if compare == 'higher':
-                        if not formation['num_midfielders'] >= value:
-                            match = False
-                    elif compare == 'exact':
-                        if not formation['num_midfielders'] == value:
-                            match = False
-                    elif compare == 'lower':
-                        if not formation['num_midfielders'] <= value:
-                            match = False
-                elif attribute == 'num_attackers':
-                    if compare == 'higher':
-                        if not formation['num_attackers'] >= value:
-                            match = False
-                    elif compare == 'exact':
-                        if not formation['num_attackers'] == value:
-                            match = False
-                    elif compare == 'lower':
-                        if not formation['num_attackers'] <= value:
-                            match = False
+                elif attribute == 'custom_position':
+                    string_value = str(value.upper())
+                    if string_value not in formation['positions']:
+                        match = False
+                elif attribute == 'position':
+                    string_value = str(value.upper())
+                    symbol_list = []
+                    for position in formation['positions'].itervalues():
+                        symbol_list.append(position['symbol'])
+                    if string_value not in symbol_list:
+                        match = False
                 else:
                     print "Invalid Attribute: %s" % attribute
                     match = False
