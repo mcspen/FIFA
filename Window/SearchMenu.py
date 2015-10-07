@@ -1,5 +1,6 @@
 from GUI import Button, Label, RadioButton, RadioGroup, View, Window
 import json
+import math
 import unicodedata
 from AppConfig import *
 import StartMenu
@@ -92,7 +93,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             search_results = db_dict[p_db_radio_group.value][1].search(attr_dict)
             search_results = PlayerDB.PlayerDB(search_results)
             search_results.sort(attr_list, sort_order_radio_group.value)
-            search_results.print_compare_info()  # num_results)
+            # search_results.print_compare_info()  # num_results)
 
             # Get attributes list and avoid duplicates
             attributes_list = []
@@ -478,6 +479,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     previous_btn = Button("<<< Previous %d" % num_results)
     add_to_list_btn = Button("Add Players to List")
     next_btn = Button("Next %d >>>" % num_results)
+    total_num_results_label = Label()
+    pages_label = Label()
 
     def add_to_list_btn_func(player_list=None, func_type=None):
         if func_type == 'add':
@@ -560,6 +563,22 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     next_btn.color = small_button_color
     next_btn.just = 'right'
 
+    total_num_results_label.font = std_tf_font
+    total_num_results_label.width = 100
+    total_num_results_label.height = std_tf_height
+    total_num_results_label.x = previous_btn.left + - 100 - 10
+    total_num_results_label.y = add_to_list_btn.top
+    total_num_results_label.color = title_color
+    total_num_results_label.just = 'right'
+
+    pages_label.font = std_tf_font
+    pages_label.width = 125
+    pages_label.height = std_tf_height
+    pages_label.x = next_btn.right + 10
+    pages_label.y = add_to_list_btn.top
+    pages_label.color = title_color
+    pages_label.just = 'left'
+
     # ========== Display players from search ==========
     def display_players(display_player_db, attributes, index_range):
         # Remove old messages off page
@@ -570,11 +589,14 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         # Add navigation buttons to page
         add_to_list_btn.action = (add_to_list_btn_func, display_player_db.db, 'add')
 
-        previous_range = (index_range[0]-num_results, index_range[1]-num_results)
+        previous_range = (index_range[0]-num_results, index_range[0])
         previous_btn.action = (previous_btn_func, display_player_db, attributes, previous_range)
 
-        next_range = (index_range[0]+num_results, index_range[1]+num_results)
+        next_range = (index_range[1], index_range[1]+num_results)
         next_btn.action = (next_btn_func, display_player_db, attributes, next_range)
+
+        total_num_results_label.text = str(len(display_player_db.db)) + " Players"
+        pages_label.text = "Page %d of %d" % (int(index_range[1]/20), math.ceil(len(display_player_db.db)/20) + 1)
 
         if index_range[0] > 0:
             previous_btn.enabled = 1
@@ -585,9 +607,11 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         else:
             next_btn.enabled = 0
 
-        view.add(add_to_list_btn)
-        view.add(previous_btn)
-        view.add(next_btn)
+        settings['messages']['results'].append(add_to_list_btn)
+        settings['messages']['results'].append(previous_btn)
+        settings['messages']['results'].append(next_btn)
+        settings['messages']['results'].append(total_num_results_label)
+        settings['messages']['results'].append(pages_label)
 
         # Print out labels
         labels = player_info_labels(attributes)
