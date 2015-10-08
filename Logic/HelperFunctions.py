@@ -1,10 +1,10 @@
-__author__ = 'mspencer'
-
-import unicodedata
-
 """
 Helper functions that don't belong to any class
 """
+
+__author__ = 'mspencer'
+
+import unicodedata
 
 
 def ascii_text(input_text):
@@ -153,3 +153,37 @@ def format_attr_name(attribute):
         return attribute.capitalize()
     else:
         return "ERROR"
+
+
+def convert_height(cm_height, return_type='int_tuple'):
+    """
+    Convert height from cm to ft and inches
+    Returns a tuple of the height: (feet, inches)
+    """
+
+    total_inches = cm_height/2.54
+    feet = int(total_inches/12)
+    inches = total_inches % 12
+
+    if return_type == 'int_tuple':
+        return feet, inches
+    elif return_type == 'string':
+        return '%d\' %.1f"' % (feet, inches)
+
+
+def convert_weight(kg_weight):
+    """
+    Convert weight from kilograms to pounds
+    Returns the weight in pounds
+    """
+
+    return kg_weight*2.20462
+
+
+def format_birthday(birthdate):
+    """
+    Converts the birthdate to the Month, Day, Year format
+    Returns the birthdate as a string
+    """
+
+    return '%s/%s/%s' % (birthdate[5:7], birthdate[-2:], birthdate[:4])

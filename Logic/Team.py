@@ -3,7 +3,7 @@ import json
 import sys
 import time
 from multiprocessing import Pool
-from HelperFunctions import ascii_text
+from HelperFunctions import ascii_text, format_attr_name, convert_height
 
 from PlayerDB import PlayerDB
 
@@ -1120,6 +1120,102 @@ class Team:
         print 'Manager - Nation: %s   League: %s' % (self.manager['nation'], self.manager['league'])
 
         return 0
+
+    def print_team_strengths(self):
+        """
+        Prints out the key strengths of the players on the team
+        Input: None  -  All of the information is in self
+        Output: None  -  Prints out the key strengths
+        """
+
+        good_skill = 4
+        good_weak_foot = 5
+        good_stat = 85
+        good_height = 190
+
+        index = 0
+
+        while index < 1 + self.formation['num_defenders'] + self.formation['num_midfielders'] + \
+                self.formation['num_attackers']:
+            for symbol, position in self.formation['positions'].iteritems():
+                if position['index'] == index:
+
+                    player = position['player']
+
+                    # Get player's common name, if it exists, or the full name
+                    name = ascii_text(player['firstName']) + " " + ascii_text(player['lastName'])
+                    if player['commonName'] != '':
+                        name = ascii_text(player['commonName'])
+
+                    strengths = []
+
+                    # Get traits
+                    traits = player['traits']
+
+                    if traits is not None:
+                        # Remove bad traits or ones that don't affect ability
+                        for bad_trait in ['Injury Prone', 'Selfish', 'Leadership', 'One Club Player']:
+                            if bad_trait in traits:
+                                traits.remove(bad_trait)
+
+                        # Add good traits to list
+                        if len(traits) > 0:
+                            traits_str = ''
+                            for trait in traits:
+                                traits_str += trait + ', '
+                            strengths.append(('Good Traits', traits_str[:-2]))
+
+                    # Specialities are just player tendencies and don't affect ability
+                    """# Get specialities
+                    specialities = player['specialities']
+                    if specialities is not None:
+                        specialities_str = ''
+                        for speciality in specialities:
+                            specialities_str += speciality + ', '
+                        strengths.append(('Specialities', specialities_str[:-2]))"""
+
+                    # Check for skill moves
+                    skill_moves = player['skillMoves']
+                    if skill_moves >= good_skill:
+                        stars = skill_moves*'* '
+                        stars = stars[:-1]
+                        strengths.append(('Skill Moves', stars))
+
+                    # Check for weak foot
+                    weak_foot = player['weakFoot']
+                    if weak_foot >= good_weak_foot:
+                        stars = weak_foot*'* '
+                        stars = stars[:-1]
+                        strengths.append(('Weak Foot', stars))
+
+                    # Check for height
+                    height = player['height']
+                    if height >= good_height:
+                        strengths.append(('Height', convert_height(height, 'string')))
+
+                    # Check for any high stats
+                    """stats = ["acceleration", "sprintspeed", "agility", "balance", "reactions", "ballcontrol",
+                             "dribbling", "positioning", "finishing", "shotpower", "longshots", "volleys",
+                             "penalties", "interceptions", "headingaccuracy", "marking", "standingtackle",
+                             "slidingtackle", "vision", "crossing", "freekickaccuracy", "shortpassing",
+                             "longpassing", "curve", "jumping", "stamina", "strength", "aggression",
+                             "gkdiving", "gkhandling", "gkkicking", "gkpositioning", "gkreflexes"]"""
+
+                    important_stats = ["acceleration", "sprintspeed", "balance", "ballcontrol", "dribbling",
+                                       "finishing", "shotpower", "longshots", "volleys", "interceptions", "marking",
+                                       "vision", "freekickaccuracy", "longpassing", "curve", "stamina", "strength"]
+
+                    for attribute in important_stats:
+                        stat = player[attribute]
+                        if stat >= good_stat:
+                            strengths.append((format_attr_name(attribute), stat))
+
+                    if len(strengths) > 0:
+                        print "%s%s%d%s%s" % (symbol, ' '*(5-len(symbol)), player['rating'], ' '*3, name)
+                        for strength in strengths:
+                            print "%s%s%s %s" % (' '*15, strength[0], ' '*(17-len(strength[0])), str(strength[1]))
+
+                    index += 1
 
 # ====================FIND ATTRIBUTE TEAM FUNCTIONS========== #
 

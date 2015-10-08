@@ -3,7 +3,7 @@ from AppConfig import *
 import cStringIO
 import json
 import urllib
-from Logic.HelperFunctions import ascii_text, format_attr_name
+from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday
 
 
 def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
@@ -247,17 +247,17 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
                                x=label_x+5, y=label_y, color=color, just=personal_stat_just)
         if personal == 'height':
             centimeters = player[personal]
-            inches = centimeters/2.54
-            stat_label.text = '%d\' %.1f" (%d cm)' % (int(inches/12), inches % 12, centimeters)
+            converted_height = convert_height(centimeters, 'string')
+            stat_label.text = '%s (%d cm)' % (converted_height, centimeters)
         elif personal == 'weight':
             kilograms = player[personal]
-            pounds = kilograms*2.20462
+            pounds = convert_weight(kilograms)
             stat_label.text = '%.1f lb (%d kg)' % (pounds, kilograms)
         elif personal in ['club', 'league', 'nation']:
             stat_label.text = ascii_text(player[personal]['name'])
         elif personal == 'birthdate':
-            stat_label.text = '%s/%s/%s' % (player['birthdate'][5:7], player['birthdate'][-2:],
-                                              player['birthdate'][:4])
+            b_day = format_birthday(player['birthdate'])
+            stat_label.text = b_day
         elif personal == 'position':
             stat_label.text = '%s (%s)' % (player['positionFull'], player[personal])
         else:

@@ -43,12 +43,6 @@ if __name__ == '__main__':
 
     FifaApp.start_app(db_dict)
 
-    """team = TeamDB()
-    team.load('team_db_2015-10-07')
-    team.print_db()
-    for t in team.db:
-        Team(t).print_chemistry_stats()"""
-
     # -------------------------PLAYER DB EXAMPLES---------------------------
     # Initialize DB
     # player_db = PlayerDB()
@@ -68,6 +62,17 @@ if __name__ == '__main__':
     # player_db.load('player_db_16_4')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
+    """teams = TeamDB()
+    teams.load('team_db_2015-10-08')
+    for index, team in enumerate(teams.db):
+        print '============ TEAM %d ==============' % index
+        Team(team).print_team_strengths()
+        print"""
+
+    """team = Team()
+    team.load('Germany2014WorldCupFinal')
+    team.print_team_strengths()"""
+
     """my_players = PlayerDB()
     my_players.load('my_players_db_16')"""
 
@@ -85,7 +90,7 @@ if __name__ == '__main__':
 
     ultimate_team = Team()
     teams = TeamDB(ultimate_team.create_team_ultimate(gold_players, formation_db, 'multi'))
-    teams.save('team_db_2015-10-07')"""
+    teams.save('team_db_2015-10-09')"""
 
     """americans = PlayerDB(player_db.search({'nation': ('United States',)}))"""
 
@@ -131,6 +136,12 @@ if __name__ == '__main__':
             traits += player['traits']
     traits = list(set(traits))
     print traits"""
+
+    """team = TeamDB()
+    team.load('team_db_2015-10-07')
+    team.print_db()
+    for t in team.db:
+        Team(t).print_chemistry_stats()"""
 
     """from os import listdir
     files = listdir('Teams/2015-09-02/')
