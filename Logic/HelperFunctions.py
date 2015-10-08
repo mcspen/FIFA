@@ -129,9 +129,9 @@ def format_attr_name(attribute):
     elif attribute == "name_custom":
         return "Name - Any Part"
     elif attribute == "freekickaccuracy":
-        return "Free Kick Accuracy"
+        return "FK Accuracy"
     elif attribute == "headingaccuracy":
-        return "Heading Accuracy"
+        return "Head Accuracy"
     elif attribute == "isGK":
         return "GK?"
     elif attribute == "isSpecialType":

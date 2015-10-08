@@ -25,6 +25,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
     view = StartWindowImageView(size=win_attribute.size)
 
+    attribute_display_list = []
+
     # ========== Title ==========
     title = Label(text=attribute_title)
     title.font = title_font
@@ -37,6 +39,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
     # ========== Button Declarations ==========
     enter_btn = Button("Enter")
+    erase_btn = Button("Erase List")
     back_btn = Button("Back")
 
     # ========== Radio Button Action ==========
@@ -54,9 +57,6 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     with open('configs.json', 'r') as f:
             attributes_list = json.load(f)['player_attributes']['all']
             f.close()
-
-    erase_option = 'ERASE LIST'
-    attributes_list.append(erase_option)
 
     for idx, attribute in enumerate(attributes_list):
         button = RadioButton(attribute)
@@ -87,17 +87,12 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         return_value = None
 
         if attr_type == 'sort':
-            # Erase option
-            if radio_group.value == erase_option:
-                del attr_list[:]
-            else:
-                # Check for doubles
-                if attr_list.count(radio_group.value) == 0:
-                    attr_list.append(radio_group.value)
+            # Check for doubles
+            if attr_list.count(radio_group.value) == 0:
+                attr_list.append(radio_group.value)
 
-            SearchMenu.open_search_menu(win_attribute.x, win_attribute.y,
-                                        db_dict, attr_dict, attr_list, settings)
-            win_attribute.hide()
+            show_attributes(attribute_display_list)
+            erase_btn.enabled = 1
 
         elif attr_type == 'search':
             # Value checks
@@ -139,25 +134,26 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                         return_value = False
                     valid = True
 
-            if radio_group.value == erase_option:
-                attr_dict.clear()
-                SearchMenu.open_search_menu(win_attribute.x, win_attribute.y, db_dict,
-                                            attr_dict, attr_list, settings)
-                win_attribute.hide()
-
-            elif valid:
+            if valid:
                 attr_dict[radio_group.value] = (return_value, compare_group.value)
-                SearchMenu.open_search_menu(win_attribute.x, win_attribute.y, db_dict,
-                                            attr_dict, attr_list, settings)
-                win_attribute.hide()
+                value_tf.value = ''
+                show_attributes(attribute_display_list)
+                erase_btn.enabled = 1
             else:
                 print "Invalid attribute value."
 
         else:
             print 'Invalid attr_type for AddAttribute.'
-            SearchMenu.open_search_menu(win_attribute.x, win_attribute.y,
-                                        db_dict, attr_dict, attr_list, settings)
-            win_attribute.hide()
+
+    def erase_btn_func():
+        if attr_type == 'sort':
+            del attr_list[:]
+        elif attr_type == 'search':
+            attr_dict.clear()
+
+        show_attributes(attribute_display_list)
+
+        erase_btn.enabled = 0
 
     def back_btn_func():
         SearchMenu.open_search_menu(win_attribute.x, win_attribute.y,
@@ -165,8 +161,21 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         win_attribute.hide()
 
     # ========== Buttons ==========
-    enter_btn.x = (win_width - 2*button_width - button_spacing) / 2
-    enter_btn.y = win_attribute.height - 70
+    erase_btn.x = (win_width - button_width) / 2
+    erase_btn.y = win_attribute.height - 70
+    erase_btn.height = button_height
+    erase_btn.width = button_width
+    erase_btn.font = button_font
+    erase_btn.action = erase_btn_func
+    erase_btn.style = 'default'
+    erase_btn.color = button_color
+    erase_btn.just = 'right'
+    if (attr_type == 'sort' and len(attr_list) == 0) or \
+        (attr_type == 'search' and len(attr_dict) == 0):
+        erase_btn.enabled = 0
+
+    enter_btn.x = erase_btn.left - button_spacing - button_width
+    enter_btn.y = erase_btn.top
     enter_btn.height = button_height
     enter_btn.width = button_width
     enter_btn.font = button_font
@@ -176,8 +185,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     enter_btn.just = 'right'
     enter_btn.enabled = 0
 
-    back_btn.x = enter_btn.right + button_spacing
-    back_btn.y = enter_btn.top
+    back_btn.x = erase_btn.right + button_spacing
+    back_btn.y = erase_btn.top
     back_btn.height = button_height
     back_btn.width = button_width
     back_btn.font = button_font
@@ -216,9 +225,71 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
     compare_group.value = 'higher'
 
+    def show_attributes(display_list):
+
+        # Remove old attribute labels from screen
+        for message in display_list:
+            view.remove(message)
+
+        del display_list[:]
+
+        # Display new search attributes on screen
+        message_x = 10
+        message_y = win_attribute.height - 150
+
+        if attr_type == 'search':
+            display_list.append(Label(text=("Search Attributes:"), font=title_tf_font, width=std_tf_width,
+                                   height=std_tf_height, x=message_x, y=message_y, color=title_color))
+            message_y += std_tf_height
+
+            index = 0
+
+            for key, search_value in attr_dict.iteritems():
+                if index == 6:
+                    message_x = back_btn.right + 10
+                    message_y = win_attribute.height - 150
+
+                msg_text = format_attr_name(key) + ": "
+                if key in ['id', 'baseId', 'nationId', 'leagueId', 'clubId']:
+                    msg_text += str(search_value[0])
+                elif type(search_value[0]) is int:
+                    msg_text += search_value[1].capitalize() + ' ' + str(search_value[0])
+                elif search_value[1] == 'not':
+                    msg_text += search_value[1].capitalize() + ' "' + str(search_value[0]) + '"'
+                else:
+                    msg_text += '"' + str(search_value[0]) + '"'
+
+                attr_label = Label(text=msg_text, font=std_tf_font, width=std_tf_width,
+                                   height=std_tf_height, x=message_x, y=message_y, color=title_color)
+                message_y += std_tf_height
+                display_list.append(attr_label)
+                index += 1
+
+        # Display new sort attributes on screen
+        elif attr_type == 'sort':
+            display_list.append(Label(text=("Sort Attributes:"), font=title_tf_font, width=std_tf_width,
+                                       height=std_tf_height, x=message_x, y=message_y, color=title_color))
+            message_y += std_tf_height
+
+            for index, sort_value in enumerate(attr_list):
+                if index == 6:
+                    message_x = back_btn.right + 10
+                    message_y = win_attribute.height - 150
+
+                attr_label = Label(text=(format_attr_name(sort_value)), font=std_tf_font, width=std_tf_width,
+                                   height=std_tf_height, x=message_x, y=message_y, color=title_color)
+                message_y += std_tf_height
+                display_list.append(attr_label)
+
+        for attribute_label in display_list:
+            view.add(attribute_label)
+
+    show_attributes(attribute_display_list)
+
     # ========== Add buttons to window ==========
     view.add(title)
     view.add(enter_btn)
+    view.add(erase_btn)
     view.add(back_btn)
 
     # Shows only for getting attribute for search, not sort
