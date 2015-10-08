@@ -40,6 +40,7 @@ light_green = GUI.StdColors.rgb(0, 0.7, 0)
 blue = GUI.StdColors.blue
 cyan = GUI.StdColors.cyan
 magenta = GUI.StdColors.magenta
+purple = GUI.StdColors.rgb(0.5, 0, 0.5)
 clear = GUI.StdColors.clear
 gold = GUI.StdColors.rgb(1, 0.84, 0)
 light_gold = GUI.StdColors.rgb(0.83, 0.69, 0.22)
@@ -47,6 +48,7 @@ silver = GUI.StdColors.rgb(0.75, 0.75, 0.75)
 dark_silver = GUI.StdColors.rgb(0.52, 0.52, 0.52)
 bronze = GUI.StdColors.rgb(0.8, 0.5, 0.2)
 dark_bronze = GUI.StdColors.rgb(0.59, 0.29, 0)
+darker = GUI.StdColors.rgb(0, 0, 0, 0.75)
 
 
 def attr_color(value):
@@ -81,6 +83,8 @@ def quality_color(value):
         color = white
     elif value == 'rare':
         color = gold
+    elif value == 'purple':
+        color = purple
     else:
         color = blue
 
@@ -98,7 +102,6 @@ view_backcolor = black
 title_border = 10
 title_width = 700
 title_height = 50
-title_font = Font("Times", 3 * system_font.size, ['bold'])
 title_color = white
 
 # ========== Messages ==========
@@ -125,6 +128,8 @@ small_button_top_spacing = 10
 tiny_button_height = 20
 
 # ========== Textfields ==========
+title_font = Font("Times", 3 * system_font.size, ['bold'])
+title_font_2 = Font("Times", 2.5 * system_font.size, ['bold'])
 title_tf_font = Font("Times", 1.6 * system_font.size, ['bold'])
 std_tf_font = Font("Times", 1.5 * system_font.size)
 std_tf_font_bold = Font("Times", 1.5 * system_font.size, ['bold'])

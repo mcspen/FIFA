@@ -23,16 +23,17 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
         def draw(self, c, r):
             c.backcolor = view_backcolor
             c.erase_rect(r)
-            """image_pos = ((player_name_label.left - player_headshot.width)/2,
+
+            image_pos = ((player_name_label.left - player_headshot.width)/2,
                          player_name_label.top)
             src_rect = player_headshot.bounds
             dst_rect = Geometry.offset_rect(src_rect, image_pos)
-            player_headshot.draw(c, src_rect, dst_rect)"""
 
-            image_pos = ((player_name_label.left - 120)/2,
-                         player_name_label.top)
-            src_rect = (0, 0, 120, 120)
-            dst_rect = Geometry.offset_rect(src_rect, image_pos)
+            c.forecolor = quality_color(player['color'])
+            c.fill_rect((dst_rect[0]-2, dst_rect[1]-2, dst_rect[2]+2, dst_rect[3]+3*std_tf_height+2))
+            c.forecolor = darker
+            c.fill_rect((dst_rect[0], dst_rect[3]+5, dst_rect[2], dst_rect[3]+3*std_tf_height))
+
             player_headshot.draw(c, src_rect, dst_rect)
 
     view = StartWindowImageView(size=win_player_bio.size)
@@ -126,7 +127,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     labels_list = []
 
     name_width = 300
-    rating_big_width = 35
+    rating_big_width = 70
 
     traits_offset_left = 25
     traits_label_width = 100
@@ -143,9 +144,12 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
                                    color=title_color, just='center')
     labels_list.append(player_full_name_label)
     rating_big_label = Label(font=title_font, width=rating_big_width, height=title_height,
-                             x=player_full_name_label.left - rating_big_width - title_border,
+                             x=player_full_name_label.left - rating_big_width + 12,
                              y=player_full_name_label.top - title_border, color=title_color, just='center')
     labels_list.append(rating_big_label)
+    position_big_label = Label(font=title_font_2, width=rating_big_width, height=title_height,
+                               x=rating_big_label.left, y=rating_big_label.bottom-15, color=title_color, just='center')
+    labels_list.append(position_big_label)
 
     # ========== Traits and Specialities ==========
     traits_label = Label(font=std_tf_font_bold, width=traits_label_width, height=std_tf_height,
@@ -178,12 +182,12 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     attr_label_width = 20
     attribute_x_offset = 30
     label_x = (player_name_label.left - player_headshot.width)/2 + player_headshot.width/2 - attribute_x_offset
-    label_y = player_name_label.top + player_headshot.height
+    label_y = player_name_label.top + player_headshot.height + 5
 
     for idx, attr in enumerate(player['attributes']):
         if idx == 3:
             label_x = (player_name_label.left - player_headshot.width)/2 + player_headshot.width/2 + attribute_x_offset
-            label_y = player_name_label.top + player_headshot.height
+            label_y = player_name_label.top + player_headshot.height + 5
 
         stat_title_label = Label(font=small_tf_font, width=attr_title_label_width, height=std_tf_height,
                                x=label_x-attr_title_label_width, y=label_y, color=title_color, just='right')
@@ -244,7 +248,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
         if personal == 'height':
             centimeters = player[personal]
             inches = centimeters/2.54
-            stat_label.text = '%d\'%.1f" (%d cm)' % (int(inches/12), inches % 12, centimeters)
+            stat_label.text = '%d\' %.1f" (%d cm)' % (int(inches/12), inches % 12, centimeters)
         elif personal == 'weight':
             kilograms = player[personal]
             pounds = kilograms*2.20462
@@ -379,6 +383,11 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     rating_big_label.text = str(player['rating'])
     rating_big_label.color = color
 
+    # Player's position
+    color = attr_color(player['rating'])
+    position_big_label.text = player['position']
+    position_big_label.color = color
+
     # Player's traits
     traits_label.text = 'Traits:'
     traits_list = ''
@@ -427,9 +436,9 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     view.add(add_player_btn)
     view.add(back_btn)
 
-    view.add(player_name_label)
+    """view.add(player_name_label)
     view.add(player_full_name_label)
-    view.add(rating_big_label)
+    view.add(rating_big_label)"""
 
     for label in labels_list:
         view.add(label)
