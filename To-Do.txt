@@ -28,3 +28,10 @@ Change nation/league/club name comparisons to id comparisons? (avoid mix ups by 
 
 Change save to account for an existing file by adding something to the end of the name
 Change load to account for no file by creating a blank one
+
+Long Shots - 79 Fabio Quagliarella
+Long Shots 2 - 77 Lukas Podolski (93 shot power, 83 long shots, 91 volleys)
+Long Shots 3 - 81 Granit Xhaka (88 shot power, 84 long shots)
+Speedy - 75 Marco Sau
+Speedy 2 - 75 Imoh Ezekiel
+5 Star Skills - 81 Quaresma (85 long shots, 92 curve)

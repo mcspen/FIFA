@@ -43,6 +43,12 @@ if __name__ == '__main__':
 
     FifaApp.start_app(db_dict)
 
+    """team = TeamDB()
+    team.load('team_db_2015-10-07')
+    team.print_db()
+    for t in team.db:
+        Team(t).print_chemistry_stats()"""
+
     # -------------------------PLAYER DB EXAMPLES---------------------------
     # Initialize DB
     # player_db = PlayerDB()
@@ -54,12 +60,12 @@ if __name__ == '__main__':
 
     # Save Database to File
     # temp_time = time.time()
-    # player_db.save('player_db_16_3')
+    # player_db.save('player_db_16_4')
     # print "Time to save DB: %f" % (time.time()-temp_time)
 
     # Load Player Database from File
     # temp_time = time.time()
-    # player_db.load('player_db_16_3')
+    # player_db.load('player_db_16_4')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
     """my_players = PlayerDB()
@@ -72,8 +78,14 @@ if __name__ == '__main__':
     """silver_players = PlayerDB(my_players.search({'quality': ('silver', 'exact')}))
 
     ultimate_team = Team()
-    teams = TeamDB(ultimate_team.create_team_ultimate(silver_players, formation_db, 'single'))
+    teams = TeamDB(ultimate_team.create_team_ultimate(silver_players, formation_db, 'multi'))
     teams.save('silver_teams')"""
+
+    """gold_players = PlayerDB(my_players.search({'quality': ('gold', 'exact')}))
+
+    ultimate_team = Team()
+    teams = TeamDB(ultimate_team.create_team_ultimate(gold_players, formation_db, 'multi'))
+    teams.save('team_db_2015-10-07')"""
 
     """americans = PlayerDB(player_db.search({'nation': ('United States',)}))"""
 
