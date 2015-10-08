@@ -11,8 +11,9 @@ players_title = 'Players'
 formations_title = 'Formations'
 teams_title = 'Teams'
 manage_title = 'Manage Files'
-attribute_title = 'Add Attribute'
+attribute_title = 'Attributes Menu'
 player_bio_title = 'Player Bio'
+file_title = 'File Menu'
 
 # Titles on the window bar at the top
 start_win_title = 'FIFA Squad Builder'
@@ -23,6 +24,7 @@ teams_win_title = start_win_title + ' - ' + teams_title
 manage_win_title = start_win_title + ' - ' + manage_title
 attribute_win_title = start_win_title + ' - ' + attribute_title
 player_bio_win_title = start_win_title + ' - ' + player_bio_title
+file_win_title = start_win_title + ' - ' + file_title
 
 # ========== Colors ==========
 black = GUI.StdColors.black

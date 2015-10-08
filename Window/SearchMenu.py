@@ -144,6 +144,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         view.add(all_players_radio_btn)
         view.add(my_players_radio_btn)
 
+        win_search.become_target()
+
     def formations_btn_func():
         for btn in search_type_button_list:
             btn.enabled = 1
@@ -162,6 +164,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         view.add(all_formations_radio_btn)
         view.add(my_formations_radio_btn)
 
+        win_search.become_target()
+
     def teams_btn_func():
         for btn in search_type_button_list:
             btn.enabled = 1
@@ -179,6 +183,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         view.remove(my_formations_radio_btn)
 
         view.add(t_db_rg_msg)
+
+        win_search.become_target()
 
     # ========== Tool Button Functions ==========
     def attribute_btn_func():

@@ -2,9 +2,19 @@ from GUI import Button, Label, View, Window
 
 from AppConfig import *
 import StartMenu
+import json
 
 
-def open_manage_menu(window_x, window_y, db_dict):
+def open_manage_menu(window_x, window_y, db_dict, settings=None):
+
+    with open('configs.json', 'r') as f:
+        default_search = json.load(f)['default_search']
+        f.close()
+
+    if settings is None:
+        settings = {
+            'mode': 'players_list'
+        }
 
     # ========== Window ==========
     win_manage = Window()
@@ -23,6 +33,8 @@ def open_manage_menu(window_x, window_y, db_dict):
 
     view = FormationsWindowImageView(size=win_manage.size)
 
+    display_list = []
+
     # ========== Title ==========
     title = Label(text=manage_title)
     title.font = title_font
@@ -32,168 +44,174 @@ def open_manage_menu(window_x, window_y, db_dict):
     title.y = top_border
     title.color = title_color
     title.just = 'center'
-
-    # ========== Messages ==========
-    start_message = Label(text=start_message_text)
-    start_message.font = start_message_font
-    start_message.width = start_message_width
-    start_message.height = start_message_height
-    start_message.x = (win_width - start_message_width) / 2
-    start_message.y = (win_height - start_message_height) / 2
-    start_message.color = start_message_color
-
-    # ========== Button Toolbar Declarations ==========
-    search_players_btn = Button("Search Players")
-    create_players_list_btn = Button("Create Players List")
-    load_players_list_btn = Button("Load Players List")
-    save_players_list_btn = Button("Save Players List")
-    edit_players_list_btn = Button("Edit Players List")
-    delete_players_list_btn = Button("Delete Players List")
-    back_btn = Button("Back")
-
-    button_list = [search_players_btn,
-                   create_players_list_btn,
-                   load_players_list_btn,
-                   save_players_list_btn,
-                   edit_players_list_btn,
-                   delete_players_list_btn,
-                   back_btn]
+    display_list.append(title)
 
     # ========== Button Toolbar Functions ==========
-    def search_players_btn_func():
-        for btn in button_list:
-            btn.enabled = 1
-        search_players_btn.enabled = 0
-        view.remove(start_message)
-        #StartMenu.open_start_menu(win_manage.left, win_manage.top)
-        #win_manage.hide()
+    def players_list_btn_func():
+        settings['mode'] = 'players_list'
 
-    def create_players_list_btn_func():
         for btn in button_list:
             btn.enabled = 1
-        create_players_list_btn.enabled = 0
-        view.remove(start_message)
-        #StartMenu.open_start_menu(win_manage.left, win_manage.top)
-        #win_manage.hide()
+        players_list_btn.enabled = 0
 
-    def load_players_list_btn_func():
-        for btn in button_list:
-            btn.enabled = 1
-        load_players_list_btn.enabled = 0
-        view.remove(start_message)
-        #StartMenu.open_start_menu(win_manage.left, win_manage.top)
-        #win_manage.hide()
+        win_manage.become_target()
 
-    def save_players_list_btn_func():
-        for btn in button_list:
-            btn.enabled = 1
-        save_players_list_btn.enabled = 0
-        view.remove(start_message)
-        #StartMenu.open_start_menu(win_manage.left, win_manage.top)
-        #win_manage.hide()
+    def formations_list_btn_func():
+        settings['mode'] = 'formations_list'
 
-    def edit_players_list_btn_func():
         for btn in button_list:
             btn.enabled = 1
-        edit_players_list_btn.enabled = 0
-        view.remove(start_message)
-        #StartMenu.open_start_menu(win_manage.left, win_manage.top)
-        #win_manage.hide()
+        formations_list_btn.enabled = 0
 
-    def delete_players_list_btn_func():
+        win_manage.become_target()
+
+    def teams_list_btn_func():
+        settings['mode'] = 'teams_list'
+
         for btn in button_list:
             btn.enabled = 1
-        delete_players_list_btn.enabled = 0
-        view.remove(start_message)
-        #StartMenu.open_start_menu(win_manage.left, win_manage.top)
-        #win_manage.hide()
+        teams_list_btn.enabled = 0
+
+        win_manage.become_target()
+
+    def databases_btn_func():
+        settings['mode'] = 'databases'
+
+        for btn in button_list:
+            btn.enabled = 1
+        databases_btn.enabled = 0
+
+        win_manage.become_target()
+
+    def defaults_btn_func():
+        settings['mode'] = 'defaults'
+
+        for btn in button_list:
+            btn.enabled = 1
+        defaults_btn.enabled = 0
+
+        win_manage.become_target()
 
     def back_btn_func():
         StartMenu.open_start_menu(win_manage.x, win_manage.y, db_dict)
         win_manage.hide()
 
+    # ========== Defaults Button Functions ==========
+    def players_db_default_btn_func():
+        win_manage.become_target()
+
+    def players_list_default_btn_func():
+        win_manage.become_target()
+
+    def formations_db_default_btn_func():
+        win_manage.become_target()
+
+    def formations_list_default_btn_func():
+        win_manage.become_target()
+
+    def teams_list_default_btn_func():
+        win_manage.become_target()
+
+    # ========== Button Toolbar Declarations ==========
+    players_list_btn = Button("Players List", height=small_button_height, width=small_button_width,
+                              font=small_button_font, action=players_list_btn_func, style='default',
+                              color=small_button_color, just='center')
+    formations_list_btn = Button("Formations List", height=small_button_height, width=small_button_width,
+                                 font=small_button_font, action=formations_list_btn_func, style='default',
+                                 color=small_button_color, just='center')
+    teams_list_btn = Button("Teams List", height=small_button_height, width=small_button_width, font=small_button_font,
+                            action=teams_list_btn_func, style='default', color=small_button_color, just='center')
+    databases_btn = Button("Databases", height=small_button_height, width=small_button_width, font=small_button_font,
+                           action=databases_btn_func, style='default', color=small_button_color, just='center')
+    defaults_btn = Button("Defaults", height=small_button_height, width=small_button_width, font=small_button_font,
+                          action=defaults_btn_func, style='default', color=small_button_color, just='center')
+    back_btn = Button("Back", height=small_button_height, width=small_button_width, font=small_button_font,
+                      action=back_btn_func, style='default', color=small_button_color, just='center')
+
+    button_list = [players_list_btn,
+                   formations_list_btn,
+                   teams_list_btn,
+                   databases_btn,
+                   defaults_btn,
+                   back_btn]
+
+    for button in button_list:
+        display_list.append(button)
+
+    # ========== Defaults Button Declarations ==========
+    players_db_default_btn = Button("Select Default", height=small_button_height, width=small_button_width,
+                                    font=small_button_font, action=players_db_default_btn_func, style='default',
+                                    color=small_button_color, just='center')
+    display_list.append(players_db_default_btn)
+    players_list_default_btn = Button("Select Default", height=small_button_height,
+                                      width=small_button_width, font=small_button_font,
+                                      action=players_list_default_btn_func,
+                                      style='default', color=small_button_color, just='center')
+    display_list.append(players_list_default_btn)
+    formations_db_default_btn = Button("Select Default", height=small_button_height,
+                                       width=small_button_width, font=small_button_font,
+                                       action=formations_db_default_btn_func,
+                                       style='default', color=small_button_color, just='center')
+    display_list.append(formations_db_default_btn)
+    formations_list_default_btn = Button("Select Default", height=small_button_height,
+                                         width=small_button_width, font=small_button_font,
+                                         action=formations_list_default_btn_func,
+                                         style='default', color=small_button_color, just='center')
+    display_list.append(formations_list_default_btn)
+    teams_list_default_btn = Button("Select Default", height=small_button_height, width=small_button_width,
+                                    font=small_button_font, action=teams_list_default_btn_func,
+                                    style='default', color=small_button_color, just='center')
+    display_list.append(teams_list_default_btn)
+
     # ========== Toolbar Buttons ==========
-    search_players_btn.x = (win_width - len(button_list)*small_button_width
-                            - (len(button_list)-1)*small_button_spacing) / 2
-    search_players_btn.y = title.bottom + small_button_top_spacing
-    search_players_btn.height = small_button_height
-    search_players_btn.width = small_button_width
-    search_players_btn.font = small_button_font
-    search_players_btn.action = search_players_btn_func
-    search_players_btn.style = 'default'
-    search_players_btn.color = small_button_color
-    search_players_btn.just = 'right'
+    players_list_btn.x = (win_width - len(button_list)*small_button_width
+                          - (len(button_list)-1)*small_button_spacing) / 2
+    players_list_btn.y = title.bottom + small_button_top_spacing
+    if settings['mode'] == 'players_list':
+        defaults_btn.enabled = 0
 
-    create_players_list_btn.x = search_players_btn.right + small_button_spacing
-    create_players_list_btn.y = search_players_btn.top
-    create_players_list_btn.height = small_button_height
-    create_players_list_btn.width = small_button_width
-    create_players_list_btn.font = small_button_font
-    create_players_list_btn.action = create_players_list_btn_func
-    create_players_list_btn.style = 'default'
-    create_players_list_btn.color = small_button_color
-    create_players_list_btn.just = 'right'
+    formations_list_btn.x = players_list_btn.right + small_button_spacing
+    formations_list_btn.y = players_list_btn.top
+    if settings['mode'] == 'formations_list':
+        defaults_btn.enabled = 0
 
-    load_players_list_btn.x = create_players_list_btn.right + small_button_spacing
-    load_players_list_btn.y = search_players_btn.top
-    load_players_list_btn.height = small_button_height
-    load_players_list_btn.width = small_button_width
-    load_players_list_btn.font = small_button_font
-    load_players_list_btn.action = load_players_list_btn_func
-    load_players_list_btn.style = 'default'
-    load_players_list_btn.color = small_button_color
-    load_players_list_btn.just = 'right'
+    teams_list_btn.x = formations_list_btn.right + small_button_spacing
+    teams_list_btn.y = players_list_btn.top
+    if settings['mode'] == 'teams_list':
+        defaults_btn.enabled = 0
 
-    save_players_list_btn.x = load_players_list_btn.right + small_button_spacing
-    save_players_list_btn.y = search_players_btn.top
-    save_players_list_btn.height = small_button_height
-    save_players_list_btn.width = small_button_width
-    save_players_list_btn.font = small_button_font
-    save_players_list_btn.action = save_players_list_btn_func
-    save_players_list_btn.style = 'default'
-    save_players_list_btn.color = small_button_color
-    save_players_list_btn.just = 'right'
+    databases_btn.x = teams_list_btn.right + small_button_spacing
+    databases_btn.y = players_list_btn.top
+    if settings['mode'] == 'databases':
+        defaults_btn.enabled = 0
 
-    edit_players_list_btn.x = save_players_list_btn.right + small_button_spacing
-    edit_players_list_btn.y = search_players_btn.top
-    edit_players_list_btn.height = small_button_height
-    edit_players_list_btn.width = small_button_width
-    edit_players_list_btn.font = small_button_font
-    edit_players_list_btn.action = edit_players_list_btn_func
-    edit_players_list_btn.style = 'default'
-    edit_players_list_btn.color = small_button_color
-    edit_players_list_btn.just = 'right'
+    defaults_btn.x = databases_btn.right + small_button_spacing
+    defaults_btn.y = players_list_btn.top
+    if settings['mode'] == 'defaults':
+        defaults_btn.enabled = 0
 
-    delete_players_list_btn.x = edit_players_list_btn.right + small_button_spacing
-    delete_players_list_btn.y = search_players_btn.top
-    delete_players_list_btn.height = small_button_height
-    delete_players_list_btn.width = small_button_width
-    delete_players_list_btn.font = small_button_font
-    delete_players_list_btn.action = delete_players_list_btn_func
-    delete_players_list_btn.style = 'default'
-    delete_players_list_btn.color = small_button_color
-    delete_players_list_btn.just = 'right'
+    back_btn.x = defaults_btn.right + small_button_spacing
+    back_btn.y = players_list_btn.top
 
-    back_btn.x = delete_players_list_btn.right + small_button_spacing
-    back_btn.y = search_players_btn.top
-    back_btn.height = small_button_height
-    back_btn.width = small_button_width
-    back_btn.font = small_button_font
-    back_btn.action = back_btn_func
-    back_btn.style = 'default'
-    back_btn.color = small_button_color
-    back_btn.just = 'right'
+    # ========== Defaults Buttons ==========
+    players_db_default_btn.x = win_width / 4 - small_button_width/2
+    players_db_default_btn.y = players_list_btn.bottom + top_border*2
+
+    players_list_default_btn.x = win_width / 4 - small_button_width/2
+    players_list_default_btn.y = players_db_default_btn.bottom + title_border
+
+    formations_db_default_btn.x = win_width / 4 - small_button_width/2
+    formations_db_default_btn.y = players_list_default_btn.bottom + title_border
+
+    formations_list_default_btn.x = win_width / 4 - small_button_width/2
+    formations_list_default_btn.y = formations_db_default_btn.bottom + title_border
+
+    teams_list_default_btn.x = win_width / 4 - small_button_width/2
+    teams_list_default_btn.y = formations_list_default_btn.bottom + title_border
 
     # ========== Add components to view and add view to window ==========
-    view.add(title)
-    view.add(search_players_btn)
-    view.add(create_players_list_btn)
-    view.add(load_players_list_btn)
-    view.add(save_players_list_btn)
-    view.add(edit_players_list_btn)
-    view.add(delete_players_list_btn)
-    view.add(back_btn)
-    view.add(start_message)
+    for item in display_list:
+        view.add(item)
 
     win_manage.add(view)
     view.become_target()
