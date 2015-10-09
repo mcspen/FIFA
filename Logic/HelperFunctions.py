@@ -187,3 +187,21 @@ def format_birthday(birthdate):
     """
 
     return '%s/%s/%s' % (birthdate[5:7], birthdate[-2:], birthdate[:4])
+
+
+def get_file_prefix(file_type):
+    if file_type in ['default_player_db', 'current_player_db']:
+        file_prefix = 'play_db_'
+    elif file_type in ['default_player_list', 'current_player_list']:
+        file_prefix = 'play_lt_'
+    elif file_type in ['default_formation_db', 'current_formation_db']:
+        file_prefix = 'form_db_'
+    elif file_type in ['default_formation_list', 'current_formation_list']:
+        file_prefix = 'form_lt_'
+    elif file_type in ['default_team_list', 'current_team_list']:
+        file_prefix = 'team_lt_'
+    else:
+        file_prefix = ''
+        print "File type is invalid."
+
+    return file_prefix

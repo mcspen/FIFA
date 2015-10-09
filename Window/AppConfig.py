@@ -129,6 +129,9 @@ small_button_top_spacing = 10
 
 tiny_button_height = 20
 
+file_btn_width = 200
+file_btn_spacing = 3
+
 # ========== Textfields ==========
 title_font = Font("Times", 3 * system_font.size, ['bold'])
 title_font_2 = Font("Times", 2.5 * system_font.size, ['bold'])

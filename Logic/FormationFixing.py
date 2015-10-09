@@ -54,7 +54,7 @@ formation.create_formation(formation_name,
                           num_def, defense_positions, num_mid, midfield_positions, num_off, offense_positions)'''
 
 '''formation_db = FormationDB()
-formation_db.load('formation_db.json')
+formation_db.load('form_db_all.json')
 
 for formation in formation_db.db:
     formation['num_defenders'] = formation['defense']['num_defenders']
@@ -112,7 +112,7 @@ formation_db.print_positions(symbol='custom')
 formation_db.print_db_short()
 formation_db.print_db()
 
-formation_db.save('formation_db.json')'''
+formation_db.save('form_db_all.json')'''
 
 '''exists = False
 for form in formation_db.db:
@@ -123,6 +123,6 @@ if exists:
     print "%s exists already" % formation_name
 else:
     formation_db.add_formation(formation)
-    formation_db.save('formation_db.json')'''
+    formation_db.save('form_db_all.json')'''
 
 test = 1

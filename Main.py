@@ -20,25 +20,25 @@ if __name__ == '__main__':
 
     # Set defaults
     player_db = PlayerDB()
-    formation_db = FormationDB()
     player_list = PlayerDB()
+    formation_db = FormationDB()
     formation_list = FormationDB()
     team_list = TeamDB()
 
     temp_time = time.time()
-    player_db.load(default_dbs['all_players'])
-    player_list.load(default_dbs['my_players'])
-    formation_db.load(default_dbs['all_formations'])
-    formation_list.load(default_dbs['my_formations'])
-    team_list.load(default_dbs['teams'])
+    player_db.load(default_dbs['player_db'])
+    player_list.load(default_dbs['player_list'])
+    formation_db.load(default_dbs['formation_db'])
+    formation_list.load(default_dbs['formation_list'])
+    team_list.load(default_dbs['team_list'])
     print "Time to load DBs: %f" % (time.time()-temp_time)
 
     db_dict = {
-        'all_players': (default_dbs['all_players'], player_db),
-        'my_players': (default_dbs['my_players'], player_list),
-        'all_formations': (default_dbs['all_formations'], formation_db),
-        'my_formations': (default_dbs['my_formations'], formation_list),
-        'teams': (default_dbs['teams'], team_list)
+        'player_db': (default_dbs['player_db'][8:], player_db),
+        'player_list': (default_dbs['player_list'][8:], player_list),
+        'formation_db': (default_dbs['formation_db'][8:], formation_db),
+        'formation_list': (default_dbs['formation_list'][8:], formation_list),
+        'team_list': (default_dbs['team_list'][8:], team_list)
     }
 
     FifaApp.start_app(db_dict)
