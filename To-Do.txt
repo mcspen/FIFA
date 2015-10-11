@@ -1,7 +1,9 @@
+Team evaluation function!!!!!!!!!!!!!!!!
+
 Add more options to TeamDB search
 Add team names?
 
-Finish PlayerDB search/sort.  Remove redundacy in other search/sort classes.
+Finish PlayerDB search/sort.  Remove redundancy in other search/sort classes.
 
 Add try loops for printing out names for those exception cases (non-ascii)
 

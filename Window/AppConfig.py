@@ -14,6 +14,7 @@ manage_title = 'Manage Files'
 attribute_title = 'Attributes Menu'
 player_bio_title = 'Player Bio'
 file_title = 'File Menu'
+confirm_prompt_title = 'Are you sure?'
 
 # Titles on the window bar at the top
 start_win_title = 'FIFA Squad Builder'
@@ -25,6 +26,7 @@ manage_win_title = start_win_title + ' - ' + manage_title
 attribute_win_title = start_win_title + ' - ' + attribute_title
 player_bio_win_title = start_win_title + ' - ' + player_bio_title
 file_win_title = start_win_title + ' - ' + file_title
+confirm_prompt_win_title = start_win_title + ' - ' + confirm_prompt_title
 
 # ========== Colors ==========
 black = GUI.StdColors.black

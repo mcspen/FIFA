@@ -2,6 +2,7 @@ from GUI import Button, Label, View, Window
 from AppConfig import *
 import ManageMenu
 import EnterText
+import ConfirmPrompt
 from Logic import PlayerDB, FormationDB, TeamDB, HelperFunctions
 import json
 from os import listdir
@@ -133,19 +134,21 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
             win_file.hide()
 
         def rename_file_func(file_name):
-            # Set new name
+            # Get new name
             EnterText.open_enter_text_window(win_file.x, win_file.y, db_dict, settings,
                                              'rename', fill_text=file_name, file_prefix=file_prefix)
             win_file.hide()
 
-        def duplicate_file_func():
-            win_file.become_target()
+        def duplicate_file_func(file_name):
+            # Get name for duplicate file and create
+            EnterText.open_enter_text_window(win_file.x, win_file.y, db_dict, settings,
+                                             'duplicate', fill_text=file_name, file_prefix=file_prefix)
+            win_file.hide()
 
-        def delete_file_func():
-            # Disable back button in case the selected file has changed
-            settings['file_changes'] = True
-            back_btn.enabled = 0
-            win_file.become_target()
+        def delete_file_func(file_name):
+            file_path = 'JSONs/' + file_prefix + file_name + '.json'
+            ConfirmPrompt.open_confirm_prompt_window(win_file.x, win_file.y, db_dict, settings, file_path, file_name)
+            win_file.hide()
 
         # Display appropriate files
         small_file_button_width = 75
@@ -170,14 +173,14 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
 
             # Duplicate file button
             duplicate_btn = Button('Duplicate', height=small_button_height, width=small_file_button_width,
-                                font=small_button_font, action=duplicate_file_func, style='default',
+                                font=small_button_font, action=(duplicate_file_func, filename), style='default',
                                 x=rename_btn.right + file_btn_spacing, y=file_y,
                                 color=small_button_color, just='center')
             display_list.append(duplicate_btn)
 
             # Delete file button
             delete_btn = Button('Delete', height=small_button_height, width=small_file_button_width,
-                                font=small_button_font, action=delete_file_func, style='default',
+                                font=small_button_font, action=(delete_file_func, filename), style='default',
                                 x=duplicate_btn.right + file_btn_spacing, y=file_y,
                                 color=small_button_color, just='center')
             display_list.append(delete_btn)

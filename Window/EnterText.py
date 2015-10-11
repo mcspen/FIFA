@@ -1,14 +1,19 @@
-from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
+from GUI import Button, Label, TextField, View, Window
 from AppConfig import *
 import PickFile
-import json
 from os import rename
+from os.path import isfile
+from shutil import copyfile
 
 
 def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill_text='', file_prefix=''):
 
     if box_type == 'rename':
         title = 'Rename File'
+        old_file_name = fill_text
+        message_text = 'Enter new file name.'
+    elif box_type == 'duplicate':
+        title = 'Duplicate File'
         old_file_name = fill_text
         message_text = 'Enter new file name.'
     else:
@@ -62,7 +67,7 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
 
             if len(new_file_name) > 0:
 
-                try:
+                if not isfile('JSONs/' + file_prefix + new_file_name + '.json'):
                     # Rename file
                     rename('JSONs/' + file_prefix + old_file_name + '.json',
                            'JSONs/' + file_prefix + new_file_name + '.json')
@@ -73,8 +78,30 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
                     PickFile.open_pick_file_window(window_x, window_y, db_dict, settings)
                     win_enter_text.hide()
 
-                except OSError as err:
-                    message.text = "File already exists."
+                else:
+                    message.text = "A file with that name already exists."
+
+            else:
+                message.text = "File name must be at least 1 character."
+
+        # Duplicate file
+        elif box_type == 'duplicate':
+
+            # Get new name
+            duplicate_file_name = value_tf.value
+
+            if len(duplicate_file_name) > 0:
+
+                if not isfile('JSONs/' + file_prefix + duplicate_file_name + '.json'):
+                    # Create duplicate file
+                    copyfile('JSONs/' + file_prefix + old_file_name + '.json',
+                             'JSONs/' + file_prefix + duplicate_file_name + '.json')
+
+                    PickFile.open_pick_file_window(window_x, window_y, db_dict, settings)
+                    win_enter_text.hide()
+
+                else:
+                    message.text = "A file with that name already exists."
 
             else:
                 message.text = "File name must be at least 1 character."

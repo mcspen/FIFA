@@ -1,9 +1,8 @@
 from GUI import Button, Geometry, Image, Label, View, Window
 from AppConfig import *
-import cStringIO
 import json
-import urllib
-from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday
+from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
+    save_image
 
 
 def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
@@ -39,20 +38,12 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     view = StartWindowImageView(size=win_player_bio.size)
 
     # ========== Player Headshot ==========
-    player_headshot = Image(file = 'Images/headshot.png')
-    """image_url = player['headshotImgUrl']
+    # player_headshot = Image(file = 'Images/headshot.png')
 
-    from PIL import Image
-    import urllib2
-    import cStringIO
-    import time
-    file = cStringIO.StringIO(urllib2.urlopen(image_url).read())
-    image_filename = '/Images/temp_%s.png' % str(time.time())
-    image_info = Image.open(file)
-    image_info.save(image_filename)
-    file.close()
-
-    player_headshot = Image(file=image_filename)"""
+    image_url = player['headshotImgUrl']
+    player_id = player['id']
+    image_file_name = save_image(image_url, player_id)
+    player_headshot = Image(file = image_file_name)
 
     # ========== Button Declarations ==========
     add_player_btn = Button()
@@ -62,13 +53,13 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     def add_player_btn_func():
         # Check if player is already on selected players list
         # Remove player from list
-        if player in db_dict['my_players'][1].db:
+        if player in db_dict['player_list'][1].db:
 
             # Remove
-            db_dict['my_players'][1].db.remove(player)
+            db_dict['player_list'][1].db.remove(player)
             # Save
-            db_dict['my_players'][1].sort(['rating'])
-            db_dict['my_players'][1].save(db_dict['my_players'][0])
+            db_dict['player_list'][1].sort(['rating'])
+            db_dict['player_list'][1].save(db_dict['player_list'][0])
 
             # Switch button title
             add_player_btn.title = "Add Player to List"
@@ -77,10 +68,10 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
         else:
 
             # Add
-            db_dict['my_players'][1].db.append(player)
+            db_dict['player_list'][1].db.append(player)
             # Save
-            db_dict['my_players'][1].sort(['rating'])
-            db_dict['my_players'][1].save(db_dict['my_players'][0])
+            db_dict['player_list'][1].sort(['rating'])
+            db_dict['player_list'][1].save(db_dict['player_list'][0])
 
             # Switch button title
             add_player_btn.title = "Remove Player from List"
@@ -104,7 +95,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     add_player_btn.color = small_button_color
 
     # Check if player is already on selected players list
-    if player in db_dict['my_players'][1].db:
+    if player in db_dict['player_list'][1].db:
         add_player_btn.title = "Remove Player from List"
     else:
         add_player_btn.title = "Add Player to List"

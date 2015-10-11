@@ -8,6 +8,7 @@ from Logic.Player import Player
 from Logic.PlayerDB import PlayerDB
 from Logic.TeamDB import TeamDB
 from Logic.Team import Team
+from Logic.HelperFunctions import delete_all_temp_images
 
 if __name__ == '__main__':
     multiprocessing.freeze_support()
@@ -42,6 +43,7 @@ if __name__ == '__main__':
     }
 
     FifaApp.start_app(db_dict)
+    # delete_all_temp_images()
 
     # -------------------------PLAYER DB EXAMPLES---------------------------
     # Initialize DB
@@ -54,12 +56,12 @@ if __name__ == '__main__':
 
     # Save Database to File
     # temp_time = time.time()
-    # player_db.save('player_db_16_4')
+    # player_db.save('play_db_FIFA 16 - 5')
     # print "Time to save DB: %f" % (time.time()-temp_time)
 
     # Load Player Database from File
     # temp_time = time.time()
-    # player_db.load('player_db_16_4')
+    # player_db.load('play_db_FIFA 16 - 5')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
     """teams = TeamDB()
@@ -74,7 +76,7 @@ if __name__ == '__main__':
     team.print_team_strengths()"""
 
     """my_players = PlayerDB()
-    my_players.load('my_players_db_16')"""
+    my_players.load('play_lt_my_players_16')"""
 
     # Load Formation Database from file
     """formation_db = FormationDB()
@@ -107,7 +109,7 @@ if __name__ == '__main__':
 
     """my_players.console_search(player_db)
     my_players.sort(['rating'])
-    my_players.save('my_players_db_16')"""
+    my_players.save('play_lt_my_players_16')"""
 
     """my_team = Team()
     my_formations = FormationDB(formation_db.search({'num_defenders': 4}, 'lower'))

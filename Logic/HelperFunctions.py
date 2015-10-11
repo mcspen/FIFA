@@ -4,7 +4,12 @@ Helper functions that don't belong to any class
 
 __author__ = 'mspencer'
 
+import random
 import unicodedata
+from PIL import Image
+import urllib2
+import cStringIO
+import os
 
 
 def ascii_text(input_text):
@@ -190,6 +195,9 @@ def format_birthday(birthdate):
 
 
 def get_file_prefix(file_type):
+    """
+    Returns the JSON file prefix for the specified file type.
+    """
     if file_type in ['default_player_db', 'current_player_db']:
         file_prefix = 'play_db_'
     elif file_type in ['default_player_list', 'current_player_list']:
@@ -205,3 +213,44 @@ def get_file_prefix(file_type):
         print "File type is invalid."
 
     return file_prefix
+
+
+def save_image(image_url, image_file_name):
+    """
+    Saves the image from the specified url and returns the file name.
+    """
+
+    image_file_name = 'Images/temp/' + image_file_name + '.png'
+
+    if not os.path.isfile(image_file_name):
+        file = cStringIO.StringIO(urllib2.urlopen(image_url).read())
+        image_info = Image.open(file)
+        image_info.save(image_file_name)
+        file.close()
+
+    return image_file_name
+
+
+def delete_image(image_file_name):
+    """
+    Deletes the image with the specified file name.
+    Returns true if it was deleted and false if it was unsuccessful.
+    """
+
+    try:
+        os.remove(image_file_name)
+        return True
+
+    except Exception as err:
+        print "Error: " + err.args[1]
+        return False
+
+
+def delete_all_temp_images():
+    """
+    Deletes all of the files in the temp image folder
+    """
+
+    file_names = os.listdir("Images/temp/")
+    for file_name in file_names:
+        delete_image("Images/temp/" + file_name)

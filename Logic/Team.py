@@ -1128,10 +1128,16 @@ class Team:
         Output: None  -  Prints out the key strengths
         """
 
-        good_skill = 4
-        good_weak_foot = 5
-        good_stat = 85
-        good_height = 190
+        # Get important stats from config file
+        with open('configs.json', 'r') as config_file:
+            strengths_dict = json.load(config_file)['player_attributes']['important_attributes']
+            config_file.close()
+
+        important_attributes = strengths_dict['attribute_list']
+        good_skill = strengths_dict['good_skill']
+        good_weak_foot = strengths_dict['good_weak_foot']
+        good_height = strengths_dict['good_height']
+        good_stat_value = strengths_dict['good_stat_value']
 
         index = 0
 
@@ -1201,14 +1207,12 @@ class Team:
                              "longpassing", "curve", "jumping", "stamina", "strength", "aggression",
                              "gkdiving", "gkhandling", "gkkicking", "gkpositioning", "gkreflexes"]"""
 
-                    important_stats = ["acceleration", "sprintspeed", "balance", "ballcontrol", "dribbling",
-                                       "finishing", "shotpower", "longshots", "volleys", "interceptions", "marking",
-                                       "vision", "freekickaccuracy", "longpassing", "curve", "stamina", "strength"]
-
-                    for attribute in important_stats:
-                        stat = player[attribute]
-                        if stat >= good_stat:
-                            strengths.append((format_attr_name(attribute), stat))
+                    for attribute in important_attributes:
+                        # Skip already checked stats
+                        if attribute not in ['traits', 'skillMoves', 'weakFoot', 'height']:
+                            stat = player[attribute]
+                            if stat >= good_stat_value:
+                                strengths.append((format_attr_name(attribute), stat))
 
                     if len(strengths) > 0:
                         print "%s%s%d%s%s" % (symbol, ' '*(5-len(symbol)), player['rating'], ' '*3, name)
