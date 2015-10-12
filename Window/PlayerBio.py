@@ -2,7 +2,7 @@ from GUI import Button, Geometry, Image, Label, View, Window
 from AppConfig import *
 import json
 from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
-    save_image
+    save_image, get_file_prefix
 
 
 def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
@@ -59,7 +59,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
             db_dict['player_list'][1].db.remove(player)
             # Save
             db_dict['player_list'][1].sort(['rating'])
-            db_dict['player_list'][1].save(db_dict['player_list'][0])
+            db_dict['player_list'][1].save(get_file_prefix('current_player_list') + db_dict['player_list'][0])
 
             # Switch button title
             add_player_btn.title = "Add Player to List"
@@ -71,7 +71,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
             db_dict['player_list'][1].db.append(player)
             # Save
             db_dict['player_list'][1].sort(['rating'])
-            db_dict['player_list'][1].save(db_dict['player_list'][0])
+            db_dict['player_list'][1].save(get_file_prefix('current_player_list') + db_dict['player_list'][0])
 
             # Switch button title
             add_player_btn.title = "Remove Player from List"

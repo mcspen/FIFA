@@ -78,9 +78,9 @@ if __name__ == '__main__':
     """my_players = PlayerDB()
     my_players.load('play_lt_my_players_16')"""
 
-    # Load Formation Database from file
-    """formation_db = FormationDB()
-    formation_db.load('formation_db')"""
+    """# Load Formation Database from file
+    formation_db = FormationDB()
+    formation_db.load('form_db_All Formations')"""
 
     """silver_players = PlayerDB(my_players.search({'quality': ('silver', 'exact')}))
 
