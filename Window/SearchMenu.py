@@ -9,7 +9,7 @@ import PlayerBio
 from Logic import PlayerDB
 from Logic import FormationDB
 from Logic import TeamDB
-from Logic.HelperFunctions import format_attr_name, player_info_labels, player_info
+from Logic.HelperFunctions import format_attr_name, player_info_labels, player_info, get_file_prefix
 
 
 def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, settings=None):
@@ -499,7 +499,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             # Sort
             db_dict['player_list'][1].sort(['rating'])
             # Save
-            db_dict['player_list'][1].save(db_dict['player_list'][0])
+            db_dict['player_list'][1].save(get_file_prefix('current_player_list') + db_dict['player_list'][0])
 
             # Change button title and action
             add_to_list_btn.title = "Remove Added Players"
@@ -516,7 +516,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             # Sort
             db_dict['player_list'][1].sort(['rating'])
             # Save
-            db_dict['player_list'][1].save(db_dict['player_list'][0])
+            db_dict['player_list'][1].save(get_file_prefix('current_player_list') + db_dict['player_list'][0])
 
             # Change button title and action
             add_to_list_btn.title = "Add Players to List"
