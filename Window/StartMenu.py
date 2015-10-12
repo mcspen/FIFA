@@ -32,7 +32,7 @@ def open_start_menu(window_x, window_y, db_dict):
     view = StartWindowImageView(size=win_start.size)
 
     # ========== Start Window Image ==========
-    start_window_image = Image(file = 'Images/messi.jpg')
+    start_window_image = Image(file='Images/messi.jpg')
 
     # ========== Title ==========
     title = Label(text=start_title)

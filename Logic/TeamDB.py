@@ -1,7 +1,6 @@
 import copy
 import json
 from os.path import isfile
-import sys
 
 
 class TeamDB:
@@ -227,7 +226,7 @@ class TeamDB:
         # Sort DB by rating
         self.sort({'rating'})
 
-        if num_results == None:
+        if num_results is None:
             num_results = len(self.db)
 
         # Iterate and print out all of the teams

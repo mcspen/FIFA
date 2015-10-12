@@ -3,7 +3,10 @@ from AppConfig import *
 import ManageMenu
 import EnterText
 import ConfirmPrompt
-from Logic import PlayerDB, FormationDB, TeamDB, HelperFunctions
+from Logic.PlayerDB import PlayerDB
+from Logic.FormationDB import FormationDB
+from Logic.TeamDB import TeamDB
+from Logic import HelperFunctions
 import json
 from os import listdir
 
@@ -70,7 +73,7 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
         return text
 
     sub_title = Label(font=title_font_2, width=title_width, height=title_height,
-                    x=(win_file.width-title_width)/2, y=title.bottom, color=title_color, just='center')
+                      x=(win_file.width-title_width)/2, y=title.bottom, color=title_color, just='center')
     sub_title_text = get_sub_title_text()
     sub_title.text = "Select %s file:" % sub_title_text
     display_list.append(sub_title)
@@ -147,6 +150,12 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
                                              'rename', fill_text=file_name, file_prefix=file_prefix)
             win_file.hide()
 
+        def edit_file_func(file_name):
+            # Get new name
+            EnterText.open_enter_text_window(win_file.x, win_file.y, db_dict, settings,
+                                             'rename', fill_text=file_name, file_prefix=file_prefix)
+            win_file.hide()
+
         def duplicate_file_func(file_name):
             # Get name for duplicate file and create
             EnterText.open_enter_text_window(win_file.x, win_file.y, db_dict, settings,
@@ -160,8 +169,11 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
 
         # Display appropriate files
         small_file_button_width = 75
-        file_x = (win_width - file_btn_width - 3*small_file_button_width - 3*file_btn_spacing) / 2
         file_y = sub_title.bottom + small_button_top_spacing
+        if file_type[:7] == 'default':
+            file_x = (win_width - file_btn_width) / 2
+        else:
+            file_x = (win_width - file_btn_width - 4*small_file_button_width - 4*file_btn_spacing) / 2
 
         for filename in file_list:
 
@@ -172,26 +184,34 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
                               color=small_button_color, just='center')
             display_list.append(file_btn)
 
-            # Rename file button
-            rename_btn = Button('Rename', height=small_button_height, width=small_file_button_width,
-                                font=small_button_font, action=(rename_file_func, filename), style='default',
-                                x=file_btn.right + file_btn_spacing, y=file_y,
-                                color=small_button_color, just='center')
-            display_list.append(rename_btn)
+            if file_type[:7] == 'current':
+                # Rename file button
+                rename_btn = Button('Rename', height=small_button_height, width=small_file_button_width,
+                                    font=small_button_font, action=(rename_file_func, filename), style='default',
+                                    x=file_btn.right + file_btn_spacing, y=file_y,
+                                    color=small_button_color, just='center')
+                display_list.append(rename_btn)
 
-            # Duplicate file button
-            duplicate_btn = Button('Duplicate', height=small_button_height, width=small_file_button_width,
-                                font=small_button_font, action=(duplicate_file_func, filename), style='default',
-                                x=rename_btn.right + file_btn_spacing, y=file_y,
-                                color=small_button_color, just='center')
-            display_list.append(duplicate_btn)
+                # Edit file button
+                edit_btn = Button('Edit', height=small_button_height, width=small_file_button_width,
+                                       font=small_button_font, action=(edit_file_func, filename), style='default',
+                                       x=rename_btn.right + file_btn_spacing, y=file_y,
+                                       color=small_button_color, just='center')
+                display_list.append(edit_btn)
 
-            # Delete file button
-            delete_btn = Button('Delete', height=small_button_height, width=small_file_button_width,
-                                font=small_button_font, action=(delete_file_func, filename), style='default',
-                                x=duplicate_btn.right + file_btn_spacing, y=file_y,
-                                color=small_button_color, just='center')
-            display_list.append(delete_btn)
+                # Duplicate file button
+                duplicate_btn = Button('Duplicate', height=small_button_height, width=small_file_button_width,
+                                       font=small_button_font, action=(duplicate_file_func, filename), style='default',
+                                       x=edit_btn.right + file_btn_spacing, y=file_y,
+                                       color=small_button_color, just='center')
+                display_list.append(duplicate_btn)
+
+                # Delete file button
+                delete_btn = Button('Delete', height=small_button_height, width=small_file_button_width,
+                                    font=small_button_font, action=(delete_file_func, filename), style='default',
+                                    x=duplicate_btn.right + file_btn_spacing, y=file_y,
+                                    color=small_button_color, just='center')
+                display_list.append(delete_btn)
 
             file_y += small_button_height + 3*file_btn_spacing
 

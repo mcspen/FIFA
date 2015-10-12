@@ -43,7 +43,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     image_url = player['headshotImgUrl']
     player_id = player['id']
     image_file_name = save_image(image_url, player_id)
-    player_headshot = Image(file = image_file_name)
+    player_headshot = Image(file=image_file_name)
 
     # ========== Button Declarations ==========
     add_player_btn = Button()
@@ -128,7 +128,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
 
     # ========== Name and Rating ==========
     player_name_label = Label(font=title_font, width=name_width, height=title_height, x=(win_width - name_width)/2,
-                               y=top_border, color=title_color, just='center')
+                              y=top_border, color=title_color, just='center')
     labels_list.append(player_name_label)
     player_full_name_label = Label(font=title_tf_font, width=name_width, height=std_tf_height,
                                    x=(win_width - name_width)/2, y=player_name_label.bottom - title_border,
@@ -152,8 +152,8 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
                               y=traits_label.top+3, color=title_color, just='left')
     labels_list.append(traits_list_label)
     traits_list_label_2 = Label(font=small_tf_font, width=traits_list_label_width, height=std_tf_height,
-                              x=traits_label.right + small_button_spacing,
-                              y=traits_list_label.bottom, color=title_color, just='left')
+                                x=traits_label.right + small_button_spacing,
+                                y=traits_list_label.bottom, color=title_color, just='left')
     labels_list.append(traits_list_label_2)
     specialities_label = Label(font=std_tf_font_bold, width=traits_label_width, height=std_tf_height,
                                x=traits_label.left,
@@ -164,8 +164,8 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
                                     y=specialities_label.top+3, color=title_color, just='left')
     labels_list.append(specialities_list_label)
     specialities_list_label_2 = Label(font=small_tf_font, width=traits_list_label_width, height=std_tf_height,
-                                    x=specialities_label.right + small_button_spacing,
-                                    y=specialities_list_label.bottom, color=title_color, just='left')
+                                      x=specialities_label.right + small_button_spacing,
+                                      y=specialities_list_label.bottom, color=title_color, just='left')
     labels_list.append(specialities_list_label_2)
 
     # ========== Attributes Under Picture Section ==========
@@ -181,14 +181,14 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
             label_y = player_name_label.top + player_headshot.height + 5
 
         stat_title_label = Label(font=small_tf_font, width=attr_title_label_width, height=std_tf_height,
-                               x=label_x-attr_title_label_width, y=label_y, color=title_color, just='right')
+                                 x=label_x-attr_title_label_width, y=label_y, color=title_color, just='right')
         stat_title_label.text = format_attr_name(attr['name'][-3:]) + ':'
         labels_list.append(stat_title_label)
 
         color = attr_color(attr['value'])
 
         stat_label = Label(font=small_tf_font, width=attr_label_width, height=std_tf_height,
-                               x=label_x, y=label_y, color=color, just='right')
+                           x=label_x, y=label_y, color=color, just='right')
         stat_label.text = str(attr['value'])
         labels_list.append(stat_label)
 
@@ -222,7 +222,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
             continue
 
         stat_title_label = Label(font=small_tf_font, width=personal_title_stat_width, height=std_tf_height,
-                               x=label_x-personal_title_stat_width, y=label_y, color=title_color, just='right')
+                                 x=label_x-personal_title_stat_width, y=label_y, color=title_color, just='right')
         stat_title_label.text = format_attr_name(personal) + ':'
         labels_list.append(stat_title_label)
 
@@ -235,7 +235,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
             color = quality_color(player[personal])
 
         stat_label = Label(font=small_tf_font, width=personal_stat_width, height=std_tf_height,
-                               x=label_x+5, y=label_y, color=color, just=personal_stat_just)
+                           x=label_x+5, y=label_y, color=color, just=personal_stat_just)
         if personal == 'height':
             centimeters = player[personal]
             converted_height = convert_height(centimeters, 'string')
@@ -282,12 +282,12 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
                 db_info_label_width = 95
 
         stat_title_label = Label(font=small_tf_font, width=db_info_title_label_width, height=std_tf_height,
-                               x=label_x-db_info_title_label_width, y=label_y, color=title_color, just='right')
+                                 x=label_x-db_info_title_label_width, y=label_y, color=title_color, just='right')
         stat_title_label.text = format_attr_name(db_info) + ':'
         labels_list.append(stat_title_label)
 
         stat_label = Label(font=small_tf_font, width=db_info_label_width, height=std_tf_height,
-                               x=label_x, y=label_y, color=title_color, just='right')
+                           x=label_x, y=label_y, color=title_color, just='right')
         if db_info in ['clubId', 'leagueId', 'nationId']:
             stat_label.text = str(player[db_info[:-2]]['id'])
         else:
@@ -337,7 +337,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
 
         for attribute in attribute_lists[group]:
             stat_title_label = Label(font=small_tf_font, width=stat_title_label_width, height=std_tf_height,
-                               x=label_x-stat_title_label_width, y=label_y, color=title_color, just='right')
+                                     x=label_x-stat_title_label_width, y=label_y, color=title_color, just='right')
             stat_title_label.text = format_attr_name(attribute) + ':'
             labels_list.append(stat_title_label)
 
@@ -349,7 +349,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
                 color = attr_color(40 + 10*player[attribute])
 
             stat_label = Label(font=small_tf_font, width=stat_width, height=std_tf_height,
-                                   x=label_x, y=label_y, color=color, just='right')
+                               x=label_x, y=label_y, color=color, just='right')
             if attribute in ['weakFoot', 'skillMoves']:
                 stat_label.text = '* '*player[attribute]
             else:

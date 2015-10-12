@@ -1,9 +1,19 @@
 from GUI import Button, Label, TextField, View, Window
 from AppConfig import *
 import PickFile
+import ManageMenu
+from Logic.PlayerDB import PlayerDB
 from os import rename
 from os.path import isfile
 from shutil import copyfile
+import multiprocessing
+
+
+def download_and_save(new_db_name):
+    # Download player database
+    player_db = PlayerDB()
+    player_db.download()
+    player_db.save(new_db_name, 'db')
 
 
 def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill_text='', file_prefix=''):
@@ -16,6 +26,10 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
         title = 'Duplicate File'
         old_file_name = fill_text
         message_text = 'Enter new file name.'
+    elif box_type == 'download':
+        title = 'Download Player Database'
+        message_text = 'Enter player database name.'
+        download_settings = {'overwrite_counter': 0, 'last_entered_text': ''}
     else:
         title = 'Enter Text'
         message_text = 'Enter text.'
@@ -102,6 +116,47 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
 
                 else:
                     message.text = "A file with that name already exists."
+
+            else:
+                message.text = "File name must be at least 1 character."
+
+        elif box_type == 'download':
+            valid_name = False
+
+            # Get new player database name
+            new_player_db_name = value_tf.value
+
+            if new_player_db_name != download_settings['last_entered_text']:
+                download_settings['overwrite_counter'] = 0
+                message.text = message_text
+
+            if len(new_player_db_name) > 0:
+
+                if not isfile('JSONs/play_db_' + new_player_db_name + '.json'):
+                    valid_name = True
+
+                else:
+                    download_settings['last_entered_text'] = new_player_db_name
+
+                    if download_settings['overwrite_counter'] == 0:
+                        download_settings['overwrite_counter'] += 1
+                        message.text = "File already exists. Overwrite?"
+                    elif download_settings['overwrite_counter'] == 1:
+                        download_settings['overwrite_counter'] += 1
+                        message.text = "Are you sure you want to overwrite?"
+                    elif download_settings['overwrite_counter'] == 2:
+                        download_settings['overwrite_counter'] += 1
+                        message.text = "Really, really, really sure?"
+                    elif download_settings['overwrite_counter'] >= 3:
+                        valid_name = True
+
+                if valid_name:
+
+                    # Start download and saving of the player database, and return to manage menu
+                    multiprocessing.Process(target=download_and_save, args=(new_player_db_name,)).start()
+
+                    ManageMenu.open_manage_menu(window_x, window_y, db_dict, settings)
+                    win_enter_text.hide()
 
             else:
                 message.text = "File name must be at least 1 character."

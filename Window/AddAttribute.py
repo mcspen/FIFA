@@ -171,7 +171,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     erase_btn.color = button_color
     erase_btn.just = 'right'
     if (attr_type == 'sort' and len(attr_list) == 0) or \
-        (attr_type == 'search' and len(attr_dict) == 0):
+       (attr_type == 'search' and len(attr_dict) == 0):
         erase_btn.enabled = 0
 
     enter_btn.x = erase_btn.left - button_spacing - button_width
@@ -211,7 +211,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     comp_button_x = (win_attribute.width - 4*comp_button_width)/2
 
     for value in ['higher', 'exact', 'lower', 'not']:
-        button = RadioButton(attribute)
+        button = RadioButton()
         button.width = comp_button_width
         button.x = comp_button_x
         button.y = value_tf.top - value_tf.height - title_border
@@ -238,8 +238,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         message_y = win_attribute.height - 150
 
         if attr_type == 'search':
-            display_list.append(Label(text=("Search Attributes:"), font=title_tf_font, width=std_tf_width,
-                                   height=std_tf_height, x=message_x, y=message_y, color=title_color))
+            display_list.append(Label(text="Search Attributes:", font=title_tf_font, width=std_tf_width,
+                                      height=std_tf_height, x=message_x, y=message_y, color=title_color))
             message_y += std_tf_height
 
             index = 0
@@ -267,8 +267,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
         # Display new sort attributes on screen
         elif attr_type == 'sort':
-            display_list.append(Label(text=("Sort Attributes:"), font=title_tf_font, width=std_tf_width,
-                                       height=std_tf_height, x=message_x, y=message_y, color=title_color))
+            display_list.append(Label(text="Sort Attributes:", font=title_tf_font, width=std_tf_width,
+                                      height=std_tf_height, x=message_x, y=message_y, color=title_color))
             message_y += std_tf_height
 
             for index, sort_value in enumerate(attr_list):

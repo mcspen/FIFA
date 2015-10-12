@@ -1,7 +1,6 @@
 from GUI import Button, Label, RadioButton, RadioGroup, View, Window
 import json
 import math
-import unicodedata
 from AppConfig import *
 import StartMenu
 import AddAttribute
@@ -93,7 +92,6 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             search_results = db_dict[p_db_radio_group.value][1].search(attr_dict)
             search_results = PlayerDB.PlayerDB(search_results)
             search_results.sort(attr_list, sort_order_radio_group.value)
-            # search_results.print_compare_info()  # num_results)
 
             # Get attributes list and avoid duplicates
             attributes_list = []
@@ -335,8 +333,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     db_msg_width = 70
 
     # Players DB RG
-    p_db_rg_msg =Label(text=("Database:"), font=std_tf_font, width=db_msg_width,
-                     height=std_tf_height, color=title_color)
+    p_db_rg_msg = Label(text="Database:", font=std_tf_font, width=db_msg_width,
+                        height=std_tf_height, color=title_color)
     p_db_rg_msg.x = (win_search.width - 2*db_radio_btn_width - db_radio_btn_space - db_msg_width) / 2
     p_db_rg_msg.y = reset_btn.bottom + db_radio_btn_space
 
@@ -357,8 +355,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     p_db_radio_group.value = settings['p_db_rg']
 
     # Formations DB RG
-    f_db_rg_msg =Label(text=("Database:"), font=std_tf_font, width=db_msg_width,
-                     height=std_tf_height, color=title_color)
+    f_db_rg_msg = Label(text="Database:", font=std_tf_font, width=db_msg_width,
+                        height=std_tf_height, color=title_color)
     f_db_rg_msg.x = (win_search.width - 2*db_radio_btn_width - db_radio_btn_space - db_msg_width) / 2
     f_db_rg_msg.y = reset_btn.bottom + db_radio_btn_space
 
@@ -380,8 +378,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     # Teams DB RG
     teams_db_msg_width = 250
-    t_db_rg_msg =Label(text=("Database: " + db_dict['team_list'][0]), font=std_tf_font, width=teams_db_msg_width,
-                     height=std_tf_height, color=title_color)
+    t_db_rg_msg = Label(text=("Database: " + db_dict['team_list'][0]), font=std_tf_font, width=teams_db_msg_width,
+                        height=std_tf_height, color=title_color)
     t_db_rg_msg.x = (win_search.width - teams_db_msg_width) / 2
     t_db_rg_msg.y = reset_btn.bottom + db_radio_btn_space
 
@@ -398,8 +396,6 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     else:
         print "Error: Invalid mode."
 
-    rg_1_bottom = player_db_radio_btn.bottom
-
     # ========== Sort Order Radio Buttons ==========
     def get_attribute_sort_order_rg():
         settings['order_rg'] = sort_order_radio_group.value
@@ -411,8 +407,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     asc_msg_width = 80
     radio_btn_space = 5
 
-    asc_desc_rg_msg =Label(text=("Sort Order:"), font=std_tf_font, width=asc_msg_width, height=std_tf_height,
-                           color=title_color)
+    asc_desc_rg_msg = Label(text="Sort Order:", font=std_tf_font, width=asc_msg_width, height=std_tf_height,
+                            color=title_color)
     asc_desc_rg_msg.x = (win_search.width - 2*asc_desc_radio_btn_width - radio_btn_space - asc_msg_width) / 2
     asc_desc_rg_msg.y = formation_db_radio_btn.bottom + radio_btn_space
 
@@ -443,8 +439,9 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     del settings['messages']['sort'][:]
 
     if len(attr_dict) > 0:
-        settings['messages']['search'].append(Label(text=("Search Attributes:"), font=title_tf_font, width=std_tf_width,
-                               height=std_tf_height, x=attr_msg_offset, y=lowest_msg_l, color=title_color))
+        settings['messages']['search'].append(Label(text="Search Attributes:", font=title_tf_font, width=std_tf_width,
+                                                    height=std_tf_height, x=attr_msg_offset, y=lowest_msg_l,
+                                                    color=title_color))
         lowest_msg_l += std_tf_height
 
         for key, value in attr_dict.iteritems():
@@ -464,14 +461,15 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             settings['messages']['search'].append(attr_label)
 
     if len(attr_list) > 0:
-        settings['messages']['sort'].append(Label(text=("Sort Attributes:"), font=title_tf_font, width=std_tf_width,
-                                   height=std_tf_height, x=teams_btn.right + 3*attr_msg_offset, y=lowest_msg_r,
-                                   color=title_color))
+        settings['messages']['sort'].append(Label(text="Sort Attributes:", font=title_tf_font, width=std_tf_width,
+                                                  height=std_tf_height, x=teams_btn.right + 3*attr_msg_offset,
+                                                  y=lowest_msg_r, color=title_color))
         lowest_msg_r += std_tf_height
 
         for value in attr_list:
-            attr_label = Label(text=(format_attr_name(value)), font=std_tf_font, width=std_tf_width, height=std_tf_height,
-                               x=teams_btn.right + 3*attr_msg_offset, y=lowest_msg_r, color=title_color)
+            attr_label = Label(text=(format_attr_name(value)), font=std_tf_font, width=std_tf_width,
+                               height=std_tf_height, x=teams_btn.right + 3*attr_msg_offset, y=lowest_msg_r,
+                               color=title_color)
             lowest_msg_r += std_tf_height
             settings['messages']['sort'].append(attr_label)
 
@@ -629,7 +627,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
         for info_label in labels:
             player_label = Label(text=info_label, font=std_tf_font_bold, width=win_width-(2*left_border),
-                               height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
+                                 height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
             settings['messages']['results'].append(player_label)
             msg_x += spacing_list[stat_index]
 
@@ -661,8 +659,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
             msg_y += std_tf_height
 
-        for msg in settings['messages']['results']:
-            view.add(msg)
+        for results_msg in settings['messages']['results']:
+            view.add(results_msg)
 
     # ========== Add components to view and add view to window ==========
     view.add(title)

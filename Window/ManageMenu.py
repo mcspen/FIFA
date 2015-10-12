@@ -1,17 +1,16 @@
-from GUI import Button, Label, View, Window
+from GUI import Button,Label, View, Window
 
 from AppConfig import *
 import StartMenu
 import PickFile
+import EnterText
 import json
 
 
 def open_manage_menu(window_x, window_y, db_dict, settings=None):
 
     general_display_list = []
-    players_list_display_list = []
-    formations_list_display_list = []
-    teams_list_display_list = []
+    lists_display_list = []
     databases_display_list = []
     defaults_display_list = []
 
@@ -21,7 +20,7 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
 
     if settings is None:
         settings = {
-            'mode': 'players_list',
+            'mode': 'lists',
             'file_changes': False
         }
 
@@ -47,25 +46,25 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
     title.font = title_font
     title.width = title_width
     title.height = title_height
-    title.x = (win_width - title_width) / 2
+    title.x = (win_manage.width - title_width) / 2
     title.y = top_border
     title.color = title_color
     title.just = 'center'
     general_display_list.append(title)
+
+    # Subtitle
+    subtitle = Label(font=title_font_2, width=title_width, height=title_height,
+                     x=(win_manage.width - title_width) / 2,
+                     color=title_color, just = 'center')
+    general_display_list.append(subtitle)
 
     # ========== Helper Functions ==========
     def remove_old_display():
         """
         Remove previous displayed items
         """
-        if settings['mode'] == 'players_list':
-            for display_item in players_list_display_list:
-                view.remove(display_item)
-        elif settings['mode'] == 'formations_list':
-            for display_item in formations_list_display_list:
-                view.remove(display_item)
-        elif settings['mode'] == 'teams_list':
-            for display_item in teams_list_display_list:
+        if settings['mode'] == 'lists':
+            for display_item in lists_display_list:
                 view.remove(display_item)
         elif settings['mode'] == 'databases':
             for display_item in databases_display_list:
@@ -80,67 +79,34 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
         """
         Remove previous displayed items
         """
-        if settings['mode'] == 'players_list':
-            for display_item in players_list_display_list:
-                view.add(display_item)
-        elif settings['mode'] == 'formations_list':
-            for display_item in formations_list_display_list:
-                view.add(display_item)
-        elif settings['mode'] == 'teams_list':
-            for display_item in teams_list_display_list:
+        if settings['mode'] == 'lists':
+            subtitle.text = "Current Lists"
+            for display_item in lists_display_list:
                 view.add(display_item)
         elif settings['mode'] == 'databases':
+            subtitle.text = "Current Databases"
             for display_item in databases_display_list:
                 view.add(display_item)
         elif settings['mode'] == 'defaults':
+            subtitle.text = "Default Files"
             for display_item in defaults_display_list:
                 view.add(display_item)
         else:
             print "Settings mode is invalid."
 
     # ========== Button Toolbar Functions ==========
-    def players_list_btn_func():
+    def lists_btn_func():
         # Remove previous displayed items
         remove_old_display()
 
-        settings['mode'] = 'players_list'
+        settings['mode'] = 'lists'
 
         # Add new display items
         add_new_display()
 
         for btn in button_list:
             btn.enabled = 1
-        players_list_btn.enabled = 0
-
-        win_manage.become_target()
-
-    def formations_list_btn_func():
-        # Remove previous displayed items
-        remove_old_display()
-
-        settings['mode'] = 'formations_list'
-
-        # Add new display items
-        add_new_display()
-
-        for btn in button_list:
-            btn.enabled = 1
-        formations_list_btn.enabled = 0
-
-        win_manage.become_target()
-
-    def teams_list_btn_func():
-        # Remove previous displayed items
-        remove_old_display()
-
-        settings['mode'] = 'teams_list'
-
-        # Add new display items
-        add_new_display()
-
-        for btn in button_list:
-            btn.enabled = 1
-        teams_list_btn.enabled = 0
+        lists_btn.enabled = 0
 
         win_manage.become_target()
 
@@ -160,6 +126,9 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
         win_manage.become_target()
 
     def defaults_btn_func():
+        # Remove previous displayed items
+        remove_old_display()
+
         settings['mode'] = 'defaults'
 
         # Add new display items
@@ -175,41 +144,72 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
         StartMenu.open_start_menu(win_manage.x, win_manage.y, db_dict)
         win_manage.hide()
 
+    # ========== Current Lists Button Functions ==========
+    def create_list_btn_func():
+        settings['file_type'] = 'create_list'
+        #win_manage.hide()
+
+    def player_list_current_btn_func():
+        settings['file_type'] = 'current_player_list'
+        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
+        win_manage.hide()
+
+    def formation_list_current_btn_func():
+        settings['file_type'] = 'current_formation_list'
+        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
+        win_manage.hide()
+
+    def team_list_current_btn_func():
+        settings['file_type'] = 'current_team_list'
+        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
+        win_manage.hide()
+
+    # ========== Current Databases Button Functions ==========
+    def download_player_db_btn_func():
+        settings['file_type'] = 'download_player_db'
+        EnterText.open_enter_text_window(win_manage.x, win_manage.y, db_dict, settings, 'download')
+        win_manage.hide()
+
+    def player_db_current_btn_func():
+        settings['file_type'] = 'current_player_db'
+        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
+        win_manage.hide()
+
+    def formation_db_current_btn_func():
+        settings['file_type'] = 'current_formation_db'
+        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
+        win_manage.hide()
+
     # ========== Defaults Button Functions ==========
-    def players_db_default_btn_func():
+    def player_db_default_btn_func():
         settings['file_type'] = 'default_player_db'
         PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
         win_manage.hide()
 
-    def players_list_default_btn_func():
+    def player_list_default_btn_func():
         settings['file_type'] = 'default_player_list'
         PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
         win_manage.hide()
 
-    def formations_db_default_btn_func():
+    def formation_db_default_btn_func():
         settings['file_type'] = 'default_formation_db'
         PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
         win_manage.hide()
 
-    def formations_list_default_btn_func():
+    def formation_list_default_btn_func():
         settings['file_type'] = 'default_formation_list'
         PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
         win_manage.hide()
 
-    def teams_list_default_btn_func():
+    def team_list_default_btn_func():
         settings['file_type'] = 'default_team_list'
         PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
         win_manage.hide()
 
     # ========== Button Toolbar Declarations ==========
-    players_list_btn = Button("Players List", height=small_button_height, width=small_button_width,
-                              font=small_button_font, action=players_list_btn_func, style='default',
-                              color=small_button_color, just='center')
-    formations_list_btn = Button("Formations List", height=small_button_height, width=small_button_width,
-                                 font=small_button_font, action=formations_list_btn_func, style='default',
-                                 color=small_button_color, just='center')
-    teams_list_btn = Button("Teams List", height=small_button_height, width=small_button_width, font=small_button_font,
-                            action=teams_list_btn_func, style='default', color=small_button_color, just='center')
+    lists_btn = Button("Lists", height=small_button_height, width=small_button_width,
+                       font=small_button_font, action=lists_btn_func, style='default',
+                       color=small_button_color, just='center')
     databases_btn = Button("Databases", height=small_button_height, width=small_button_width, font=small_button_font,
                            action=databases_btn_func, style='default', color=small_button_color, just='center')
     defaults_btn = Button("Defaults", height=small_button_height, width=small_button_width, font=small_button_font,
@@ -217,9 +217,7 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
     back_btn = Button("Back", height=small_button_height, width=small_button_width, font=small_button_font,
                       action=back_btn_func, style='default', color=small_button_color, just='center')
 
-    button_list = [players_list_btn,
-                   formations_list_btn,
-                   teams_list_btn,
+    button_list = [lists_btn,
                    databases_btn,
                    defaults_btn,
                    back_btn]
@@ -227,104 +225,192 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
     for button in button_list:
         general_display_list.append(button)
 
-    # ========== Defaults Button Declarations ==========
-    players_db_default_btn = Button(default_databases['player_db'], height=small_button_height, width=file_btn_width,
-                                    font=small_button_font, action=players_db_default_btn_func, style='default',
-                                    color=small_button_color, just='center')
-    defaults_display_list.append(players_db_default_btn)
-    players_list_default_btn = Button(default_databases['player_list'], height=small_button_height,
-                                      width=file_btn_width, font=small_button_font,
-                                      action=players_list_default_btn_func,
-                                      style='default', color=small_button_color, just='center')
-    defaults_display_list.append(players_list_default_btn)
-    formations_db_default_btn = Button(default_databases['formation_db'], height=small_button_height,
-                                       width=file_btn_width, font=small_button_font,
-                                       action=formations_db_default_btn_func,
-                                       style='default', color=small_button_color, just='center')
-    defaults_display_list.append(formations_db_default_btn)
-    formations_list_default_btn = Button(default_databases['formation_list'], height=small_button_height,
-                                         width=file_btn_width, font=small_button_font,
-                                         action=formations_list_default_btn_func,
-                                         style='default', color=small_button_color, just='center')
-    defaults_display_list.append(formations_list_default_btn)
-    teams_list_default_btn = Button(default_databases['team_list'], height=small_button_height, width=file_btn_width,
-                                    font=small_button_font, action=teams_list_default_btn_func,
+    # ========== Current Lists Button Declarations ==========
+    create_list_btn = Button("Create New List", height=small_button_height,
+                             width=small_button_width, font=small_button_font,
+                             action=create_list_btn_func,
+                             style='default', color=small_button_color, just='center')
+    lists_display_list.append(create_list_btn)
+    player_list_current_btn = Button(db_dict['player_list'][0], height=small_button_height,
+                                     width=file_btn_width, font=small_button_font,
+                                     action=player_list_current_btn_func,
+                                     style='default', color=small_button_color, just='center')
+    lists_display_list.append(player_list_current_btn)
+    formation_list_current_btn = Button(db_dict['formation_list'][0], height=small_button_height,
+                                        width=file_btn_width, font=small_button_font,
+                                        action=formation_list_current_btn_func,
+                                        style='default', color=small_button_color, just='center')
+    lists_display_list.append(formation_list_current_btn)
+    team_list_current_btn = Button(db_dict['team_list'][0], height=small_button_height,
+                                   width=file_btn_width, font=small_button_font,
+                                   action=team_list_current_btn_func,
+                                   style='default', color=small_button_color, just='center')
+    lists_display_list.append(team_list_current_btn)
+
+    # ========== Current Databases Button Declarations ==========
+    download_player_db_btn = Button("Download Player DB", height=small_button_height,
+                                    width=small_button_width, font=small_button_font,
+                                    action=download_player_db_btn_func,
                                     style='default', color=small_button_color, just='center')
-    defaults_display_list.append(teams_list_default_btn)
+    databases_display_list.append(download_player_db_btn)
+    player_db_current_btn = Button(db_dict['player_db'][0], height=small_button_height,
+                                   width=file_btn_width, font=small_button_font,
+                                   action=player_db_current_btn_func,
+                                   style='default', color=small_button_color, just='center')
+    databases_display_list.append(player_db_current_btn)
+    formation_db_current_btn = Button(db_dict['formation_db'][0], height=small_button_height,
+                                      width=file_btn_width, font=small_button_font,
+                                      action=formation_db_current_btn_func,
+                                      style='default', color=small_button_color, just='center')
+    databases_display_list.append(formation_db_current_btn)
+
+    # ========== Defaults Button Declarations ==========
+    player_db_default_btn = Button(default_databases['player_db'], height=small_button_height, width=file_btn_width,
+                                   font=small_button_font, action=player_db_default_btn_func, style='default',
+                                   color=small_button_color, just='center')
+    defaults_display_list.append(player_db_default_btn)
+    player_list_default_btn = Button(default_databases['player_list'], height=small_button_height,
+                                     width=file_btn_width, font=small_button_font,
+                                     action=player_list_default_btn_func,
+                                     style='default', color=small_button_color, just='center')
+    defaults_display_list.append(player_list_default_btn)
+    formation_db_default_btn = Button(default_databases['formation_db'], height=small_button_height,
+                                      width=file_btn_width, font=small_button_font,
+                                      action=formation_db_default_btn_func,
+                                      style='default', color=small_button_color, just='center')
+    defaults_display_list.append(formation_db_default_btn)
+    formation_list_default_btn = Button(default_databases['formation_list'], height=small_button_height,
+                                        width=file_btn_width, font=small_button_font,
+                                        action=formation_list_default_btn_func,
+                                        style='default', color=small_button_color, just='center')
+    defaults_display_list.append(formation_list_default_btn)
+    team_list_default_btn = Button(default_databases['team_list'], height=small_button_height, width=file_btn_width,
+                                   font=small_button_font, action=team_list_default_btn_func,
+                                   style='default', color=small_button_color, just='center')
+    defaults_display_list.append(team_list_default_btn)
 
     # ========== Toolbar Buttons ==========
-    players_list_btn.x = (win_width - len(button_list)*small_button_width
-                          - (len(button_list)-1)*small_button_spacing) / 2
-    players_list_btn.y = title.bottom + small_button_top_spacing
-    if settings['mode'] == 'players_list':
-        players_list_btn.enabled = 0
+    lists_btn.x = (win_width - len(button_list)*small_button_width - (len(button_list)-1)*small_button_spacing) / 2
+    lists_btn.y = title.bottom + small_button_top_spacing
+    if settings['mode'] == 'lists':
+        lists_btn.enabled = 0
 
-    formations_list_btn.x = players_list_btn.right + small_button_spacing
-    formations_list_btn.y = players_list_btn.top
-    if settings['mode'] == 'formations_list':
-        formations_list_btn.enabled = 0
-
-    teams_list_btn.x = formations_list_btn.right + small_button_spacing
-    teams_list_btn.y = players_list_btn.top
-    if settings['mode'] == 'teams_list':
-        teams_list_btn.enabled = 0
-
-    databases_btn.x = teams_list_btn.right + small_button_spacing
-    databases_btn.y = players_list_btn.top
+    databases_btn.x = lists_btn.right + small_button_spacing
+    databases_btn.y = lists_btn.top
     if settings['mode'] == 'databases':
         databases_btn.enabled = 0
 
     defaults_btn.x = databases_btn.right + small_button_spacing
-    defaults_btn.y = players_list_btn.top
+    defaults_btn.y = lists_btn.top
     if settings['mode'] == 'defaults':
         defaults_btn.enabled = 0
 
     back_btn.x = defaults_btn.right + small_button_spacing
-    back_btn.y = players_list_btn.top
+    back_btn.y = lists_btn.top
+
+    subtitle.y = lists_btn.bottom + top_border
+
+    # ========== Lists Buttons ========
+    lists_file_label_width = 200
+    lists_buttons_x = win_width - file_btn_width - (win_width - file_btn_width - lists_file_label_width) / 2
+
+    create_list_btn.x = (win_manage.width - button_width) / 2
+    create_list_btn.y = subtitle.bottom + title_border
+
+    player_list_current_btn.x = lists_buttons_x
+    player_list_current_btn.y = create_list_btn.bottom + top_border
+
+    formation_list_current_btn.x = lists_buttons_x
+    formation_list_current_btn.y = player_list_current_btn.bottom + title_border
+
+    team_list_current_btn.x = lists_buttons_x
+    team_list_current_btn.y = formation_list_current_btn.bottom + title_border
+
+    # ========== Databases Buttons ========
+    dbs_file_label_width = 200
+    dbs_buttons_x = win_width - file_btn_width - (win_width - file_btn_width - dbs_file_label_width) / 2
+
+    download_player_db_btn.x = (win_manage.width - button_width) / 2
+    download_player_db_btn.y = subtitle.bottom + title_border
+
+    player_db_current_btn.x = dbs_buttons_x
+    player_db_current_btn.y = download_player_db_btn.bottom + top_border
+
+    formation_db_current_btn.x = dbs_buttons_x
+    formation_db_current_btn.y = player_db_current_btn.bottom + title_border
 
     # ========== Defaults Buttons ==========
-    default_file_label_width = 240
+    default_file_label_width = 200
     default_buttons_x = win_width - file_btn_width - (win_width - file_btn_width - default_file_label_width) / 2
 
-    players_db_default_btn.x = default_buttons_x
-    players_db_default_btn.y = players_list_btn.bottom + top_border*2
+    player_db_default_btn.x = default_buttons_x
+    player_db_default_btn.y = subtitle.bottom + title_border
 
-    players_list_default_btn.x = default_buttons_x
-    players_list_default_btn.y = players_db_default_btn.bottom + title_border
+    player_list_default_btn.x = default_buttons_x
+    player_list_default_btn.y = player_db_default_btn.bottom + title_border
 
-    formations_db_default_btn.x = default_buttons_x
-    formations_db_default_btn.y = players_list_default_btn.bottom + title_border
+    formation_db_default_btn.x = default_buttons_x
+    formation_db_default_btn.y = player_list_default_btn.bottom + title_border*2
 
-    formations_list_default_btn.x = default_buttons_x
-    formations_list_default_btn.y = formations_db_default_btn.bottom + title_border
+    formation_list_default_btn.x = default_buttons_x
+    formation_list_default_btn.y = formation_db_default_btn.bottom + title_border
 
-    teams_list_default_btn.x = default_buttons_x
-    teams_list_default_btn.y = formations_list_default_btn.bottom + title_border
+    team_list_default_btn.x = default_buttons_x
+    team_list_default_btn.y = formation_list_default_btn.bottom + title_border*2
+
+    # ========== Lists Labels ==========
+    player_list_current_text = "Player List:"
+    lists_display_list.append(Label(text=player_list_current_text, font=title_tf_font,
+                                    width=lists_file_label_width, height=std_tf_height,
+                                    x=player_list_current_btn.left - lists_file_label_width,
+                                    y=player_list_current_btn.top + 6, color=title_color))
+    formation_list_current_text = "Formation List:"
+    lists_display_list.append(Label(text=formation_list_current_text, font=title_tf_font,
+                                    width=lists_file_label_width, height=std_tf_height,
+                                    x=formation_list_current_btn.left - lists_file_label_width,
+                                    y=formation_list_current_btn.top + 6, color=title_color))
+    team_list_current_text = "Team List:"
+    lists_display_list.append(Label(text=team_list_current_text, font=title_tf_font,
+                                    width=lists_file_label_width, height=std_tf_height,
+                                    x=team_list_current_btn.left - lists_file_label_width,
+                                    y=team_list_current_btn.top + 6, color=title_color))
+
+    # ========== Databases Labels ==========
+    player_db_current_text = "Player Database:"
+    databases_display_list.append(Label(text=player_db_current_text, font=title_tf_font,
+                                        width=dbs_file_label_width, height=std_tf_height,
+                                        x=player_list_current_btn.left - lists_file_label_width,
+                                        y=player_list_current_btn.top + 6, color=title_color))
+    formation_db_current_text = "Formation Database:"
+    databases_display_list.append(Label(text=formation_db_current_text, font=title_tf_font,
+                                        width=dbs_file_label_width, height=std_tf_height,
+                                        x=formation_list_current_btn.left - lists_file_label_width,
+                                        y=formation_list_current_btn.top + 6, color=title_color))
 
     # ========== Default File Labels ==========
-    player_db_default_text = "Default Player Database:"
+    player_db_default_text = "Player Database:"
     defaults_display_list.append(Label(text=player_db_default_text, font=title_tf_font, width=default_file_label_width,
-                                       height=std_tf_height, x=players_db_default_btn.left - default_file_label_width,
-                                       y=players_db_default_btn.top + 6, color=title_color))
-    player_list_default_text = "Default Player List:"
+                                       height=std_tf_height, x=player_db_default_btn.left - default_file_label_width,
+                                       y=player_db_default_btn.top + 6, color=title_color))
+    player_list_default_text = "Player List:"
     defaults_display_list.append(Label(text=player_list_default_text, font=title_tf_font,
                                        width=default_file_label_width, height=std_tf_height,
-                                       x=players_list_default_btn.left - default_file_label_width,
-                                       y=players_list_default_btn.top + 6, color=title_color))
-    formation_db_default_text = "Default Formation Database:"
+                                       x=player_list_default_btn.left - default_file_label_width,
+                                       y=player_list_default_btn.top + 6, color=title_color))
+    formation_db_default_text = "Formation Database:"
     defaults_display_list.append(Label(text=formation_db_default_text, font=title_tf_font,
                                        width=default_file_label_width, height=std_tf_height,
-                                       x=formations_db_default_btn.left - default_file_label_width,
-                                       y=formations_db_default_btn.top + 6, color=title_color))
-    formation_list_default_text = "Default Formation List:"
+                                       x=formation_db_default_btn.left - default_file_label_width,
+                                       y=formation_db_default_btn.top + 6, color=title_color))
+    formation_list_default_text = "Formation List:"
     defaults_display_list.append(Label(text=formation_list_default_text, font=title_tf_font,
                                        width=default_file_label_width, height=std_tf_height,
-                                       x=formations_list_default_btn.left - default_file_label_width,
-                                       y=formations_list_default_btn.top + 6, color=title_color))
-    team_list_default_text = "Default Team List:"
+                                       x=formation_list_default_btn.left - default_file_label_width,
+                                       y=formation_list_default_btn.top + 6, color=title_color))
+    team_list_default_text = "Team List:"
     defaults_display_list.append(Label(text=team_list_default_text, font=title_tf_font, width=default_file_label_width,
-                                       height=std_tf_height, x=teams_list_default_btn.left - default_file_label_width,
-                                       y=teams_list_default_btn.top + 6, color=title_color))
+                                       height=std_tf_height, x=team_list_default_btn.left - default_file_label_width,
+                                       y=team_list_default_btn.top + 6, color=title_color))
 
     # ========== Add components to view and add view to window ==========
     for item in general_display_list:
