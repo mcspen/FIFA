@@ -27,19 +27,19 @@ if __name__ == '__main__':
     team_list = TeamDB()
 
     temp_time = time.time()
-    player_db.load(default_dbs['player_db'])
-    player_list.load(default_dbs['player_list'])
-    formation_db.load(default_dbs['formation_db'])
-    formation_list.load(default_dbs['formation_list'])
+    player_db.load(default_dbs['player_db'], 'db')
+    player_list.load(default_dbs['player_list'], 'list')
+    formation_db.load(default_dbs['formation_db'], 'db')
+    formation_list.load(default_dbs['formation_list'], 'list')
     team_list.load(default_dbs['team_list'])
     print "Time to load DBs: %f" % (time.time()-temp_time)
 
     db_dict = {
-        'player_db': (default_dbs['player_db'][8:], player_db),
-        'player_list': (default_dbs['player_list'][8:], player_list),
-        'formation_db': (default_dbs['formation_db'][8:], formation_db),
-        'formation_list': (default_dbs['formation_list'][8:], formation_list),
-        'team_list': (default_dbs['team_list'][8:], team_list)
+        'player_db': (default_dbs['player_db'], player_db),
+        'player_list': (default_dbs['player_list'], player_list),
+        'formation_db': (default_dbs['formation_db'], formation_db),
+        'formation_list': (default_dbs['formation_list'], formation_list),
+        'team_list': (default_dbs['team_list'], team_list)
     }
 
     FifaApp.start_app(db_dict)
@@ -56,16 +56,16 @@ if __name__ == '__main__':
 
     # Save Database to File
     # temp_time = time.time()
-    # player_db.save('play_db_FIFA 16 - 5')
+    # player_db.save('FIFA 16 - 5', 'db')
     # print "Time to save DB: %f" % (time.time()-temp_time)
 
     # Load Player Database from File
     # temp_time = time.time()
-    # player_db.load('play_db_FIFA 16 - 5')
+    # player_db.load('FIFA 16 - 5', 'db')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
     """teams = TeamDB()
-    teams.load('team_db_2015-10-08')
+    teams.load('2015-10-08', 'db')
     for index, team in enumerate(teams.db):
         print '============ TEAM %d ==============' % index
         Team(team).print_team_strengths()
@@ -76,11 +76,11 @@ if __name__ == '__main__':
     team.print_team_strengths()"""
 
     """my_players = PlayerDB()
-    my_players.load('play_lt_my_players_16')"""
+    my_players.load('my_players_16', 'list')"""
 
     """# Load Formation Database from file
     formation_db = FormationDB()
-    formation_db.load('form_db_All Formations')"""
+    formation_db.load('All Formations', 'db')"""
 
     """silver_players = PlayerDB(my_players.search({'quality': ('silver', 'exact')}))
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
     ultimate_team = Team()
     teams = TeamDB(ultimate_team.create_team_ultimate(gold_players, formation_db, 'multi'))
-    teams.save('team_db_2015-10-09')"""
+    teams.save('2015-10-09')"""
 
     """americans = PlayerDB(player_db.search({'nation': ('United States',)}))"""
 
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     """my_players.console_search(player_db)
     my_players.sort(['rating'])
-    my_players.save('play_lt_my_players_16')"""
+    my_players.save('my_players_16', 'list')"""
 
     """my_team = Team()
     my_formations = FormationDB(formation_db.search({'num_defenders': 4}, 'lower'))
@@ -120,9 +120,9 @@ if __name__ == '__main__':
     """my_teams = TeamDB()
 
     my_teams.__init__(team_list)
-    my_teams.save('team_db_2015-09-23')"""
+    my_teams.save('2015-09-23')"""
 
-    """my_teams.load('team_db_2015-09-11')
+    """my_teams.load('2015-09-11')
     my_teams.print_db(20)
 
     for team in my_teams.db:
@@ -140,7 +140,7 @@ if __name__ == '__main__':
     print traits"""
 
     """team = TeamDB()
-    team.load('team_db_2015-10-07')
+    team.load('2015-10-07')
     team.print_db()
     for t in team.db:
         Team(t).print_chemistry_stats()"""
@@ -155,4 +155,4 @@ if __name__ == '__main__':
 
     my_teams.add_teams(team_list)
 
-    my_teams.save('team_db_2015-09-02')"""
+    my_teams.save('2015-09-02')"""

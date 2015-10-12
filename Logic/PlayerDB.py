@@ -1,5 +1,6 @@
 import copy
 import json
+from os.path import isfile
 import unicodedata
 import requests
 from Logic.Player import Player
@@ -67,37 +68,69 @@ class PlayerDB:
 
         return self.db
 
-    def save(self, db_name):
+    def save(self, file_name, file_type):
         """
         Save the database to the specified file name and overwrite the data
-        Input: The name of the database to save
+        Input: The name of the database to save, and the type of the file ('db' or 'list')
         Output: True  -  the database is saved in the file
         """
 
-        # Create filename from database name
-        filename = 'JSONs/' + db_name + '.json'
+        if file_type == 'db':
+            # Create filename from file name and file type
+            file_name = 'play_db_' + file_name
 
-        with open(filename, 'w') as f:
-            json.dump(self.db, f)
-            f.close()
+        elif file_type == 'list':
+            # Create filename from file name and file type
+            file_name = 'play_lt_' + file_name
+
+        else:
+            print "Invalid file type. Must be 'db' or 'list'."
+            return False
+
+        file_path = 'JSONs/' + file_name + '.json'
+
+        if not isfile(file_path):
+            with open(file_path, 'w') as f:
+                json.dump(self.db, f)
+                f.close()
+
+        else:
+            print "File already exists."
+            return False
 
         return True
 
-    def load(self, db_name):
+    def load(self, file_name, file_type):
         """
         Load the database from the specified file name
-        Input: The name of the database to load
+        Input: The name of the database to load, and the type of the file ('db' or 'list')
         Output: True  -  the database is loaded into the PlayerDB object
         """
 
         del self.db[:]  # Empty existing DB list
 
-        # Create filename from database name
-        filename = 'JSONs/' + db_name + '.json'
+        if file_type == 'db':
+            # Create filename from file name and file type
+            file_name = 'play_db_' + file_name
 
-        with open(filename, 'r') as f:
-            self.db = json.load(f)
-            f.close()
+        elif file_type == 'list':
+            # Create filename from file name and file type
+            file_name = 'play_lt_' + file_name
+
+        else:
+            print "Invalid file type. Must be 'db' or 'list'."
+            return False
+
+        file_path = 'JSONs/' + file_name + '.json'
+
+        if isfile(file_path):
+            with open(file_path, 'r') as f:
+                self.db = json.load(f)
+                f.close()
+
+        else:
+            print "File does not exist."
+            return False
 
         return True
 
@@ -394,7 +427,7 @@ class PlayerDB:
                 player_name = unicodedata.normalize('NFKD', player['commonName']).encode('ascii', 'ignore')
             else:
                 player_name = unicodedata.normalize('NFKD', player['firstName']).encode('ascii', 'ignore') + ' ' + \
-                              unicodedata.normalize('NFKD', player['lastName']).encode('ascii', 'ignore')
+                    unicodedata.normalize('NFKD', player['lastName']).encode('ascii', 'ignore')
 
             # Print out name and rating
             print "%s%s%d" % (player_name,
@@ -420,7 +453,7 @@ class PlayerDB:
 
             # Get player's name
             player_name = unicodedata.normalize('NFKD', player['firstName']).encode('ascii', 'ignore') + ' ' + \
-                          unicodedata.normalize('NFKD', player['lastName']).encode('ascii', 'ignore')
+                unicodedata.normalize('NFKD', player['lastName']).encode('ascii', 'ignore')
 
             # If the player has a common name, print it out first
             if len(common_name) > 0:

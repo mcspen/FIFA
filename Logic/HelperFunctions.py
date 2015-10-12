@@ -223,10 +223,10 @@ def save_image(image_url, image_file_name):
     image_file_name = 'Images/temp/' + image_file_name + '.png'
 
     if not os.path.isfile(image_file_name):
-        file = cStringIO.StringIO(urllib2.urlopen(image_url).read())
-        image_info = Image.open(file)
+        image_file = cStringIO.StringIO(urllib2.urlopen(image_url).read())
+        image_info = Image.open(image_file)
         image_info.save(image_file_name)
-        file.close()
+        image_file.close()
 
     return image_file_name
 

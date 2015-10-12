@@ -1,4 +1,4 @@
-from GUI import Button, Label, TextField, View, Window
+from GUI import Button, Label, View, Window
 from AppConfig import *
 import PickFile
 from os import remove

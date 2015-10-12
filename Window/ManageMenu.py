@@ -228,26 +228,26 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
         general_display_list.append(button)
 
     # ========== Defaults Button Declarations ==========
-    players_db_default_btn = Button(default_databases['player_db'][8:], height=small_button_height, width=file_btn_width,
+    players_db_default_btn = Button(default_databases['player_db'], height=small_button_height, width=file_btn_width,
                                     font=small_button_font, action=players_db_default_btn_func, style='default',
                                     color=small_button_color, just='center')
     defaults_display_list.append(players_db_default_btn)
-    players_list_default_btn = Button(default_databases['player_list'][8:], height=small_button_height,
+    players_list_default_btn = Button(default_databases['player_list'], height=small_button_height,
                                       width=file_btn_width, font=small_button_font,
                                       action=players_list_default_btn_func,
                                       style='default', color=small_button_color, just='center')
     defaults_display_list.append(players_list_default_btn)
-    formations_db_default_btn = Button(default_databases['formation_db'][8:], height=small_button_height,
+    formations_db_default_btn = Button(default_databases['formation_db'], height=small_button_height,
                                        width=file_btn_width, font=small_button_font,
                                        action=formations_db_default_btn_func,
                                        style='default', color=small_button_color, just='center')
     defaults_display_list.append(formations_db_default_btn)
-    formations_list_default_btn = Button(default_databases['formation_list'][8:], height=small_button_height,
+    formations_list_default_btn = Button(default_databases['formation_list'], height=small_button_height,
                                          width=file_btn_width, font=small_button_font,
                                          action=formations_list_default_btn_func,
                                          style='default', color=small_button_color, just='center')
     defaults_display_list.append(formations_list_default_btn)
-    teams_list_default_btn = Button(default_databases['team_list'][8:], height=small_button_height, width=file_btn_width,
+    teams_list_default_btn = Button(default_databases['team_list'], height=small_button_height, width=file_btn_width,
                                     font=small_button_font, action=teams_list_default_btn_func,
                                     style='default', color=small_button_color, just='center')
     defaults_display_list.append(teams_list_default_btn)

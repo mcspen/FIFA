@@ -100,7 +100,7 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
                     config_file.close()
 
                 # Assign new file name to config
-                configs['default_databases'][file_type[8:]] = file_prefix + file_name
+                configs['default_databases'][file_type[8:]] = file_name
 
                 # Save configs
                 with open('configs.json', 'w') as config_file:
@@ -109,6 +109,7 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
 
             # Load db to db_dict
             elif file_type[:7] == 'current':
+
                 if file_type[8:12] == 'play':
                     load_db = PlayerDB()
                 elif file_type[8:12] == 'form':
@@ -119,8 +120,15 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
                     load_db = PlayerDB()
                     print "File type is invalid."
 
+                if file_type[-2:] == 'db':
+                    load_file_type = 'db'
+                elif file_type[-4:] == 'list':
+                    load_file_type = 'list'
+                else:
+                    load_file_type = 'Invalid'
+
                 # Load db
-                load_db.load(file_prefix + file_name)
+                load_db.load(file_name, load_file_type)
 
                 # Assign db to db_dict
                 db_dict[file_type[8:]] = (file_name, load_db)

@@ -1,5 +1,6 @@
 import copy
 import json
+from os.path import isfile
 import sys
 
 
@@ -40,23 +41,28 @@ class TeamDB:
         for team in team_list:
             self.db.append(copy.deepcopy(team.__dict__))
 
-    def save(self, db_name):
+    def save(self, file_name):
         """
         Save the database to the specified file name and overwrite the data
         Input: The name of the database to save
         Output: True  -  the database is saved in the file
         """
 
-        # Create filename from database name
-        filename = 'JSONs/' + db_name + '.json'
+        # Create filename from file name
+        file_path = 'JSONs/team_lt_' + file_name + '.json'
 
-        with open(filename, 'w') as f:
-            json.dump(self.db, f)
-            f.close()
+        if not isfile(file_path):
+            with open(file_path, 'w') as f:
+                json.dump(self.db, f)
+                f.close()
+
+        else:
+            print "File already exists."
+            return False
 
         return True
 
-    def load(self, db_name):
+    def load(self, file_name):
         """
         Load the database from the specified file name
         Input: The name of the database to load
@@ -66,11 +72,16 @@ class TeamDB:
         del self.db[:]  # Empty existing DB list
 
         # Create filename from database name
-        filename = 'JSONs/' + db_name + '.json'
+        file_path = 'JSONs/team_lt_' + file_name + '.json'
 
-        with open(filename, 'r') as f:
-            self.db = json.load(f)
-            f.close()
+        if isfile(file_path):
+            with open(file_path, 'r') as f:
+                self.db = json.load(f)
+                f.close()
+
+        else:
+            print "File does not exist."
+            return False
 
         return True
 
