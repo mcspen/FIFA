@@ -59,7 +59,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
             db_dict['player_list'][1].db.remove(player)
             # Save
             db_dict['player_list'][1].sort(['rating'])
-            db_dict['player_list'][1].save(get_file_prefix('current_player_list') + db_dict['player_list'][0])
+            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
 
             # Switch button title
             add_player_btn.title = "Add Player to List"
@@ -71,7 +71,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
             db_dict['player_list'][1].db.append(player)
             # Save
             db_dict['player_list'][1].sort(['rating'])
-            db_dict['player_list'][1].save(get_file_prefix('current_player_list') + db_dict['player_list'][0])
+            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
 
             # Switch button title
             add_player_btn.title = "Remove Player from List"

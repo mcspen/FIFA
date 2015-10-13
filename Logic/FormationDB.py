@@ -31,7 +31,7 @@ class FormationDB:
 
         self.db.append(copy.deepcopy(formation.__dict__))
 
-    def save(self, file_name, file_type):
+    def save(self, file_name, file_type, overwrite=False):
         """
         Save the database to the specified file name and overwrite the data
         Input: The name of the database to save, and the type of the file ('db' or 'list')
@@ -52,7 +52,7 @@ class FormationDB:
 
         file_path = 'JSONs/' + file_name + '.json'
 
-        if not isfile(file_path):
+        if (not isfile(file_path)) or overwrite:
             with open(file_path, 'w') as f:
                 json.dump(self.db, f)
                 f.close()

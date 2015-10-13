@@ -497,7 +497,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             # Sort
             db_dict['player_list'][1].sort(['rating'])
             # Save
-            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list')
+            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
 
             # Change button title and action
             add_to_list_btn.title = "Remove Added Players"
@@ -514,7 +514,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             # Sort
             db_dict['player_list'][1].sort(['rating'])
             # Save
-            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list')
+            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
 
             # Change button title and action
             add_to_list_btn.title = "Add Players to List"

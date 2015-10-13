@@ -40,7 +40,7 @@ class TeamDB:
         for team in team_list:
             self.db.append(copy.deepcopy(team.__dict__))
 
-    def save(self, file_name):
+    def save(self, file_name, overwrite=False):
         """
         Save the database to the specified file name and overwrite the data
         Input: The name of the database to save
@@ -50,7 +50,7 @@ class TeamDB:
         # Create filename from file name
         file_path = 'JSONs/team_lt_' + file_name + '.json'
 
-        if not isfile(file_path):
+        if (not isfile(file_path)) or overwrite:
             with open(file_path, 'w') as f:
                 json.dump(self.db, f)
                 f.close()
