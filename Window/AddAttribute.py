@@ -1,6 +1,7 @@
 from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
 from AppConfig import *
 import SearchMenu
+import EditMenu
 from Logic.HelperFunctions import format_attr_name
 import json
 
@@ -156,8 +157,13 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         erase_btn.enabled = 0
 
     def back_btn_func():
-        SearchMenu.open_search_menu(win_attribute.x, win_attribute.y,
-                                    db_dict, attr_dict, attr_list, settings)
+        if settings['window'] == 'search':
+            SearchMenu.open_search_menu(win_attribute.x, win_attribute.y, db_dict, attr_dict, attr_list, settings)
+        elif settings['window'] == 'edit':
+            EditMenu.open_edit_menu(win_attribute.x, win_attribute.y, db_dict, attr_dict, attr_list, settings)
+        else:
+            print "Invalid window setting."
+
         win_attribute.hide()
 
     # ========== Buttons ==========

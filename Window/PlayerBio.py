@@ -38,8 +38,6 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     view = StartWindowImageView(size=win_player_bio.size)
 
     # ========== Player Headshot ==========
-    # player_headshot = Image(file = 'Images/headshot.png')
-
     image_url = player['headshotImgUrl']
     player_id = player['id']
     image_file_name = save_image(image_url, player_id)

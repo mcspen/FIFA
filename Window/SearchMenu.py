@@ -8,7 +8,7 @@ import PlayerBio
 from Logic import PlayerDB
 from Logic import FormationDB
 from Logic import TeamDB
-from Logic.HelperFunctions import format_attr_name, player_info_labels, player_info, get_file_prefix
+from Logic.HelperFunctions import format_attr_name, player_info_labels, player_info
 
 
 def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, settings=None):
@@ -29,6 +29,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     if settings is None:
         settings = {
+            'window': 'search',
             'mode': 'players',
             'p_db_rg': 'player_db',
             'f_db_rg': 'formation_db',
@@ -47,7 +48,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     win_search.position = (window_x, window_y)
     win_search.size = (win_width, win_height)
     win_search.resizable = 0
-    win_search.name = "Search Window"
+    win_search.name = search_title + " Window"
 
     # ========== Window Image View ==========
     class FormationsWindowImageView(View):

@@ -1,4 +1,4 @@
-Team evaluation function!!!!!!!!!!!!!!!!
+Team evaluation function!!!!!!!!!!!!!!!! (evaluates each player and the team on stats and strengths)
 
 Add more options to TeamDB search
 Add team names?
@@ -27,9 +27,6 @@ New player recommendations to improve team
 
 
 Change nation/league/club name comparisons to id comparisons? (avoid mix ups by clubs with same name)
-
-Change save to account for an existing file by adding something to the end of the name
-Change load to check if file exists
 
 Long Shots - 79 Fabio Quagliarella
 Long Shots 2 - 77 Lukas Podolski (93 shot power, 83 long shots, 91 volleys)

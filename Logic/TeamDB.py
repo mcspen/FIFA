@@ -56,8 +56,8 @@ class TeamDB:
                 f.close()
 
         else:
-            print "File already exists."
-            return False
+            print "File already exists. Adding ' - New' to file name"
+            self.save(file_name + ' - New', overwrite)
 
         return True
 

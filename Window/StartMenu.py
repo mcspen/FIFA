@@ -27,12 +27,12 @@ def open_start_menu(window_x, window_y, db_dict):
             image_pos = (players_btn.bottom + top_border, (win_start.width - start_window_image.width)/2)
             src_rect = start_window_image.bounds
             dst_rect = Geometry.offset_rect(src_rect, image_pos)
-            #start_window_image.draw(c, src_rect, dst_rect)
+            start_window_image.draw(c, src_rect, dst_rect)
 
     view = StartWindowImageView(size=win_start.size)
 
     # ========== Start Window Image ==========
-    start_window_image = Image(file='Images/messi.jpg')
+    start_window_image = Image(file='Images/start_menu_image.jpg')
 
     # ========== Title ==========
     title = Label(text=start_title)
@@ -59,38 +59,14 @@ def open_start_menu(window_x, window_y, db_dict):
 
     # ========== Button Functions ==========
     def search_btn_func():
-        """print "Players players players"
-
-        players_btn.enabled = 0
-
-        player_db = PlayerDB()
-        temp_time = time.time()
-        player_db.load('player_db_16')
-        print "Time to load DB: %f" % (time.time()-temp_time)
-
-        players_btn.enabled = 1"""
         win_start.hide()
         SearchMenu.open_search_menu(win_start.x, win_start.y, db_dict)
 
     def players_btn_func():
-        """print "Players players players"
-
-        players_btn.enabled = 0
-
-        player_db = PlayerDB()
-        temp_time = time.time()
-        player_db.load('player_db_16')
-        print "Time to load DB: %f" % (time.time()-temp_time)
-
-        players_btn.enabled = 1"""
         win_start.hide()
         PlayersMenu.open_players_menu(win_start.x, win_start.y, db_dict)
 
     def formations_btn_func():
-        """print "Formations formations formations"
-        view.remove(players_btn)
-        formations_btn.enabled = 0
-        teams_btn.enabled = 1"""
         win_start.hide()
         FormationsMenu.open_formations_menu(win_start.x, win_start.y, db_dict)
 

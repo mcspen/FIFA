@@ -77,17 +77,17 @@ class PlayerDB:
 
         if file_type == 'db':
             # Create filename from file name and file type
-            file_name = 'play_db_' + file_name
+            file_path = 'play_db_' + file_name
 
         elif file_type == 'list':
             # Create filename from file name and file type
-            file_name = 'play_lt_' + file_name
+            file_path = 'play_lt_' + file_name
 
         else:
             print "Invalid file type. Must be 'db' or 'list'."
             return False
 
-        file_path = 'JSONs/' + file_name + '.json'
+        file_path = 'JSONs/' + file_path + '.json'
 
         if (not isfile(file_path)) or overwrite:
             with open(file_path, 'w') as f:
@@ -95,8 +95,8 @@ class PlayerDB:
                 f.close()
 
         else:
-            print "File already exists."
-            return False
+            print "File already exists. Adding ' - New' to file name"
+            self.save(file_name + ' - New', file_type, overwrite)
 
         return True
 
