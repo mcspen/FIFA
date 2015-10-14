@@ -272,10 +272,10 @@ class PlayerDB:
                     return []
 
                 if attribute in ['id', 'baseId']:
-                    if not player[attribute] == str(value):
+                    if not str(player[attribute]) == str(value):
                         match = False
                 elif attribute in ['nationId', 'leagueId', 'clubId']:
-                    if not player[attribute]['id'] == str(value):
+                    if not player[attribute[:-2]]['id'] == value:
                         match = False
                 elif attribute in ['name', 'quality', 'color', 'positionFull', 'itemType', 'modelName', 'playerType',
                                    'commonName', 'firstName', 'lastName', 'position', 'playStyle', 'foot',

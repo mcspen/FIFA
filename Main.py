@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     # Load Player Database from File
     # temp_time = time.time()
-    # player_db.load('FIFA 16 - 5', 'db')
+    # player_db.load('FIFA 16 - Current', 'db')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
     """teams = TeamDB()
@@ -91,8 +91,8 @@ if __name__ == '__main__':
     """gold_players = PlayerDB(my_players.search({'quality': ('gold', 'exact')}))
 
     ultimate_team = Team()
-    teams = TeamDB(ultimate_team.create_team_ultimate(gold_players, formation_db, 'multi'))
-    teams.save('2015-10-09')"""
+    teams = TeamDB(ultimate_team.create_team_ultimate(gold_players, formation_list, 'multi'))
+    teams.save('2015-10-13')"""
 
     """americans = PlayerDB(player_db.search({'nation': ('United States',)}))"""
 
