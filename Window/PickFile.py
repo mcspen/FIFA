@@ -153,11 +153,11 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
 
         def edit_file_func(file_name):
             if file_type[8:12] == 'play':
-                settings['mode'] = 'players'
+                settings['edit_subject'] = 'players'
             elif file_type[8:12] == 'form':
-                settings['mode'] = 'formations'
+                settings['edit_subject'] = 'formations'
             elif file_type[8:12] == 'team':
-                settings['mode'] = 'teams'
+                settings['edit_subject'] = 'teams'
             else:
                 print "Invalid file type."
 
@@ -210,6 +210,8 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
                                       font=small_button_font, action=(edit_file_func, filename), style='default',
                                       x=rename_btn.right + file_btn_spacing, y=file_y,
                                       color=small_button_color, just='center')
+                    if file_type[8:12] != 'play':
+                        edit_btn.enabled = 0
                     display_list.append(edit_btn)
 
                     # Duplicate file button

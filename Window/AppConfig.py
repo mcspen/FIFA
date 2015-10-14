@@ -16,6 +16,7 @@ player_bio_title = 'Player Bio'
 file_title = 'File Menu'
 confirm_prompt_title = 'Are you sure?'
 edit_title = 'Edit'
+create_list_title = 'Create New List'
 
 # Titles on the window bar at the top
 start_win_title = 'FIFA Squad Builder'
@@ -29,6 +30,7 @@ player_bio_win_title = start_win_title + ' - ' + player_bio_title
 file_win_title = start_win_title + ' - ' + file_title
 confirm_prompt_win_title = start_win_title + ' - ' + confirm_prompt_title
 edit_win_title = start_win_title + ' - ' + edit_title
+create_list_win_title = start_win_title + ' - ' + create_list_title
 
 # ========== Colors ==========
 black = GUI.StdColors.black

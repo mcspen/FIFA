@@ -27,7 +27,7 @@ def open_start_menu(window_x, window_y, db_dict):
             image_pos = (players_btn.bottom + top_border, (win_start.width - start_window_image.width)/2)
             src_rect = start_window_image.bounds
             dst_rect = Geometry.offset_rect(src_rect, image_pos)
-            start_window_image.draw(c, src_rect, dst_rect)
+            #start_window_image.draw(c, src_rect, dst_rect)
 
     view = StartWindowImageView(size=win_start.size)
 

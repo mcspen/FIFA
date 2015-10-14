@@ -225,7 +225,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     def player_bio_btn_func(player):
         win_search.hide()
-        PlayerBio.open_player_bio_window(win_search.x, win_search.y, player, db_dict, win_search)
+        PlayerBio.open_player_bio_window(win_search.x, win_search.y, player, win_search,
+                                         db_dict['player_list'][0], db_dict['player_list'][1])
         win_search.become_target()
 
     # ========== Action Buttons ==========
@@ -482,19 +483,20 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     # ========== Previous, Add to List, Next Buttons ==========
     previous_btn = Button("<<< Previous %d" % num_results)
-    add_to_list_btn = Button("Add Players to List")
+    add_to_list_btn = Button()
     next_btn = Button("Next %d >>>" % num_results)
     total_num_results_label = Label()
     pages_label = Label()
 
-    def add_to_list_btn_func(player_list=None, func_type=None):
-        if func_type == 'add':
+    def add_to_list_btn_func(player_list, func_type):
+        if func_type == 'add all':
             added_players = []
             # Add current results to player list
             for player in player_list:
                 if db_dict['player_list'][1].db.count(player) == 0:
                     db_dict['player_list'][1].db.append(player)
                     added_players.append(player)
+
             # Sort
             db_dict['player_list'][1].sort(['rating'])
             # Save
@@ -502,27 +504,60 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
             # Change button title and action
             add_to_list_btn.title = "Remove Added Players"
-            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'remove')
+            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'remove select')
 
             # Keep track of just added players
-            settings['messages']['players_just_added'] = added_players
+            settings['messages']['players_changed'] = added_players
 
-        elif func_type == 'remove':
-            # Remove players just added
-            for player in settings['messages']['players_just_added']:
+        elif func_type == 'remove all':
+            removed_players = []
+            # Remove current results from player list
+            for player in player_list:
                 if db_dict['player_list'][1].db.count(player) > 0:
                     db_dict['player_list'][1].db.remove(player)
+                    removed_players.append(player)
+
             # Sort
             db_dict['player_list'][1].sort(['rating'])
             # Save
             db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
 
             # Change button title and action
-            add_to_list_btn.title = "Add Players to List"
-            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'add')
+            add_to_list_btn.title = "Add Removed Players"
+            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'add select')
 
-            # Delete the just added players list
-            settings['messages'].pop('players_just_added', None)
+            # Keep track of just removed players
+            settings['messages']['players_changed'] = removed_players
+
+        elif func_type == 'add select':
+            # Add select players back to player list
+            for player in settings['messages']['players_changed']:
+                if db_dict['player_list'][1].db.count(player) == 0:
+                    db_dict['player_list'][1].db.append(player)
+
+            # Sort
+            db_dict['player_list'][1].sort(['rating'])
+            # Save
+            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
+
+            # Change button title and action
+            add_to_list_btn.title = "Remove Added Players"
+            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'remove select')
+
+        elif func_type == 'remove select':
+            # Remove select players from player list
+            for player in settings['messages']['players_changed']:
+                if db_dict['player_list'][1].db.count(player) > 0:
+                    db_dict['player_list'][1].db.remove(player)
+
+            # Sort
+            db_dict['player_list'][1].sort(['rating'])
+            # Save
+            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
+
+            # Change button title and action
+            add_to_list_btn.title = "Add Removed Players"
+            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'add select')
 
         win_search.become_target()
 
@@ -543,7 +578,6 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     add_to_list_btn.height = tiny_button_height
     add_to_list_btn.width = small_button_width
     add_to_list_btn.font = small_button_font
-    add_to_list_btn.action = add_to_list_btn_func
     add_to_list_btn.style = 'default'
     add_to_list_btn.color = small_button_color
     add_to_list_btn.just = 'right'
@@ -592,7 +626,14 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         del settings['messages']['results'][:]
 
         # Add navigation buttons to page
-        add_to_list_btn.action = (add_to_list_btn_func, display_player_db.db, 'add')
+        if settings['p_db_rg'] == 'player_db':
+            add_to_list_btn.title = 'Add All Players'
+            add_to_list_btn.action = (add_to_list_btn_func, display_player_db.db, 'add all')
+        elif settings['p_db_rg'] == 'player_list':
+            add_to_list_btn.title = 'Remove All Players'
+            add_to_list_btn.action = (add_to_list_btn_func, display_player_db.db, 'remove all')
+        else:
+            print "Invalid edit type."
 
         previous_range = (index_range[0]-num_results, index_range[0])
         previous_btn.action = (previous_btn_func, display_player_db, attributes, previous_range)

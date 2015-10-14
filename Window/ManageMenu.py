@@ -4,6 +4,7 @@ from AppConfig import *
 import StartMenu
 import PickFile
 import EnterText
+import CreateList
 import json
 
 
@@ -147,7 +148,8 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
     # ========== Current Lists Button Functions ==========
     def create_list_btn_func():
         settings['file_type'] = 'create_list'
-        #win_manage.hide()
+        CreateList.open_create_list_window(win_manage.x, win_manage.y, db_dict, settings)
+        win_manage.hide()
 
     def player_list_current_btn_func():
         settings['file_type'] = 'current_player_list'

@@ -3,9 +3,10 @@ from AppConfig import *
 import json
 from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
     save_image, get_file_prefix
+from Logic import PlayerDB
 
 
-def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
+def open_player_bio_window(window_x, window_y, player, win_previous, file_name, current_list):
 
     # ========== Window ==========
     win_player_bio = Window()
@@ -51,25 +52,23 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     def add_player_btn_func():
         # Check if player is already on selected players list
         # Remove player from list
-        if player in db_dict['player_list'][1].db:
-
+        if player in current_list.db:
             # Remove
-            db_dict['player_list'][1].db.remove(player)
+            current_list.db.remove(player)
             # Save
-            db_dict['player_list'][1].sort(['rating'])
-            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
+            current_list.sort(['rating'])
+            current_list.save(file_name, 'list', True)
 
             # Switch button title
             add_player_btn.title = "Add Player to List"
 
         # Add player to the list
         else:
-
             # Add
-            db_dict['player_list'][1].db.append(player)
+            current_list.db.append(player)
             # Save
-            db_dict['player_list'][1].sort(['rating'])
-            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
+            current_list.sort(['rating'])
+            current_list.save(file_name, 'list', True)
 
             # Switch button title
             add_player_btn.title = "Remove Player from List"
@@ -78,7 +77,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
 
     def back_btn_func():
         win_player_bio.hide()
-        win_search.show()
+        win_previous.show()
 
     # ========== Buttons ==========
     button_x_offset = 50
@@ -93,7 +92,7 @@ def open_player_bio_window(window_x, window_y, player, db_dict, win_search):
     add_player_btn.color = small_button_color
 
     # Check if player is already on selected players list
-    if player in db_dict['player_list'][1].db:
+    if player in current_list.db:
         add_player_btn.title = "Remove Player from List"
     else:
         add_player_btn.title = "Add Player to List"
