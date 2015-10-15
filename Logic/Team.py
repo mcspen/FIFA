@@ -1919,7 +1919,7 @@ class Team:
         """
 
         players_per_position = 15
-        max_teams = 150#000
+        max_teams = 150000
 
         print_formation_name_and_team_count = False
         print_all_team_chemistry = False

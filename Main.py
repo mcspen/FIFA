@@ -45,6 +45,18 @@ if __name__ == '__main__':
     FifaApp.start_app(db_dict)
     # delete_all_temp_images()
 
+    """teams = TeamDB()
+    teams.load('2015-10-14')
+
+    for team in teams.db:
+        temp = Team(team)
+        temp.print_summary()
+        print
+        temp.print_chemistry_stats()
+        print
+        temp.print_team_strengths()
+        print('\n')"""
+
     # -------------------------PLAYER DB EXAMPLES---------------------------
     # Initialize DB
     # player_db = PlayerDB()
@@ -81,6 +93,10 @@ if __name__ == '__main__':
     """# Load Formation Database from file
     formation_db = FormationDB()
     formation_db.load('All Formations', 'db')"""
+
+    """ultimate_team = Team()
+    teams = TeamDB(ultimate_team.create_team_ultimate(my_players, formation_db, 'multi', 250))
+    teams.save('2015-10-14')"""
 
     """silver_players = PlayerDB(my_players.search({'quality': ('silver', 'exact')}))
 

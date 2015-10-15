@@ -642,7 +642,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         next_btn.action = (next_btn_func, display_player_db, attributes, next_range)
 
         total_num_results_label.text = str(len(display_player_db.db)) + " Players"
-        pages_label.text = "Page %d of %d" % (int(index_range[1]/20), math.ceil(len(display_player_db.db)/20) + 1)
+        pages_label.text = "Page %d of %d" % (int(index_range[1]/num_results),
+                                              math.ceil(len(display_player_db.db)/num_results) + 1)
 
         if index_range[0] > 0:
             previous_btn.enabled = 1
