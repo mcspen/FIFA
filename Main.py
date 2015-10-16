@@ -42,7 +42,7 @@ if __name__ == '__main__':
         'team_list': (default_dbs['team_list'], team_list)
     }
 
-    FifaApp.start_app(db_dict)
+    #FifaApp.start_app(db_dict)
     # delete_all_temp_images()
 
     """teams = TeamDB()

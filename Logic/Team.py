@@ -1200,14 +1200,7 @@ class Team:
                     if height >= good_height:
                         strengths.append(('Height', convert_height(height, 'string')))
 
-                    # Check for any high stats
-                    """stats = ["acceleration", "sprintspeed", "agility", "balance", "reactions", "ballcontrol",
-                             "dribbling", "positioning", "finishing", "shotpower", "longshots", "volleys",
-                             "penalties", "interceptions", "headingaccuracy", "marking", "standingtackle",
-                             "slidingtackle", "vision", "crossing", "freekickaccuracy", "shortpassing",
-                             "longpassing", "curve", "jumping", "stamina", "strength", "aggression",
-                             "gkdiving", "gkhandling", "gkkicking", "gkpositioning", "gkreflexes"]"""
-
+                    # Check for any high important stats
                     for attribute in important_attributes:
                         # Skip already checked stats
                         if attribute not in ['traits', 'skillMoves', 'weakFoot', 'height']:
@@ -1496,61 +1489,6 @@ class Team:
         # Return the best team
         return team_list[team_index]
 
-    @staticmethod
-    def create_team_attributes_old(players, formations, attributes):
-        """
-        Create the best possible team from the given players and formations
-        Input: PlayerDB of players, the formation, and a list of attributes to focus on
-        Output: None  -  Creates team of players with highest specified attributes and assigns to self
-        """
-
-        # Check that there are at least 11 players
-        if len(players.db) < 11:
-            return {}
-
-        # List of teams created
-        team_list = []
-
-        for formation in formations.db:
-            # Find players and create the roster with current formation
-            roster = {}  # Dict of players and positions
-            base_ids = []  # List of player base IDs used to prevent duplicates
-
-            # Iterate through the positions
-            for symbol, position in formation['positions'].iteritems():
-                # Search for players in the correct position
-                attribute_player_list = PlayerDB(players.search({'position': position['symbol']}))
-                # Sort the players by the attributes
-                attribute_player_list.sort(attributes)
-
-                # Check if top player is already on team
-                for index in range(0, len(attribute_player_list.db)):
-                    if attribute_player_list.db[index]['baseId'] not in base_ids:
-                        roster[symbol] = attribute_player_list.db[index]
-                        base_ids.append(attribute_player_list.db[index]['baseId'])
-                        break
-
-            # Check for empty positions
-            if len(roster) < 11:
-                # Fill empty positions with related players
-                print "Function isn't complete"
-                return {}
-
-            # Set the team using the roster and add to list
-            temp_team = Team()
-            temp_team.set_team(formation, roster)
-            team_list.append(temp_team.__dict__)
-
-        # Compare teams and pick the best one
-        team_index = Team.pick_best_team(team_list, attributes)
-
-        # No teams
-        if team_index == -1:
-            return {}
-
-        # Return the best team
-        return team_list[team_index]
-
 # ====================FIND ULTIMATE TEAM FUNCTIONS========== #
 
     @staticmethod
@@ -1578,7 +1516,7 @@ class Team:
 
         # Create teams for each of the clubs with at least 11 players
         for club in clubs_with_players:
-            team_list.append(Team.find_team(PlayerDB(players.search({'clubId': club})), formations))
+            team_list.append(Team.find_team(PlayerDB(players.search({'clubId': (club, 'exact')})), formations))
 
         # Remove blank teams
         while team_list.count({}) > 0:
@@ -1587,15 +1525,6 @@ class Team:
         # If no teams teams were created, return a blank dict
         if len(team_list) == 0:
             return {}
-
-        # Print out team chemistry -------------------------------------------------------------------------------------
-        for team in team_list:
-            temp = Team(team)
-            print "%s:" % temp.formation['positions']['GK']['player']['club']['name']
-            temp.print_summary()
-            temp.print_chemistry_stats()
-            print ''
-        # TEMPORARY ----------------------------------------------------------------------------------------------------
 
         # Find the best team based on player ratings and individual chemistry
         team_index = Team.pick_best_team(team_list)
@@ -1632,7 +1561,7 @@ class Team:
 
         # Create teams for each of the leagues with at least 11 players
         for league in leagues_with_players:
-            team_list.append(Team.find_team(PlayerDB(players.search({'leagueId': league})), formations))
+            team_list.append(Team.find_team(PlayerDB(players.search({'leagueId': (league, 'exact')})), formations))
 
         # Remove blank teams
         while team_list.count({}) > 0:
@@ -1641,15 +1570,6 @@ class Team:
         # If no teams teams were created, return a blank dict
         if len(team_list) == 0:
             return {}
-
-        # Print out team chemistry -------------------------------------------------------------------------------------
-        for team in team_list:
-            temp = Team(team)
-            print "%s:" % temp.formation['positions']['GK']['player']['league']['name']
-            temp.print_summary()
-            temp.print_chemistry_stats()
-            print ''
-        # TEMPORARY ----------------------------------------------------------------------------------------------------
 
         # Find the best team based on player ratings and individual chemistry
         team_index = Team.pick_best_team(team_list)
@@ -1686,7 +1606,7 @@ class Team:
 
         # Create teams for each of the leagues with at least 11 players
         for nation in nations_with_players:
-            team_list.append(Team.find_team(PlayerDB(players.search({'nationId': nation})), formations))
+            team_list.append(Team.find_team(PlayerDB(players.search({'nationId': (nation, 'exact')})), formations))
 
         # Remove blank teams
         while team_list.count({}) > 0:
@@ -1695,15 +1615,6 @@ class Team:
         # If no teams teams were created, return a blank dict
         if len(team_list) == 0:
             return {}
-
-        # Print out team chemistry -------------------------------------------------------------------------------------
-        for team in team_list:
-            temp = Team(team)
-            print "%s:" % temp.formation['positions']['GK']['player']['nation']['name']
-            temp.print_summary()
-            temp.print_chemistry_stats()
-            print ''
-        # TEMPORARY ----------------------------------------------------------------------------------------------------
 
         # Find the best team based on player ratings and individual chemistry
         team_index = Team.pick_best_team(team_list)
