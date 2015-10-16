@@ -1,7 +1,7 @@
 from GUI import Button, Label, TextField, View, Window
 from AppConfig import *
 import ManageMenu
-from Logic.HelperFunctions import get_file_prefix, player_info_labels, player_info
+from Logic.HelperFunctions import ascii_text, get_file_prefix, player_info_labels, player_info
 from Logic.PlayerDB import PlayerDB
 from Logic.FormationDB import FormationDB
 from Logic.TeamDB import TeamDB
@@ -14,6 +14,7 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
     message_text = 'Select list type.'
     create_list_settings = dict()
     create_list_settings['results'] = []
+    create_list_settings['process_step'] = 'list type'
     num_results = 5
 
     # ========== Window ==========
@@ -45,12 +46,13 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
     title.just = 'center'
 
     # ========== Message Label ==========
-    message = Label(font=title_font_2, width=win_create_list.width - 50, height=title_height,
+    message = Label(font=title_font_3, width=win_create_list.width - 50, height=title_height,
                     x=25, y=title.bottom + top_border, color=title_color, just='center')
     message.text = message_text
 
     # ========== Button Declarations ==========
     enter_btn = Button("Enter")
+    undo_btn = Button("Undo Add")
     back_btn = Button("Back")
 
     player_list_btn = Button("Player")
@@ -141,7 +143,7 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
                 if len(search_dict) > 0:
                     # Search for players
                     results = PlayerDB(db_dict['player_db'][1].search(search_dict))
-                    results.sort(['name'])
+                    results.sort(['rating'])
 
                     # No matching players found
                     if len(results.db) == 0:
@@ -173,7 +175,29 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
         else:
             print "Create file process step is invalid."
 
+    def undo_btn_func():
+        # Remove last player added and save
+        if len(create_list_settings['list'].db) > 0:
+            player = create_list_settings['list'].db.pop(-1)
+            create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
+
+            common_name = ascii_text(player['commonName'])
+            player_name = ascii_text(player['firstName']) + ' ' + ascii_text(player['lastName'])
+            if len(common_name) > 0:
+                player_name = common_name + " (" + player_name + ")"
+
+            message.text = "Removed %s!" % player_name
+
+            # Disable undo if no players left
+            if len(create_list_settings['list'].db) == 0:
+                undo_btn.enabled = 0
+
     def back_btn_func():
+        # Sort and save player list before exiting
+        if create_list_settings['process_step'] == 'get player':
+            create_list_settings['list'].sort(['rating'])
+            create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
+
         ManageMenu.open_manage_menu(window_x, window_y, db_dict, settings)
         win_create_list.hide()
 
@@ -194,7 +218,7 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
         value_tf.become_target()
 
     # ========== Action Buttons ==========
-    enter_btn.x = (win_create_list.width - 2*button_width - button_spacing) / 2
+    enter_btn.x = (win_create_list.width - 3*button_width - 2*button_spacing) / 2
     enter_btn.y = win_create_list.height - button_height - 40
     enter_btn.height = button_height
     enter_btn.width = button_width
@@ -205,7 +229,18 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
     enter_btn.just = 'right'
     enter_btn.enabled = 0
 
-    back_btn.x = enter_btn.right + button_spacing
+    undo_btn.x = enter_btn.right + button_spacing
+    undo_btn.y = enter_btn.top
+    undo_btn.height = button_height
+    undo_btn.width = button_width
+    undo_btn.font = button_font
+    undo_btn.action = undo_btn_func
+    undo_btn.style = 'default'
+    undo_btn.color = button_color
+    undo_btn.just = 'right'
+    undo_btn.enabled = 0
+
+    back_btn.x = undo_btn.right + button_spacing
     back_btn.y = enter_btn.top
     back_btn.height = button_height
     back_btn.width = button_width
@@ -272,19 +307,24 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
     def add_player_btn_func(player):
         # Check for duplicates
         if create_list_settings['list'].db.count(player) == 0:
-            # Add player, sort, and save
+            # Add player and save
             create_list_settings['list'].db.append(player)
-            create_list_settings['list'].sort(['rating'])
             create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
 
             # Remove result messages off page
             for result_message in create_list_settings['results']:
                 view.remove(result_message)
 
+            common_name = ascii_text(player['commonName'])
+            player_name = ascii_text(player['firstName']) + ' ' + ascii_text(player['lastName'])
+            if len(common_name) > 0:
+                player_name = common_name + " (" + player_name + ")"
+
             # Reset page
             value_tf.value = ''
-            message.text = "Added player! Enter next player."
+            message.text = "Added %s!" % player_name
             back_btn.title = "Done"
+            undo_btn.enabled = 1
             value_tf.become_target()
 
         # Duplicate player, don't add
@@ -409,6 +449,7 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
     view.add(title)
     view.add(message)
     view.add(enter_btn)
+    view.add(undo_btn)
     view.add(back_btn)
     view.add(player_list_btn)
     view.add(formation_list_btn)

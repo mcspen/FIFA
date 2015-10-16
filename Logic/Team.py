@@ -1133,7 +1133,8 @@ class Team:
             strengths_dict = json.load(config_file)['player_attributes']['important_attributes']
             config_file.close()
 
-        important_attributes = strengths_dict['attribute_list']
+        important_attributes = strengths_dict['important_attributes']
+        bad_traits = strengths_dict['bad_traits']
         good_skill = strengths_dict['good_skill']
         good_weak_foot = strengths_dict['good_weak_foot']
         good_height = strengths_dict['good_height']
@@ -1160,7 +1161,7 @@ class Team:
 
                     if traits is not None:
                         # Remove bad traits or ones that don't affect ability
-                        for bad_trait in ['Injury Prone', 'Selfish', 'Leadership', 'One Club Player']:
+                        for bad_trait in bad_traits:
                             if bad_trait in traits:
                                 traits.remove(bad_trait)
 
@@ -1220,6 +1221,7 @@ class Team:
                             print "%s%s%s %s" % (' '*15, strength[0], ' '*(17-len(strength[0])), str(strength[1]))
 
                     index += 1
+        return 0
 
 # ====================FIND ATTRIBUTE TEAM FUNCTIONS========== #
 

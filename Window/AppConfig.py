@@ -141,6 +141,7 @@ file_btn_spacing = 3
 # ========== Textfields ==========
 title_font = Font("Times", 3 * system_font.size, ['bold'])
 title_font_2 = Font("Times", 2.5 * system_font.size, ['bold'])
+title_font_3 = Font("Times", 2.3 * system_font.size, ['bold'])
 title_tf_font = Font("Times", 1.6 * system_font.size, ['bold'])
 std_tf_font = Font("Times", 1.5 * system_font.size)
 std_tf_font_bold = Font("Times", 1.5 * system_font.size, ['bold'])

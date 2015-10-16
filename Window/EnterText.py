@@ -162,7 +162,10 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
                 message.text = "File name must be at least 1 character."
 
     def back_btn_func():
-        PickFile.open_pick_file_window(window_x, window_y, db_dict, settings)
+        if box_type == 'download':
+            ManageMenu.open_manage_menu(window_x, window_y, db_dict, settings)
+        else:
+            PickFile.open_pick_file_window(window_x, window_y, db_dict, settings)
         win_enter_text.hide()
 
     # ========== Buttons ==========

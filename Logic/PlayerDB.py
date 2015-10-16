@@ -449,11 +449,10 @@ class PlayerDB:
         for index, player in enumerate(self.db[:num_results]):
 
             # Get player's common name
-            common_name = unicodedata.normalize('NFKD', player['commonName']).encode('ascii', 'ignore')
+            common_name = ascii_text(player['commonName'])
 
             # Get player's name
-            player_name = unicodedata.normalize('NFKD', player['firstName']).encode('ascii', 'ignore') + ' ' + \
-                unicodedata.normalize('NFKD', player['lastName']).encode('ascii', 'ignore')
+            player_name = ascii_text(player['firstName']) + ' ' + ascii_text(player['lastName'])
 
             # If the player has a common name, print it out first
             if len(common_name) > 0:
