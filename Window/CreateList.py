@@ -5,16 +5,14 @@ from Logic.HelperFunctions import get_file_prefix, player_info_labels, player_in
 from Logic.PlayerDB import PlayerDB
 from Logic.FormationDB import FormationDB
 from Logic.TeamDB import TeamDB
-from os import rename
 from os.path import isfile
-from shutil import copyfile
 import math
 
 
 def open_create_list_window(window_x, window_y, db_dict, settings):
 
     message_text = 'Select list type.'
-    create_list_settings = {}
+    create_list_settings = dict()
     create_list_settings['results'] = []
     num_results = 5
 
@@ -146,22 +144,22 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
                     results.sort(['name'])
 
                     # No matching players found
-
                     if len(results.db) == 0:
                         message.text = "Unable to find player. Try again."
 
                     # If only one player in results, add player.
                     elif len(results.db) == 1:
-                        stuff = 0
-                        message.text = "Enter player rating/name or just name."
-                        back_btn.title = "Done"
+                        add_player_btn_func(results.db[0])
 
                     else:
                         message.text = "Multiple players found. Pick correct one."
                         display_players(results, [], (0, num_results))
 
+                value_tf.become_target()
+
             else:
                 message.text = "Invalid. Ex: '99 Superman'  or 'Superman'."
+                value_tf.become_target()
 
         # Get formation to add to list
         elif create_list_settings['process_step'] == 'get formation':
@@ -174,8 +172,6 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
         # Invalid process step
         else:
             print "Create file process step is invalid."
-
-        value_tf.become_target()
 
     def back_btn_func():
         ManageMenu.open_manage_menu(window_x, window_y, db_dict, settings)
@@ -274,14 +270,27 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
         win_create_list.become_target()
 
     def add_player_btn_func(player):
-        stuff = 0
+        # Check for duplicates
+        if create_list_settings['list'].db.count(player) == 0:
+            # Add player, sort, and save
+            create_list_settings['list'].db.append(player)
+            create_list_settings['list'].sort(['rating'])
+            create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
 
-        # Remove result messages off page
-        for result_message in create_list_settings['results']:
-            view.remove(result_message)
+            # Remove result messages off page
+            for result_message in create_list_settings['results']:
+                view.remove(result_message)
 
-        message.text = "Enter player rating/name or just name."
-        back_btn.title = "Done"
+            # Reset page
+            value_tf.value = ''
+            message.text = "Added player! Enter next player."
+            back_btn.title = "Done"
+            value_tf.become_target()
+
+        # Duplicate player, don't add
+        else:
+            message.text = "Player already on list."
+            win_create_list.become_target()
 
     # ========== Display Players Buttons ==========
     previous_btn.height = tiny_button_height
