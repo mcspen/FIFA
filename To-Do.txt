@@ -27,6 +27,7 @@ Update Team Rating based on Subs
 New player recommendations to improve team
  - find weak link and recommend players that will keep max chemistry
 
+Change how create club/league/nation functions return/assign the teams.
 
 Change nation/league/club name comparisons to id comparisons? (avoid mix ups by clubs with same name)
 
