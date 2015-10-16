@@ -20,8 +20,9 @@ class Team:
     The Team class contains:
         manager: The given or suggested manager traits
         total_ic: The total individual chemistry of the team (non-rounded chemistry value)
-        chemistry: The total chemistry of the team
+        chemistry: The total chemistry of the team (max of 100)
         rating: The rating of the team
+        strength: The rating of the team's strengths (traits, high stats, etc.)
         formation: The formation of the team.
     """
 
@@ -37,13 +38,20 @@ class Team:
             self.total_ic = 0
             self.chemistry = 0
             self.rating = 0
+            self.strength = 0
             self.formation = {}
         else:
             self.manager = copy.deepcopy(input_dict['manager'])
             self.total_ic = input_dict['total_ic']
             self.chemistry = input_dict['chemistry']
             self.rating = input_dict['rating']
+            #self.strength = input_dict['strength']
             self.formation = copy.deepcopy(input_dict['formation'])
+
+        # TEMPORARY UNTIL ALL TEAMS HAVE STRENGTHS----------------------------------------------------------------------
+        if 'strength' in input_dict:
+            self.strength = input_dict['strength']
+        # TEMPORARY UNTIL ALL TEAMS HAVE STRENGTHS----------------------------------------------------------------------
 
     def set_team(self, formation, roster, manager=None, loyalty=True):
         """
@@ -68,6 +76,8 @@ class Team:
                 self.formation['positions'][position]['player'] = copy.deepcopy(player)
                 self.formation['positions'][position]['chemistry'] = 0
                 self.formation['positions'][position]['loyalty'] = loyalty
+                self.formation['positions'][position]['strengths'] = []
+                self.formation['positions'][position]['strength_rating'] = 0
 
             else:
                 print "Error: Invalid position"
@@ -83,7 +93,10 @@ class Team:
         self.rating = team_total / len(roster)
 
         # Calculate the team chemistry
-        self.chemistry = self.calculate_chemistry()
+        self.calculate_chemistry()
+
+        # Calculate the team strength
+        self.calculate_strength()
 
     def save(self, team_name):
         """
@@ -125,7 +138,7 @@ class Team:
 
         return True
 
-    @staticmethod
+    '''@staticmethod
     def generate_filename(team):
         """
         Create a filename for the team
@@ -141,7 +154,7 @@ class Team:
             + '_' * (14 - len(str(team['formation']['name'])))\
             + 'time_' + str(time.clock())[:10]
 
-        return team_name
+        return team_name'''
 
     def print_roster(self, symbol='normal'):
         """
@@ -1121,11 +1134,79 @@ class Team:
 
         return 0
 
-    def print_team_strengths(self):
+# ====================STRENGTH FUNCTIONS========== #
+
+    @staticmethod
+    def individual_strengths(player, important_attributes, bad_traits, good_skill,
+                             good_weak_foot, good_height, good_stat_value):
         """
-        Prints out the key strengths of the players on the team
-        Input: None  -  All of the information is in self
-        Output: None  -  Prints out the key strengths
+        Determine the strong attributes and traits of the player
+        Input: The player
+        Output: A tuple of the strengths rating an a list of the player's strengths
+        """
+
+        rating = 99
+        strengths = []
+
+        # Get traits
+        traits = player['traits']
+
+        if traits is not None:
+            # Remove bad traits or ones that don't affect ability
+            for bad_trait in bad_traits:
+                if bad_trait in traits:
+                    traits.remove(bad_trait)
+
+            # Add good traits to list
+            if len(traits) > 0:
+                traits_str = ''
+                for trait in traits:
+                    traits_str += trait + ', '
+                strengths.append(('Good Traits', traits_str[:-2]))
+
+        # Specialities are just player tendencies and don't affect ability
+        """# Get specialities
+        specialities = player['specialities']
+        if specialities is not None:
+            specialities_str = ''
+            for speciality in specialities:
+                specialities_str += speciality + ', '
+            strengths.append(('Specialities', specialities_str[:-2]))"""
+
+        # Check for skill moves
+        skill_moves = player['skillMoves']
+        if skill_moves >= good_skill:
+            stars = skill_moves*'* '
+            stars = stars[:-1]
+            strengths.append(('Skill Moves', stars))
+
+        # Check for weak foot
+        weak_foot = player['weakFoot']
+        if weak_foot >= good_weak_foot:
+            stars = weak_foot*'* '
+            stars = stars[:-1]
+            strengths.append(('Weak Foot', stars))
+
+        # Check for height
+        height = player['height']
+        if height >= good_height:
+            strengths.append(('Height', convert_height(height, 'string')))
+
+        # Check for any high important stats
+        for attribute in important_attributes:
+            # Skip already checked stats
+            if attribute not in ['traits', 'skillMoves', 'weakFoot', 'height']:
+                stat = player[attribute]
+                if stat >= good_stat_value:
+                    strengths.append((format_attr_name(attribute), stat))
+
+        return rating, strengths
+
+    def calculate_strength(self):
+        """
+        Calculate and assign the team strength rating and individual strengths
+        Input: None  -  Just uses self
+        Output: The team strength
         """
 
         # Get important stats from config file
@@ -1140,6 +1221,28 @@ class Team:
         good_height = strengths_dict['good_height']
         good_stat_value = strengths_dict['good_stat_value']
 
+        strength = 0
+
+        for position in self.formation['positions'].itervalues():
+            # Get player's strengths
+            player_strengths = self.individual_strengths(position['player'], important_attributes, bad_traits,
+                                                         good_skill, good_weak_foot, good_height, good_stat_value)
+
+            position['strength_rating'] = player_strengths[0]
+            position['strengths'] = player_strengths[1]
+            strength += position['strength_rating']
+
+        self.strength = strength
+
+        return self.strength
+
+    def print_team_strengths(self):
+        """
+        Prints out the key strengths of the players on the team
+        Input: None  -  All of the information is in self
+        Output: None  -  Prints out the key strengths
+        """
+
         index = 0
 
         while index < 1 + self.formation['num_defenders'] + self.formation['num_midfielders'] + \
@@ -1148,68 +1251,16 @@ class Team:
                 if position['index'] == index:
 
                     player = position['player']
+                    strengths = position['strengths']
 
                     # Get player's common name, if it exists, or the full name
                     name = ascii_text(player['firstName']) + " " + ascii_text(player['lastName'])
                     if player['commonName'] != '':
                         name = ascii_text(player['commonName'])
 
-                    strengths = []
-
-                    # Get traits
-                    traits = player['traits']
-
-                    if traits is not None:
-                        # Remove bad traits or ones that don't affect ability
-                        for bad_trait in bad_traits:
-                            if bad_trait in traits:
-                                traits.remove(bad_trait)
-
-                        # Add good traits to list
-                        if len(traits) > 0:
-                            traits_str = ''
-                            for trait in traits:
-                                traits_str += trait + ', '
-                            strengths.append(('Good Traits', traits_str[:-2]))
-
-                    # Specialities are just player tendencies and don't affect ability
-                    """# Get specialities
-                    specialities = player['specialities']
-                    if specialities is not None:
-                        specialities_str = ''
-                        for speciality in specialities:
-                            specialities_str += speciality + ', '
-                        strengths.append(('Specialities', specialities_str[:-2]))"""
-
-                    # Check for skill moves
-                    skill_moves = player['skillMoves']
-                    if skill_moves >= good_skill:
-                        stars = skill_moves*'* '
-                        stars = stars[:-1]
-                        strengths.append(('Skill Moves', stars))
-
-                    # Check for weak foot
-                    weak_foot = player['weakFoot']
-                    if weak_foot >= good_weak_foot:
-                        stars = weak_foot*'* '
-                        stars = stars[:-1]
-                        strengths.append(('Weak Foot', stars))
-
-                    # Check for height
-                    height = player['height']
-                    if height >= good_height:
-                        strengths.append(('Height', convert_height(height, 'string')))
-
-                    # Check for any high important stats
-                    for attribute in important_attributes:
-                        # Skip already checked stats
-                        if attribute not in ['traits', 'skillMoves', 'weakFoot', 'height']:
-                            stat = player[attribute]
-                            if stat >= good_stat_value:
-                                strengths.append((format_attr_name(attribute), stat))
-
                     if len(strengths) > 0:
-                        print "%s%s%d%s%s" % (symbol, ' '*(5-len(symbol)), player['rating'], ' '*3, name)
+                        print "%s%s%d%s%s%s%s%d" % (symbol, ' '*(5-len(symbol)), player['rating'], ' '*3, name,
+                                                    ' '*(23-len(name)), 'STR: ', position['strength_rating'])
                         for strength in strengths:
                             print "%s%s%s %s" % (' '*15, strength[0], ' '*(17-len(strength[0])), str(strength[1]))
 

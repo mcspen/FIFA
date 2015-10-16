@@ -45,17 +45,18 @@ if __name__ == '__main__':
     #FifaApp.start_app(db_dict)
     # delete_all_temp_images()
 
-    """teams = TeamDB()
+    teams = TeamDB()
     teams.load('2015-10-14')
 
     for team in teams.db:
         temp = Team(team)
+        temp.calculate_strength()
         temp.print_summary()
         print
         temp.print_chemistry_stats()
         print
         temp.print_team_strengths()
-        print('\n')"""
+        print('\n')
 
     # -------------------------PLAYER DB EXAMPLES---------------------------
     # Initialize DB
