@@ -1135,18 +1135,34 @@ class Team:
         return 0
 
 # ====================STRENGTH FUNCTIONS========== #
-
     @staticmethod
-    def individual_strengths(player, important_attributes, bad_traits, good_skill,
-                             good_weak_foot, good_height, good_stat_value):
+    def individual_strengths(player, important_attributes=None, bad_traits=None, good_skill=None,
+                             good_weak_foot=None, good_height=None, good_stat_value=None):
         """
         Determine the strong attributes and traits of the player
         Input: The player
         Output: A tuple of the strengths rating an a list of the player's strengths
         """
 
-        rating = 99
+        # Get strength config values
+        if important_attributes is None:
+            # Get important stats from config file
+            with open('configs.json', 'r') as config_file:
+                strengths_dict = json.load(config_file)['player_attributes']['important_attributes']
+                config_file.close()
+
+            important_attributes = strengths_dict['important_attributes']
+            bad_traits = strengths_dict['bad_traits']
+            good_skill = strengths_dict['good_skill']
+            good_weak_foot = strengths_dict['good_weak_foot']
+            good_height = strengths_dict['good_height']
+            good_stat_value = strengths_dict['good_stat_value']
+
+        rating = 0
         strengths = []
+        good_strength = 1
+        great_strength = 2
+        amazing_strength = 3
 
         # Get traits
         traits = player['traits']
@@ -1162,6 +1178,7 @@ class Team:
                 traits_str = ''
                 for trait in traits:
                     traits_str += trait + ', '
+                    rating += good_strength
                 strengths.append(('Good Traits', traits_str[:-2]))
 
         # Specialities are just player tendencies and don't affect ability
@@ -1179,6 +1196,7 @@ class Team:
             stars = skill_moves*'* '
             stars = stars[:-1]
             strengths.append(('Skill Moves', stars))
+            rating += great_strength + skill_moves - good_skill
 
         # Check for weak foot
         weak_foot = player['weakFoot']
@@ -1186,11 +1204,13 @@ class Team:
             stars = weak_foot*'* '
             stars = stars[:-1]
             strengths.append(('Weak Foot', stars))
+            rating += good_strength
 
         # Check for height
         height = player['height']
         if height >= good_height:
             strengths.append(('Height', convert_height(height, 'string')))
+            rating += good_strength
 
         # Check for any high important stats
         for attribute in important_attributes:
@@ -1199,6 +1219,7 @@ class Team:
                 stat = player[attribute]
                 if stat >= good_stat_value:
                     strengths.append((format_attr_name(attribute), stat))
+                    rating += good_strength
 
         return rating, strengths
 
@@ -1259,8 +1280,8 @@ class Team:
                         name = ascii_text(player['commonName'])
 
                     if len(strengths) > 0:
-                        print "%s%s%d%s%s%s%s%d" % (symbol, ' '*(5-len(symbol)), player['rating'], ' '*3, name,
-                                                    ' '*(23-len(name)), 'STR: ', position['strength_rating'])
+                        print "%s%s%d%s%d%s%s" % (symbol, ' '*(5-len(symbol)), player['rating'], '-',
+                                                  position['strength_rating'], ' '*3, name)
                         for strength in strengths:
                             print "%s%s%s %s" % (' '*15, strength[0], ' '*(17-len(strength[0])), str(strength[1]))
 

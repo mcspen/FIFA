@@ -132,9 +132,9 @@ class TeamDB:
         for team in self.db:
             match = True
             for attribute, value in attributes.iteritems():
-                if attribute == 'formation':
+                if attribute in ['formation']:
                     string_value = str(value.upper())
-                    stat = str(team['formation']['name'].upper())
+                    stat = str(team[attribute]['name'].upper())
                     if compare == 'higher':
                         if not stat >= string_value:
                             match = False
@@ -144,9 +144,9 @@ class TeamDB:
                     elif compare == 'lower':
                         if not stat <= string_value:
                             match = False
-                elif attribute == 'manager_league':
+                elif attribute in ['manager_league', 'manager_nation']:
                     string_value = str(value.upper())
-                    stat = str(team['manager']['league'].upper())
+                    stat = str(team[attribute[:7]][attribute[8:]].upper())
                     if compare == 'higher':
                         if not stat >= string_value:
                             match = False
@@ -156,19 +156,7 @@ class TeamDB:
                     elif compare == 'lower':
                         if not stat <= string_value:
                             match = False
-                elif attribute == 'manager_nation':
-                    string_value = str(value.upper())
-                    stat = str(team['manager']['nation'].upper())
-                    if compare == 'higher':
-                        if not stat >= string_value:
-                            match = False
-                    elif compare == 'exact':
-                        if stat != string_value:
-                            match = False
-                    elif compare == 'lower':
-                        if not stat <= string_value:
-                            match = False
-                elif attribute == 'rating':
+                elif attribute in ['rating', 'total_ic', 'chemistry', 'strength']:
                     if compare == 'higher':
                         if not team[attribute] >= value:
                             match = False
@@ -178,27 +166,7 @@ class TeamDB:
                     elif compare == 'lower':
                         if not team[attribute] <= value:
                             match = False
-                elif attribute == 'total_ic':
-                    if compare == 'higher':
-                        if not team[attribute] >= value:
-                            match = False
-                    elif compare == 'exact':
-                        if not team[attribute] == value:
-                            match = False
-                    elif compare == 'lower':
-                        if not team[attribute] <= value:
-                            match = False
-                elif attribute == 'chemistry':
-                    if compare == 'higher':
-                        if not team[attribute] >= value:
-                            match = False
-                    elif compare == 'exact':
-                        if not team[attribute] == value:
-                            match = False
-                    elif compare == 'lower':
-                        if not team[attribute] <= value:
-                            match = False
-                elif attribute == 'style':
+                elif attribute in ['style']:
                     string_value = value.upper()
                     stat = team['formation']['style'].upper()
                     if not stat.startswith(string_value):

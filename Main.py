@@ -13,7 +13,7 @@ from Logic.HelperFunctions import delete_all_temp_images
 if __name__ == '__main__':
     multiprocessing.freeze_support()
 
-    # Load defaults
+    """# Load defaults
     with open('configs.json', 'r') as f:
         configs = json.load(f)
         f.close()
@@ -42,16 +42,21 @@ if __name__ == '__main__':
         'team_list': (default_dbs['team_list'], team_list)
     }
 
-    #FifaApp.start_app(db_dict)
-    # delete_all_temp_images()
+    FifaApp.start_app(db_dict)
+    # delete_all_temp_images()"""
 
     teams = TeamDB()
     teams.load('2015-10-14')
 
-    for team in teams.db:
+    for index, team in enumerate(teams.db):
         temp = Team(team)
         temp.calculate_strength()
+        teams.db[index] = temp.__dict__
+    teams.sort(['strength', 'rating', 'total_ic'])
+    for team in teams.db:
+        temp = Team(team)
         temp.print_summary()
+        print "Strength: %d" % temp.strength
         print
         temp.print_chemistry_stats()
         print
