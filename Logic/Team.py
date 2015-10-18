@@ -254,7 +254,7 @@ class Team:
 
         # Print out the roster info
         print "Roster:"
-        print "Rating: %d" % self.rating
+        print "Rating: %.2f" % self.rating
         print "Chemistry: %d" % self.chemistry
         print "Formation: %s" % self.formation['name']
 
