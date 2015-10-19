@@ -1,6 +1,6 @@
 Change Edit function for manage menu to have separate windows for players (already implemented), formations, and teams.
 
-Team evaluation function!!!!!!!!!!!!!!!! (evaluates each player and the team on stats and strengths)
+Tweak strength eval function. (evaluates each player and the team on stats and strengths)
 
 Add more options to TeamDB search
 Add team names?

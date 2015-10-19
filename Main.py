@@ -13,7 +13,7 @@ from Logic.HelperFunctions import delete_all_temp_images
 if __name__ == '__main__':
     multiprocessing.freeze_support()
 
-    """# Load defaults
+    # Load defaults
     with open('configs.json', 'r') as f:
         configs = json.load(f)
         f.close()
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     FifaApp.start_app(db_dict)
     # delete_all_temp_images()"""
 
-    teams = TeamDB()
+    """teams = TeamDB()
     teams.load('2015-10-14')
 
     for index, team in enumerate(teams.db):
@@ -61,7 +61,7 @@ if __name__ == '__main__':
         temp.print_chemistry_stats()
         print
         temp.print_team_strengths()
-        print('\n')
+        print('\n')"""
 
     # -------------------------PLAYER DB EXAMPLES---------------------------
     # Initialize DB

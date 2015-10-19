@@ -3,6 +3,7 @@ import json
 import math
 from AppConfig import *
 import PickFile
+import PickPosition
 import AddAttribute
 import PlayerBio
 from Logic import PlayerDB
@@ -256,7 +257,6 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
     def player_bio_btn_func(player):
         win_edit.hide()
         PlayerBio.open_player_bio_window(win_edit.x, win_edit.y, player, win_edit, settings['file_name'], list_players)
-        win_edit.become_target()
 
     def add_btn_func(player, btn):
         # Remove player
@@ -266,7 +266,6 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
         # Add player
         else:
             add_btn_text = '+'
-
 
         # Check if player is already on selected players list
         # Remove player from list
@@ -291,6 +290,12 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
             # Switch button title
             btn.title = "-"
 
+        win_edit.become_target()
+
+    def pos_btn_func(player, btn):
+        # Open window to get position
+        win_edit.hide()
+        PickPosition.open_pick_position_window(win_edit.x, win_edit.y, player, list_players, settings, btn, win_edit)
         win_edit.become_target()
 
     # ========== Action Buttons ==========
@@ -736,7 +741,7 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
             else:
                 add_btn_text = '+'
             add_btn = Button(title=add_btn_text, width=small_add_btn_width, height=15, x=msg_x, y=msg_y)
-            add_btn.action=(add_btn_func, player, add_btn)
+            add_btn.action = (add_btn_func, player, add_btn)
             settings['messages']['results'].append(add_btn)
             msg_x += spacing_list[stat_index]
             stat_index += 1
@@ -750,11 +755,21 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
             for player_stat in player_stats[1:]:
                 player_label = Label(text=player_stat, font=small_button_font, width=win_width-(2*left_border),
                                      height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
-
                 settings['messages']['results'].append(player_label)
+
+                # Save values for position edit button
+                if stat_index == 3:
+                    edit_x = msg_x
+                    edit_y = msg_y
+
                 msg_x += spacing_list[stat_index]
                 if stat_index < len(spacing_list) - 1:
                     stat_index += 1
+
+            if settings['edit_type'] == 'edit':
+                pos_btn = Button(title=player_stats[2], width=28, height=15, x=edit_x, y=edit_y)
+                pos_btn.action = (pos_btn_func, player, pos_btn)
+                settings['messages']['results'].append(pos_btn)
 
             msg_y += std_tf_height
 

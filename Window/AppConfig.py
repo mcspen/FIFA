@@ -17,6 +17,7 @@ file_title = 'File Menu'
 confirm_prompt_title = 'Are you sure?'
 edit_title = 'Edit'
 create_list_title = 'Create New List'
+pick_position_title = 'Pick New Position'
 
 # Titles on the window bar at the top
 start_win_title = 'FIFA Squad Builder'
@@ -31,6 +32,7 @@ file_win_title = start_win_title + ' - ' + file_title
 confirm_prompt_win_title = start_win_title + ' - ' + confirm_prompt_title
 edit_win_title = start_win_title + ' - ' + edit_title
 create_list_win_title = start_win_title + ' - ' + create_list_title
+pick_position_win_title = start_win_title + ' - ' + pick_position_title
 
 # ========== Colors ==========
 black = GUI.StdColors.black
@@ -146,5 +148,6 @@ title_tf_font = Font("Times", 1.6 * system_font.size, ['bold'])
 std_tf_font = Font("Times", 1.5 * system_font.size)
 std_tf_font_bold = Font("Times", 1.5 * system_font.size, ['bold'])
 small_tf_font = Font("Times", 1.2 * system_font.size)
+smaller_tf_font = Font("Times", 1.1 * system_font.size)
 std_tf_width = 200
 std_tf_height = 20

@@ -51,6 +51,8 @@ class Team:
         # TEMPORARY UNTIL ALL TEAMS HAVE STRENGTHS----------------------------------------------------------------------
         if 'strength' in input_dict:
             self.strength = input_dict['strength']
+        else:
+            self.strength = 0
         # TEMPORARY UNTIL ALL TEAMS HAVE STRENGTHS----------------------------------------------------------------------
 
     def set_team(self, formation, roster, manager=None, loyalty=True):
