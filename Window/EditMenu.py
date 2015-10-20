@@ -259,19 +259,12 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
         PlayerBio.open_player_bio_window(win_edit.x, win_edit.y, player, win_edit, settings['file_name'], list_players)
 
     def add_btn_func(player, btn):
-        # Remove player
-        if player in list_players.db:
-            add_btn_text = '-'
-
-        # Add player
-        else:
-            add_btn_text = '+'
-
         # Check if player is already on selected players list
         # Remove player from list
-        if player in list_players.db:
+        player_data = list_players.search({'id': (player['id'], 'exact')})
+        if len(player_data) > 0:
             # Remove
-            list_players.db.remove(player)
+            list_players.db.remove(player_data[0])
             # Save
             list_players.sort(['rating'])
             list_players.save(settings['file_name'], 'list', True)
@@ -736,18 +729,21 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
             player_stats = player_info(player, attributes)
             stat_index = 0
 
-            if player in list_players.db:
+            player_data = list_players.search({'id': (player['id'], 'exact')})
+            if len(player_data) > 0:
                 add_btn_text = '-'
+                temp_player = player_data[0]
             else:
                 add_btn_text = '+'
+                temp_player = player
             add_btn = Button(title=add_btn_text, width=small_add_btn_width, height=15, x=msg_x, y=msg_y)
-            add_btn.action = (add_btn_func, player, add_btn)
+            add_btn.action = (add_btn_func, temp_player, add_btn)
             settings['messages']['results'].append(add_btn)
             msg_x += spacing_list[stat_index]
             stat_index += 1
 
             bio_btn = Button(title=player_stats[0], width=120, height=15, x=msg_x, y=msg_y,
-                             action=(player_bio_btn_func, player))
+                             action=(player_bio_btn_func, temp_player))
             settings['messages']['results'].append(bio_btn)
             msg_x += spacing_list[stat_index]
             stat_index += 1

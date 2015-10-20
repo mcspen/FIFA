@@ -39,10 +39,11 @@ def open_pick_position_window(window_x, window_y, player, player_db, settings, b
     title.just = 'center'
     display_list.append(title)
 
-    # ========== Position Button Function ==========
+    # ========== Button Function ==========
     def pos_btn_func(position_short, position_full):
         # Edit player's position
-        player_index = player_db.db.index(player)
+        player_data = player_db.search({'id': (player['id'], 'exact')})
+        player_index = player_db.db.index(player_data[0])
         player_db.db[player_index]['position'] = position_short
         player_db.db[player_index]['positionFull'] = position_full
 
@@ -51,6 +52,11 @@ def open_pick_position_window(window_x, window_y, player, player_db, settings, b
 
         # Change button symbol
         btn.title = position_short
+        win_position.hide()
+        previous_window.show()
+
+    def back_btn_func():
+        # Go back
         win_position.hide()
         previous_window.show()
 
@@ -99,8 +105,12 @@ def open_pick_position_window(window_x, window_y, player, player_db, settings, b
 
         msg_x += width + button_spacing
 
-    # ========== Back Button Declaration ==========
-    back_btn = Button("Back")
+    # ========== Back Button ==========
+    msg_x = (win_position.width - button_width) / 2
+    msg_y += small_button_height + top_border
+    back_btn = Button("Back", width=button_width, height=button_height, x=msg_x, y=msg_y,
+                      action=back_btn_func, font=button_font)
+    display_list.append(back_btn)
 
     # ========== Add buttons to window ==========
     for item in display_list:
