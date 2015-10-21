@@ -61,14 +61,19 @@ class TeamDB:
 
         return True
 
-    def load(self, file_name):
+    def load(self, file_name, file_type='list'):
         """
         Load the database from the specified file name
         Input: The name of the database to load
         Output: True  -  the database is loaded into the TeamDB object
+
+        The only file type is list, but kept the argument for symmetry.
         """
 
         del self.db[:]  # Empty existing DB list
+
+        if file_type != 'list':
+            print "Invalid list type."
 
         # Create filename from database name
         file_path = 'JSONs/team_lt_' + file_name + '.json'
