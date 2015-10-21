@@ -669,7 +669,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         msg_y = add_to_list_btn.bottom + 5
 
         for info_label in labels:
-            player_label = Label(text=info_label, font=std_tf_font_bold, width=win_width-(2*left_border),
+            player_label = Label(text=info_label, font=std_tf_font_bold, width=spacing_list[stat_index]-5,
                                  height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
             settings['messages']['results'].append(player_label)
             msg_x += spacing_list[stat_index]
@@ -685,14 +685,19 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             player_stats = player_info(player, attributes)
             stat_index = 0
 
-            bio_btn = Button(title=player_stats[0], width=120, height=15, x=msg_x, y=msg_y,
+            # Check for names that are too long
+            name = player_stats[0]
+            if len(name) > 20:
+                name = player['lastName']
+
+            bio_btn = Button(title=name, width=spacing_list[stat_index]-5, height=15, x=msg_x, y=msg_y,
                              action=(player_bio_btn_func, player))
             settings['messages']['results'].append(bio_btn)
             msg_x += spacing_list[stat_index]
             stat_index += 1
 
             for player_stat in player_stats[1:]:
-                player_label = Label(text=player_stat, font=small_button_font, width=win_width-(2*left_border),
+                player_label = Label(text=player_stat, font=small_button_font, width=spacing_list[stat_index]-5,
                                      height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
 
                 settings['messages']['results'].append(player_label)

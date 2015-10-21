@@ -384,18 +384,16 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name, 
         index = 0
         for trait in player['traits']:
             if len(traits_list + trait) < 70:
-                traits_list += trait
+                traits_list += trait + ', '
                 index += 1
-                if trait != player['traits'][-1]:
-                    traits_list += ', '
+            else:
+                break
         for trait in player['traits'][index:]:
-            traits_list_2 += trait
-            if trait != player['traits'][-1]:
-                traits_list_2 += ', '
+            traits_list_2 += trait + ', '
     else:
-        traits_list = 'No traits'
-    traits_list_label.text = traits_list
-    traits_list_label_2.text = traits_list_2
+        traits_list = 'No traits..'
+    traits_list_label.text = traits_list[:-2]
+    traits_list_label_2.text = traits_list_2[:-2]
 
     # Player's specialities
     specialities_label.text = 'Specialities:'
@@ -405,20 +403,16 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name, 
         index = 0
         for speciality in player['specialities']:
             if len(specialities_list + speciality) < 70:
-                specialities_list += speciality
+                specialities_list += speciality + ', '
                 index += 1
-                if speciality != player['specialities'][-1]:
-                    specialities_list += ', '
             else:
                 break
         for speciality in player['specialities'][index:]:
-            specialities_list_2 += speciality
-            if speciality != player['specialities'][-1]:
-                specialities_list_2 += ', '
+            specialities_list_2 += speciality + ', '
     else:
-        specialities_list = 'No traits'
-    specialities_list_label.text = specialities_list
-    specialities_list_label_2.text = specialities_list_2
+        specialities_list = 'No specialities..'
+    specialities_list_label.text = specialities_list[:-2]
+    specialities_list_label_2.text = specialities_list_2[:-2]
 
     # ========== Add buttons to window ==========
     view.add(add_player_btn)

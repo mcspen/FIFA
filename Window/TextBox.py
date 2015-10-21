@@ -1,7 +1,6 @@
 from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
 from AppConfig import *
 import SearchMenu
-import EditMenu
 from Logic.HelperFunctions import format_attr_name
 import json
 
@@ -76,12 +75,6 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
             button.x = (idx / 10) * (button.width + 5) - 40
 
         button.y = (idx % 10) * 25 + title.bottom + 5
-
-        # Added for 81st item
-        if idx == 80:
-            button.x = 7 * (button.width + 5) - 40
-            button.y = 10 * 25 + title.bottom + 5
-
         button.group = radio_group
         button.value = attribute
         button.title = format_attr_name(attribute)
@@ -126,7 +119,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
             elif radio_group.value in ["atkWorkRate", "birthdate", "club", "color", "commonName", "defWorkRate",
                                        "firstName", "foot", "itemType", "lastName", "league", "modelName", "name",
                                        "name_custom", "nation", "playStyle", "playerType", "position", "positionFull",
-                                       "quality", "specialities", "traits"]:
+                                       "quality"]:
                 # Value should be a string
                 if type(value_tf.value) is str:
                     return_value = value_tf.value
@@ -152,8 +145,6 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         else:
             print 'Invalid attr_type for AddAttribute.'
 
-        win_attribute.become_target()
-
     def erase_btn_func():
         if attr_type == 'sort':
             del attr_list[:]
@@ -165,13 +156,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         erase_btn.enabled = 0
 
     def back_btn_func():
-        if settings['window'] == 'search':
-            SearchMenu.open_search_menu(win_attribute.x, win_attribute.y, db_dict, attr_dict, attr_list, settings)
-        elif settings['window'] == 'edit':
-            EditMenu.open_edit_menu(win_attribute.x, win_attribute.y, db_dict, attr_dict, attr_list, settings)
-        else:
-            print "Invalid window setting."
-
+        SearchMenu.open_search_menu(win_attribute.x, win_attribute.y,
+                                    db_dict, attr_dict, attr_list, settings)
         win_attribute.hide()
 
     # ========== Buttons ==========
@@ -185,7 +171,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     erase_btn.color = button_color
     erase_btn.just = 'right'
     if (attr_type == 'sort' and len(attr_list) == 0) or \
-       (attr_type == 'search' and len(attr_dict) == 0):
+        (attr_type == 'search' and len(attr_dict) == 0):
         erase_btn.enabled = 0
 
     enter_btn.x = erase_btn.left - button_spacing - button_width
@@ -225,7 +211,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     comp_button_x = (win_attribute.width - 4*comp_button_width)/2
 
     for value in ['higher', 'exact', 'lower', 'not']:
-        button = RadioButton()
+        button = RadioButton(attribute)
         button.width = comp_button_width
         button.x = comp_button_x
         button.y = value_tf.top - value_tf.height - title_border
@@ -252,8 +238,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         message_y = win_attribute.height - 150
 
         if attr_type == 'search':
-            display_list.append(Label(text="Search Attributes:", font=title_tf_font, width=std_tf_width,
-                                      height=std_tf_height, x=message_x, y=message_y, color=title_color))
+            display_list.append(Label(text=("Search Attributes:"), font=title_tf_font, width=std_tf_width,
+                                   height=std_tf_height, x=message_x, y=message_y, color=title_color))
             message_y += std_tf_height
 
             index = 0
@@ -281,8 +267,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
         # Display new sort attributes on screen
         elif attr_type == 'sort':
-            display_list.append(Label(text="Sort Attributes:", font=title_tf_font, width=std_tf_width,
-                                      height=std_tf_height, x=message_x, y=message_y, color=title_color))
+            display_list.append(Label(text=("Sort Attributes:"), font=title_tf_font, width=std_tf_width,
+                                       height=std_tf_height, x=message_x, y=message_y, color=title_color))
             message_y += std_tf_height
 
             for index, sort_value in enumerate(attr_list):

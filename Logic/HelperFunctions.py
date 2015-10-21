@@ -111,6 +111,11 @@ def player_info(player, attributes):
             player_info.append(str(player_value))
         elif attribute in ['clubId', 'leagueId', 'nationId']:
             player_info.append(str(player[attribute[:-2]]['id']))
+        elif attribute in ['specialities', 'traits']:
+            if player[attribute] is not None:
+                player_info.append(', '.join(player[attribute])[:-1])
+            else:
+                player_info.append('')
         else:
             player_info.append(str(player[attribute]))
 

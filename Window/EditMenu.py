@@ -706,14 +706,13 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
         # Print out labels
         labels = player_info_labels(attributes)
         stat_index = 1
-        small_add_btn_width = 20
         spacing_list = [25, 125, 40, 40, 65, 115, 115, 115, 40]
-        left_border = (win_width - sum(spacing_list[:-1]) - (len(labels) - len(spacing_list) + 1) * spacing_list[-1])/2
+        left_border = (win_width - sum(spacing_list[:-1]) - (len(labels) - len(spacing_list) + 2) * spacing_list[-1])/2
         msg_x = left_border + spacing_list[0]
         msg_y = add_to_list_btn.bottom + 5
 
         for info_label in labels:
-            player_label = Label(text=info_label, font=std_tf_font_bold, width=win_width-(2*left_border),
+            player_label = Label(text=info_label, font=std_tf_font_bold, width=spacing_list[stat_index]-5,
                                  height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
             settings['messages']['results'].append(player_label)
             msg_x += spacing_list[stat_index]
@@ -736,20 +735,25 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
             else:
                 add_btn_text = '+'
                 temp_player = player
-            add_btn = Button(title=add_btn_text, width=small_add_btn_width, height=15, x=msg_x, y=msg_y)
+            add_btn = Button(title=add_btn_text, width=spacing_list[stat_index]-5, height=15, x=msg_x, y=msg_y)
             add_btn.action = (add_btn_func, temp_player, add_btn)
             settings['messages']['results'].append(add_btn)
             msg_x += spacing_list[stat_index]
             stat_index += 1
 
-            bio_btn = Button(title=player_stats[0], width=120, height=15, x=msg_x, y=msg_y,
+            # Check for names that are too long
+            name = player_stats[0]
+            if len(name) > 20:
+                name = player['lastName']
+
+            bio_btn = Button(title=name, width=spacing_list[stat_index]-5, height=15, x=msg_x, y=msg_y,
                              action=(player_bio_btn_func, temp_player))
             settings['messages']['results'].append(bio_btn)
             msg_x += spacing_list[stat_index]
             stat_index += 1
 
             for player_stat in player_stats[1:]:
-                player_label = Label(text=player_stat, font=small_button_font, width=win_width-(2*left_border),
+                player_label = Label(text=player_stat, font=small_button_font, width=spacing_list[stat_index]-5,
                                      height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
                 settings['messages']['results'].append(player_label)
 

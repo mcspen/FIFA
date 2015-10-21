@@ -14,7 +14,7 @@ if __name__ == '__main__':
     multiprocessing.freeze_support()
 
     # Load defaults
-    """with open('configs.json', 'r') as f:
+    with open('configs.json', 'r') as f:
         configs = json.load(f)
         f.close()
     default_dbs = configs['default_databases']
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     FifaApp.start_app(db_dict)
     # delete_all_temp_images()"""
 
-    teams = TeamDB()
+    """teams = TeamDB()
     teams.load('2015-10-14')
 
     for index, team in enumerate(teams.db):

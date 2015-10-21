@@ -63,8 +63,9 @@ class PlayerDB:
                 # Get player data
                 player_data = page_data['items'][player_num]
 
-                # Add player to database
-                self.db.append(Player(player_data).__dict__)
+                # Add player to database and avoid duplicates
+                if self.db.count(Player(player_data).__dict__) == 0:
+                    self.db.append(Player(player_data).__dict__)
 
         return self.db
 
@@ -360,8 +361,16 @@ class PlayerDB:
                     else:
                         match = False
                 elif attribute in ['specialities', 'traits']:
-                    print "Haven't implemented %s yet" % attribute
-                    match = False
+                    string_value = value.upper()
+                    string_value = string_value.split(',')
+                    # Concatenate traits/specialities into a single string
+                    if player[attribute] is not None:
+                        stat = ' '.join(player[attribute]).upper()
+                    else:
+                        stat = ''
+                    for item in string_value:
+                        if item not in stat:
+                            match = False
                 else:
                     print "Invalid Attribute: %s" % attribute
                     match = False
