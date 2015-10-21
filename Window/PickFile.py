@@ -1,6 +1,6 @@
 from GUI import Button, Label, View, Window
 from AppConfig import *
-import ManageMenu
+import FilesMenu
 import EnterText
 import EditMenu
 import ConfirmPrompt
@@ -15,14 +15,14 @@ from os import listdir
 def open_pick_file_window(window_x, window_y, db_dict, settings):
 
     # ========== Window ==========
-    win_file = Window()
-    win_file.title = file_win_title
-    win_file.auto_position = False
-    win_file.position = (window_x, window_y)
-    win_file.size = (win_width, win_height)
-    win_file.resizable = 0
-    win_file.name = file_title + " Window"
-    win_file.show()
+    win_pick_file = Window()
+    win_pick_file.title = pick_file_win_title
+    win_pick_file.auto_position = False
+    win_pick_file.position = (window_x, window_y)
+    win_pick_file.size = (win_width, win_height)
+    win_pick_file.resizable = 0
+    win_pick_file.name = pick_file_title + " Window"
+    win_pick_file.show()
 
     # ========== Window Image View ==========
     class StartWindowImageView(View):
@@ -30,14 +30,14 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
             c.backcolor = view_backcolor
             c.erase_rect(r)
 
-    view = StartWindowImageView(size=win_file.size)
+    view = StartWindowImageView(size=win_pick_file.size)
 
     display_list = []
 
     file_type = settings['file_type']
 
     # ========== Title ==========
-    title = Label(text=file_title)
+    title = Label(text=pick_file_title)
     title.font = title_font
     title.width = title_width
     title.height = title_height
@@ -74,7 +74,7 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
         return text
 
     sub_title = Label(font=title_font_2, width=title_width, height=title_height,
-                      x=(win_file.width-title_width)/2, y=title.bottom, color=title_color, just='center')
+                      x=(win_pick_file.width-title_width)/2, y=title.bottom, color=title_color, just='center')
     sub_title_text = get_sub_title_text()
     sub_title.text = "Select %s file:" % sub_title_text
     display_list.append(sub_title)
@@ -142,14 +142,14 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
 
             # Enable back button
             settings['file_changes'] = False
-            ManageMenu.open_manage_menu(win_file.x, win_file.y, db_dict, settings)
-            win_file.hide()
+            FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
+            win_pick_file.hide()
 
         def rename_file_func(file_name):
             # Get new name
-            EnterText.open_enter_text_window(win_file.x, win_file.y, db_dict, settings,
+            EnterText.open_enter_text_window(win_pick_file.x, win_pick_file.y, db_dict, settings,
                                              'rename', fill_text=file_name, file_prefix=file_prefix)
-            win_file.hide()
+            win_pick_file.hide()
 
         def edit_file_func(file_name):
             if file_type[8:12] == 'play':
@@ -163,19 +163,19 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
 
             settings['file_name'] = file_name
 
-            EditMenu.open_edit_menu(win_file.x, win_file.y, db_dict, settings=settings)
-            win_file.hide()
+            EditMenu.open_edit_menu(win_pick_file.x, win_pick_file.y, db_dict, settings=settings)
+            win_pick_file.hide()
 
         def duplicate_file_func(file_name):
             # Get name for duplicate file and create
-            EnterText.open_enter_text_window(win_file.x, win_file.y, db_dict, settings,
+            EnterText.open_enter_text_window(win_pick_file.x, win_pick_file.y, db_dict, settings,
                                              'duplicate', fill_text=file_name, file_prefix=file_prefix)
-            win_file.hide()
+            win_pick_file.hide()
 
         def delete_file_func(file_name):
             file_path = 'JSONs/' + file_prefix + file_name + '.json'
-            ConfirmPrompt.open_confirm_prompt_window(win_file.x, win_file.y, db_dict, settings, file_path, file_name)
-            win_file.hide()
+            ConfirmPrompt.open_confirm_prompt_window(win_pick_file.x, win_pick_file.y, db_dict, settings, file_path, file_name)
+            win_pick_file.hide()
 
         # Display appropriate files
         small_file_button_width = 75
@@ -242,12 +242,12 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
     back_btn = Button("Back")
 
     def back_btn_func():
-        ManageMenu.open_manage_menu(win_file.x, win_file.y, db_dict, settings)
-        win_file.hide()
+        FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
+        win_pick_file.hide()
 
     # ========== Back Button ==========
     back_btn.x = (win_width - button_width) / 2
-    back_btn.y = win_file.height - 70
+    back_btn.y = win_pick_file.height - 70
     back_btn.height = button_height
     back_btn.width = button_width
     back_btn.font = button_font
@@ -268,6 +268,6 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
     for item in display_list:
         view.add(item)
 
-    win_file.add(view)
+    win_pick_file.add(view)
     view.become_target()
-    win_file.show()
+    win_pick_file.show()

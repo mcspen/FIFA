@@ -2,10 +2,8 @@ from GUI import Button, Geometry, Image, Label, View, Window
 
 from AppConfig import *
 import SearchMenu
-import PlayersMenu
-import FormationsMenu
 import TeamsMenu
-import ManageMenu
+import FilesMenu
 
 
 def open_start_menu(window_x, window_y, db_dict):
@@ -17,14 +15,14 @@ def open_start_menu(window_x, window_y, db_dict):
     win_start.position = (window_x, window_y)
     win_start.size = (win_width, win_height)
     win_start.resizable = 0
-    win_start.name = "Start Window"
+    win_start.name = start_title + " Window"
 
     # ========== Window Image View ==========
     class StartWindowImageView(View):
         def draw(self, c, r):
             c.backcolor = view_backcolor
             c.erase_rect(r)
-            image_pos = (players_btn.bottom + top_border, (win_start.width - start_window_image.width)/2)
+            image_pos = (search_btn.bottom + top_border, (win_start.width - start_window_image.width)/2)
             src_rect = start_window_image.bounds
             dst_rect = Geometry.offset_rect(src_rect, image_pos)
             start_window_image.draw(c, src_rect, dst_rect)
@@ -46,37 +44,25 @@ def open_start_menu(window_x, window_y, db_dict):
 
     # ========== Button Declarations ==========
     search_btn = Button("Search")
-    players_btn = Button("Players")
-    formations_btn = Button("Formations")
     teams_btn = Button("Teams")
-    manage_btn = Button("Manage Files")
+    files_btn = Button("Files")
 
     button_list = [search_btn,
-                   players_btn,
-                   formations_btn,
                    teams_btn,
-                   manage_btn]
+                   files_btn]
 
     # ========== Button Functions ==========
     def search_btn_func():
         win_start.hide()
         SearchMenu.open_search_menu(win_start.x, win_start.y, db_dict)
 
-    def players_btn_func():
-        win_start.hide()
-        PlayersMenu.open_players_menu(win_start.x, win_start.y, db_dict)
-
-    def formations_btn_func():
-        win_start.hide()
-        FormationsMenu.open_formations_menu(win_start.x, win_start.y, db_dict)
-
     def teams_btn_func():
         win_start.hide()
         TeamsMenu.open_teams_menu(win_start.x, win_start.y, db_dict)
 
-    def manage_btn_func():
+    def files_btn_func():
         win_start.hide()
-        ManageMenu.open_manage_menu(win_start.x, win_start.y, db_dict)
+        FilesMenu.open_files_menu(win_start.x, win_start.y, db_dict)
 
     # ========== Buttons ==========
     search_btn.x = (win_width - len(button_list)*button_width - (len(button_list)-1)*button_spacing) / 2
@@ -89,27 +75,7 @@ def open_start_menu(window_x, window_y, db_dict):
     search_btn.color = button_color
     search_btn.just = 'right'
 
-    players_btn.x = button_spacing + search_btn.right
-    players_btn.y = title.bottom + title_border
-    players_btn.height = button_height
-    players_btn.width = button_width
-    players_btn.font = button_font
-    players_btn.action = players_btn_func
-    players_btn.style = 'default'
-    players_btn.color = button_color
-    players_btn.just = 'right'
-
-    formations_btn.x = button_spacing + players_btn.right
-    formations_btn.y = title.bottom + title_border
-    formations_btn.height = button_height
-    formations_btn.width = button_width
-    formations_btn.font = button_font
-    formations_btn.action = formations_btn_func
-    formations_btn.style = 'default'
-    formations_btn.color = button_color
-    formations_btn.just = 'right'
-
-    teams_btn.x = button_spacing + formations_btn.right
+    teams_btn.x = button_spacing + search_btn.right
     teams_btn.y = title.bottom + title_border
     teams_btn.height = button_height
     teams_btn.width = button_width
@@ -119,23 +85,21 @@ def open_start_menu(window_x, window_y, db_dict):
     teams_btn.color = button_color
     teams_btn.just = 'right'
 
-    manage_btn.x = button_spacing + teams_btn.right
-    manage_btn.y = title.bottom + title_border
-    manage_btn.height = button_height
-    manage_btn.width = button_width
-    manage_btn.font = button_font
-    manage_btn.action = manage_btn_func
-    manage_btn.style = 'default'
-    manage_btn.color = button_color
-    manage_btn.just = 'right'
+    files_btn.x = button_spacing + teams_btn.right
+    files_btn.y = title.bottom + title_border
+    files_btn.height = button_height
+    files_btn.width = button_width
+    files_btn.font = button_font
+    files_btn.action = files_btn_func
+    files_btn.style = 'default'
+    files_btn.color = button_color
+    files_btn.just = 'right'
 
     # ========== Add components to view and add view to window ==========
     view.add(title)
     view.add(search_btn)
-    view.add(players_btn)
-    view.add(formations_btn)
     view.add(teams_btn)
-    view.add(manage_btn)
+    view.add(files_btn)
 
     win_start.add(view)
     view.become_target()

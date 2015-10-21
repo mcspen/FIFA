@@ -1,7 +1,7 @@
 from GUI import Button, Label, TextField, View, Window
 from AppConfig import *
 import PickFile
-import ManageMenu
+import FilesMenu
 from Logic.PlayerDB import PlayerDB
 from os import rename
 from os.path import isfile
@@ -155,7 +155,7 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
                     # Start download and saving of the player database, and return to manage menu
                     multiprocessing.Process(target=download_and_save, args=(new_player_db_name,)).start()
 
-                    ManageMenu.open_manage_menu(window_x, window_y, db_dict, settings)
+                    FilesMenu.open_files_menu(window_x, window_y, db_dict, settings)
                     win_enter_text.hide()
 
             else:
@@ -163,7 +163,7 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
 
     def back_btn_func():
         if box_type == 'download':
-            ManageMenu.open_manage_menu(window_x, window_y, db_dict, settings)
+            FilesMenu.open_files_menu(window_x, window_y, db_dict, settings)
         else:
             PickFile.open_pick_file_window(window_x, window_y, db_dict, settings)
         win_enter_text.hide()

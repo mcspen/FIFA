@@ -10,14 +10,15 @@ search_title = 'Search'
 players_title = 'Players'
 formations_title = 'Formations'
 teams_title = 'Teams'
-manage_title = 'Manage Files'
+files_title = 'Manage Files'
 attribute_title = 'Attributes Menu'
 player_bio_title = 'Player Bio'
-file_title = 'File Menu'
+pick_file_title = 'File Menu'
 confirm_prompt_title = 'Are you sure?'
 edit_title = 'Edit'
 create_list_title = 'Create New List'
 pick_position_title = 'Pick New Position'
+create_ultimate_teams_title = 'Create Ultimate Teams'
 
 # Titles on the window bar at the top
 start_win_title = 'FIFA Squad Builder'
@@ -25,14 +26,15 @@ search_win_title = start_win_title + ' - ' + search_title
 players_win_title = start_win_title + ' - ' + players_title
 formations_win_title = start_win_title + ' - ' + formations_title
 teams_win_title = start_win_title + ' - ' + teams_title
-manage_win_title = start_win_title + ' - ' + manage_title
+files_win_title = start_win_title + ' - ' + files_title
 attribute_win_title = start_win_title + ' - ' + attribute_title
 player_bio_win_title = start_win_title + ' - ' + player_bio_title
-file_win_title = start_win_title + ' - ' + file_title
+pick_file_win_title = start_win_title + ' - ' + pick_file_title
 confirm_prompt_win_title = start_win_title + ' - ' + confirm_prompt_title
 edit_win_title = start_win_title + ' - ' + edit_title
 create_list_win_title = start_win_title + ' - ' + create_list_title
 pick_position_win_title = start_win_title + ' - ' + pick_position_title
+create_ultimate_teams_win_title = start_win_title + ' - ' + create_ultimate_teams_title
 
 # ========== Colors ==========
 black = GUI.StdColors.black

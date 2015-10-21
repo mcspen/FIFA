@@ -1,6 +1,6 @@
 from GUI import Button, Label, TextField, View, Window
 from AppConfig import *
-import ManageMenu
+import FilesMenu
 from Logic.HelperFunctions import ascii_text, get_file_prefix, player_info_labels, player_info
 from Logic.PlayerDB import PlayerDB
 from Logic.FormationDB import FormationDB
@@ -198,7 +198,7 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
             create_list_settings['list'].sort(['rating'])
             create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
 
-        ManageMenu.open_manage_menu(window_x, window_y, db_dict, settings)
+        FilesMenu.open_files_menu(window_x, window_y, db_dict, settings)
         win_create_list.hide()
 
     def list_type_func(list_type):

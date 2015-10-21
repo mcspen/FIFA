@@ -8,7 +8,7 @@ import CreateList
 import json
 
 
-def open_manage_menu(window_x, window_y, db_dict, settings=None):
+def open_files_menu(window_x, window_y, db_dict, settings=None):
 
     general_display_list = []
     lists_display_list = []
@@ -26,13 +26,13 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
         }
 
     # ========== Window ==========
-    win_manage = Window()
-    win_manage.title = manage_win_title
-    win_manage.auto_position = False
-    win_manage.position = (window_x, window_y)
-    win_manage.size = (win_width, win_height)
-    win_manage.resizable = 0
-    win_manage.name = "Manage Files Window"
+    win_files = Window()
+    win_files.title = files_win_title
+    win_files.auto_position = False
+    win_files.position = (window_x, window_y)
+    win_files.size = (win_width, win_height)
+    win_files.resizable = 0
+    win_files.name = "Files Window"
 
     # ========== Window Image View ==========
     class FormationsWindowImageView(View):
@@ -40,14 +40,14 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
             c.backcolor = view_backcolor
             c.erase_rect(r)
 
-    view = FormationsWindowImageView(size=win_manage.size)
+    view = FormationsWindowImageView(size=win_files.size)
 
     # ========== Title ==========
-    title = Label(text=manage_title)
+    title = Label(text=files_title)
     title.font = title_font
     title.width = title_width
     title.height = title_height
-    title.x = (win_manage.width - title_width) / 2
+    title.x = (win_files.width - title_width) / 2
     title.y = top_border
     title.color = title_color
     title.just = 'center'
@@ -55,7 +55,7 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
 
     # Subtitle
     subtitle = Label(font=title_font_2, width=title_width, height=title_height,
-                     x=(win_manage.width - title_width) / 2,
+                     x=(win_files.width - title_width) / 2,
                      color=title_color, just = 'center')
     general_display_list.append(subtitle)
 
@@ -109,7 +109,7 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
             btn.enabled = 1
         lists_btn.enabled = 0
 
-        win_manage.become_target()
+        win_files.become_target()
 
     def databases_btn_func():
         # Remove previous displayed items
@@ -124,7 +124,7 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
             btn.enabled = 1
         databases_btn.enabled = 0
 
-        win_manage.become_target()
+        win_files.become_target()
 
     def defaults_btn_func():
         # Remove previous displayed items
@@ -139,74 +139,74 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
             btn.enabled = 1
         defaults_btn.enabled = 0
 
-        win_manage.become_target()
+        win_files.become_target()
 
     def back_btn_func():
-        StartMenu.open_start_menu(win_manage.x, win_manage.y, db_dict)
-        win_manage.hide()
+        StartMenu.open_start_menu(win_files.x, win_files.y, db_dict)
+        win_files.hide()
 
     # ========== Current Lists Button Functions ==========
     def create_list_btn_func():
         settings['file_type'] = 'create_list'
-        CreateList.open_create_list_window(win_manage.x, win_manage.y, db_dict, settings)
-        win_manage.hide()
+        CreateList.open_create_list_window(win_files.x, win_files.y, db_dict, settings)
+        win_files.hide()
 
     def player_list_current_btn_func():
         settings['file_type'] = 'current_player_list'
-        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
-        win_manage.hide()
+        PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
+        win_files.hide()
 
     def formation_list_current_btn_func():
         settings['file_type'] = 'current_formation_list'
-        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
-        win_manage.hide()
+        PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
+        win_files.hide()
 
     def team_list_current_btn_func():
         settings['file_type'] = 'current_team_list'
-        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
-        win_manage.hide()
+        PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
+        win_files.hide()
 
     # ========== Current Databases Button Functions ==========
     def download_player_db_btn_func():
         settings['file_type'] = 'download_player_db'
-        EnterText.open_enter_text_window(win_manage.x, win_manage.y, db_dict, settings, 'download')
-        win_manage.hide()
+        EnterText.open_enter_text_window(win_files.x, win_files.y, db_dict, settings, 'download')
+        win_files.hide()
 
     def player_db_current_btn_func():
         settings['file_type'] = 'current_player_db'
-        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
-        win_manage.hide()
+        PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
+        win_files.hide()
 
     def formation_db_current_btn_func():
         settings['file_type'] = 'current_formation_db'
-        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
-        win_manage.hide()
+        PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
+        win_files.hide()
 
     # ========== Defaults Button Functions ==========
     def player_db_default_btn_func():
         settings['file_type'] = 'default_player_db'
-        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
-        win_manage.hide()
+        PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
+        win_files.hide()
 
     def player_list_default_btn_func():
         settings['file_type'] = 'default_player_list'
-        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
-        win_manage.hide()
+        PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
+        win_files.hide()
 
     def formation_db_default_btn_func():
         settings['file_type'] = 'default_formation_db'
-        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
-        win_manage.hide()
+        PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
+        win_files.hide()
 
     def formation_list_default_btn_func():
         settings['file_type'] = 'default_formation_list'
-        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
-        win_manage.hide()
+        PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
+        win_files.hide()
 
     def team_list_default_btn_func():
         settings['file_type'] = 'default_team_list'
-        PickFile.open_pick_file_window(win_manage.x, win_manage.y, db_dict, settings)
-        win_manage.hide()
+        PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
+        win_files.hide()
 
     # ========== Button Toolbar Declarations ==========
     lists_btn = Button("Lists", height=small_button_height, width=small_button_width,
@@ -316,7 +316,7 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
     lists_file_label_width = 200
     lists_buttons_x = win_width - file_btn_width - (win_width - file_btn_width - lists_file_label_width) / 2
 
-    create_list_btn.x = (win_manage.width - button_width) / 2
+    create_list_btn.x = (win_files.width - button_width) / 2
     create_list_btn.y = subtitle.bottom + title_border
 
     player_list_current_btn.x = lists_buttons_x
@@ -332,7 +332,7 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
     dbs_file_label_width = 200
     dbs_buttons_x = win_width - file_btn_width - (win_width - file_btn_width - dbs_file_label_width) / 2
 
-    download_player_db_btn.x = (win_manage.width - button_width) / 2
+    download_player_db_btn.x = (win_files.width - button_width) / 2
     download_player_db_btn.y = subtitle.bottom + title_border
 
     player_db_current_btn.x = dbs_buttons_x
@@ -420,6 +420,6 @@ def open_manage_menu(window_x, window_y, db_dict, settings=None):
 
     add_new_display()
 
-    win_manage.add(view)
+    win_files.add(view)
     view.become_target()
-    win_manage.show()
+    win_files.show()
