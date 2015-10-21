@@ -257,6 +257,7 @@ class Team:
         # Print out the roster info
         print "Roster:"
         print "Rating: %.2f" % self.rating
+        print "Strength: %d" % self.strength
         print "Chemistry: %d" % self.chemistry
         print "Formation: %s" % self.formation['name']
 
@@ -1950,7 +1951,7 @@ class Team:
                 print "Calculating... %d teams created" % count
 
                 # Compare teams and narrow teams down to top 100 -------------------------------------------------------
-                sorted_list = sorted(team_list, key=lambda k: (k['rating'], k['total_ic']), reverse=True)
+                sorted_list = sorted(team_list, key=lambda k: (k['strength'], k['rating'], k['total_ic']), reverse=True)
                 return [sorted_list[:100], count]
 
             # DELETE LATER ---------------------------------------------------------------------------------------------
