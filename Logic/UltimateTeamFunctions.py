@@ -14,7 +14,7 @@ def recursive_create_tup(tup):
     """
     Wrapper function to all Team.recursive_create_tup to be called by pool
     """
-    return recursive_create(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
+    return recursive_create(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6])
 
 
 def calculate_dependency_dict_list(dependent_positions, roster):
@@ -215,7 +215,7 @@ def calculate_dependency_dict_list(dependent_positions, roster):
 
 
 def recursive_create(players, formation, time_limit, players_per_position, teams_per_formation, sort_attributes,
-                     pos_index=0, roster=None, base_ids=None, team_list=None, team_count=0):
+                     num_teams, pos_index=0, roster=None, base_ids=None, team_list=None, team_count=0):
     """
     Recursive function to build all possible team combinations with good chemistry
     Input: PlayerDB of players, one formation, position index, roster, base IDs list, list of teams, and team count.
@@ -260,12 +260,26 @@ def recursive_create(players, formation, time_limit, players_per_position, teams
         # TEMPORARY ------------------------------------------------------------------------------------------------
 
         # Narrow down team_list to save memory
-        if (team_count % 100) == 0:
+        if (team_count % num_teams) == 0:
             print "Calculating... %d teams created" % team_count
 
-            # Compare teams and narrow teams down to top 100 -------------------------------------------------------
-            sorted_list = sorted(team_list, key=lambda k: (k['strength'], k['rating'], k['total_ic']), reverse=True)
-            return [sorted_list[:100], team_count]
+            def compare(current_team):
+                """
+                Comparison function for sorting the teams based on attributes list in config file.
+                """
+                attribute_tuple = ()
+                for attribute in sort_attributes:
+
+                    if attribute in current_team:
+                        attribute_tuple += (current_team[attribute],)
+                    else:
+                        print "Invalid Attribute: %s" % attribute
+
+                return attribute_tuple
+
+            # Compare teams and narrow down to specified max number of teams
+            sorted_list = sorted(team_list, key=compare, reverse=True)
+            return [sorted_list[:num_teams], team_count]
 
         # Check to see if function should return
         if team_count >= teams_per_formation or time.time() > time_limit:
@@ -420,7 +434,8 @@ def recursive_create(players, formation, time_limit, players_per_position, teams
 
             # Call recursive function
             results = recursive_create(players, formation, time_limit, players_per_position, teams_per_formation,
-                                       sort_attributes, next_index, roster_copy, base_ids_copy, team_list, team_count)
+                                       sort_attributes, num_teams, next_index, roster_copy, base_ids_copy, team_list,
+                                       team_count)
             team_list = results[0]
             team_count = results[1]
 
@@ -453,6 +468,7 @@ def find_teams_ultimate(players, formations):
     players_per_position = configs['players_per_position']
     teams_per_formation = configs['teams_per_formation']
     sort_attributes = configs['sort_attributes']
+    num_teams = configs['num_teams_returned']
     if configs['time_limit'] > 0:
         time_limit = time.time() + configs['time_limit']
     else:
@@ -467,7 +483,7 @@ def find_teams_ultimate(players, formations):
         # Create tuple list for each formation
         for formation in formations.db:
             input_tuples.append((players, formation, time_limit, players_per_position,
-                                 teams_per_formation, sort_attributes))
+                                 teams_per_formation, sort_attributes, num_teams))
 
         # Temporary Timing Information------------------------------------------------------------------------------
         print "Start Multi Process!"
@@ -506,7 +522,7 @@ def find_teams_ultimate(players, formations):
 
             # Call recursive team building function
             results_sp = recursive_create(players, formation, time_limit, players_per_position,
-                                          teams_per_formation, sort_attributes)
+                                          teams_per_formation, sort_attributes, num_teams)
 
             team_list_sp += results_sp[0]
             count_sp += results_sp[1]

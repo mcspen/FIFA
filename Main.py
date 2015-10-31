@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
     ultimate_team = Team()
     teams = TeamDB(ultimate_team.create_team_ultimate(gold_players, formation_db))
-    teams.save('2015-10-13')
+    teams.save('2015-10-30')
 
     """americans = PlayerDB(player_db.search({'nation': ('United States',)}))"""
 
