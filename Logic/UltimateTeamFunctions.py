@@ -459,7 +459,7 @@ def find_teams_ultimate(players, formations):
     count_mp = 0  # Count of teams created in pool
     count_sp = 0  # Count of teams created in single process
 
-    # Get configuration value
+    # Get configuration values
     with open('ultimate_team_configs.json', 'r') as f:
         configs = json.load(f)
         f.close()

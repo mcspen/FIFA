@@ -11,7 +11,7 @@ from Logic.Team import Team
 from Logic.HelperFunctions import delete_all_temp_images
 
 if __name__ == '__main__':
-    """multiprocessing.freeze_support()
+    multiprocessing.freeze_support()
 
     # Load defaults
     with open('configs.json', 'r') as f:
@@ -52,7 +52,8 @@ if __name__ == '__main__':
         temp = Team(team)
         temp.calculate_strength()
         teams.db[index] = temp.__dict__
-    teams.sort(['strength', 'rating', 'total_ic'])
+    #teams.sort(['strength', 'rating', 'total_ic'])
+    teams.sort(['rating', 'strength', 'total_ic'])
     for team in teams.db:
         temp = Team(team)
         temp.print_summary()
@@ -65,7 +66,7 @@ if __name__ == '__main__':
 
     # -------------------------PLAYER DB EXAMPLES---------------------------
     # Initialize DB
-    player_db = PlayerDB()
+    #player_db = PlayerDB()
 
     # Download Database from Website
     # temp_time = time.time()
@@ -79,7 +80,7 @@ if __name__ == '__main__':
 
     # Load Player Database from File
     # temp_time = time.time()
-    player_db.load('FIFA 16 - Current', 'db')
+    #player_db.load('FIFA 16 - Current', 'db')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
     """teams = TeamDB()
@@ -93,16 +94,16 @@ if __name__ == '__main__':
     team.load('Germany2014WorldCupFinal')
     team.print_team_strengths()"""
 
-    my_players = PlayerDB()
-    my_players.load('my_players_16', 'list')
+    """my_players = PlayerDB()
+    my_players.load('my_players_16', 'list')"""
 
     # Load Formation Database from file
-    formation_db = FormationDB()
-    formation_db.load('All Formations', 'db')
+    """formation_db = FormationDB()
+    formation_db.load('All Formations', 'db')"""
 
     """ultimate_team = Team()
-    teams = TeamDB(ultimate_team.create_team_ultimate(my_players, formation_db, 'multi', 250))
-    teams.save('2015-10-14')"""
+    teams = TeamDB(ultimate_team.create_team_ultimate(my_players, formation_db))
+    teams.save('2015-11-02')"""
 
     """silver_players = PlayerDB(my_players.search({'quality': ('silver', 'exact')}))
 
@@ -110,11 +111,11 @@ if __name__ == '__main__':
     teams = TeamDB(ultimate_team.create_team_ultimate(silver_players, formation_db, 'multi'))
     teams.save('silver_teams')"""
 
-    gold_players = PlayerDB(my_players.search({'quality': ('gold', 'exact')}))
+    """gold_players = PlayerDB(my_players.search({'quality': ('gold', 'exact')}))
 
     ultimate_team = Team()
     teams = TeamDB(ultimate_team.create_team_ultimate(gold_players, formation_db))
-    teams.save('2015-10-30')
+    teams.save('2015-10-30')"""
 
     """americans = PlayerDB(player_db.search({'nation': ('United States',)}))"""
 
