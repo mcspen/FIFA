@@ -46,15 +46,15 @@ if __name__ == '__main__':
     # delete_all_temp_images()"""
 
     """teams = TeamDB()
-    teams.load('2015-10-14')
+    teams.load('2015-11-06-long')
 
     for index, team in enumerate(teams.db):
         temp = Team(team)
         temp.calculate_strength()
         teams.db[index] = temp.__dict__
-    #teams.sort(['strength', 'rating', 'total_ic'])
-    teams.sort(['rating', 'strength', 'total_ic'])
-    for team in teams.db:
+    teams.sort(['strength', 'rating', 'total_ic'])
+    #teams.sort(['rating', 'strength', 'total_ic'])
+    for team in teams.db[:100]:
         temp = Team(team)
         temp.print_summary()
         print
@@ -95,15 +95,15 @@ if __name__ == '__main__':
     team.print_team_strengths()"""
 
     """my_players = PlayerDB()
-    my_players.load('my_players_16', 'list')"""
+    my_players.load('my_players_16_potential', 'list')
 
     # Load Formation Database from file
-    """formation_db = FormationDB()
-    formation_db.load('All Formations', 'db')"""
+    formation_db = FormationDB()
+    formation_db.load('All Formations', 'db')
 
-    """ultimate_team = Team()
+    ultimate_team = Team()
     teams = TeamDB(ultimate_team.create_team_ultimate(my_players, formation_db))
-    teams.save('2015-11-02')"""
+    teams.save('2015-11-06-long')"""
 
     """silver_players = PlayerDB(my_players.search({'quality': ('silver', 'exact')}))
 
