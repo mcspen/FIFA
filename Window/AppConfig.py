@@ -151,5 +151,5 @@ std_tf_font = Font("Times", 1.5 * system_font.size)
 std_tf_font_bold = Font("Times", 1.5 * system_font.size, ['bold'])
 small_tf_font = Font("Times", 1.2 * system_font.size)
 smaller_tf_font = Font("Times", 1.1 * system_font.size)
-std_tf_width = 200
+std_tf_width = 210
 std_tf_height = 20

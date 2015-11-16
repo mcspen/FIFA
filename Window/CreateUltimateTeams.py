@@ -43,7 +43,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     display_items.append(title)
 
     # ========== Settings ==========
-    # Current player list and formation list
+    # ========== Current player list and formation list ==========
     file_name_width = 400
     player_list_label = Label(text="Player List: " + db_dict['player_list'][0], font=std_tf_font_bold,
                               width=file_name_width, height=std_tf_height,
@@ -59,7 +59,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
 
     settings_indent = 2*win_width/5
 
-    # Team name
+    # ========== Team name ==========
     team_name_tf_width = 225
     team_name_label_width = 130
     team_list_name_label = Label(text="Team List Name: ", font=std_tf_font_bold,
@@ -76,7 +76,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     radio_btn_width = 75
     radio_btn_space = 5
 
-    # Process Type
+    # ========== Process Type Label ==========
     process_type_label = Label(text="Processing Type: ", font=std_tf_font_bold,
                                width=std_tf_width, height=std_tf_height,
                                x=settings_indent - std_tf_width,
@@ -90,7 +90,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
 
     process_type_radio_group = RadioGroup(action=get_process_type_rg)
 
-    # Edit Type
+    # Process Type Radio Buttons
     multi_process_radio_btn = RadioButton('Multi', width=radio_btn_width,
                                           x=process_type_label.right + radio_btn_space,
                                           y=process_type_label.top, group=process_type_radio_group, value='multi')
@@ -103,7 +103,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
 
     process_type_radio_group.value = settings['process_type']
 
-    # Players per Position
+    # ========== Players per Position Label ==========
     players_per_pos_tf = TextField(font=std_tf_font, width=radio_btn_width, height=std_tf_height + 5)
 
     players_per_pos_label = Label(text="Players per Position: ", font=std_tf_font_bold,
@@ -114,7 +114,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     display_items.append(players_per_pos_label)
 
     def get_players_per_pos_rg():
-        if players_per_pos_radio_group.value > 0:
+        if players_per_pos_radio_group.value == -1:
             settings['players_per_position'] = players_per_pos_radio_group.value
         else:
             settings['players_per_position'] = int(players_per_pos_tf.value)
@@ -122,27 +122,129 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
 
     players_per_pos_radio_group = RadioGroup(action=get_players_per_pos_rg)
 
-    # Edit Type
+    # Players per Position Radio Buttons
     all_players_radio_btn = RadioButton('All', width=radio_btn_width,
                                         x=players_per_pos_label.right + radio_btn_space,
-                                        y=players_per_pos_label.top, group=players_per_pos_radio_group, value=10000)
+                                        y=players_per_pos_label.top, group=players_per_pos_radio_group, value=-1)
     display_items.append(all_players_radio_btn)
 
     specify_players_radio_btn = RadioButton('Specify: ', width=radio_btn_width,
                                             x=all_players_radio_btn.right + radio_btn_space,
-                                            y=players_per_pos_label.top, group=players_per_pos_radio_group, value=-1)
+                                            y=players_per_pos_label.top, group=players_per_pos_radio_group, value=-2)
     display_items.append(specify_players_radio_btn)
 
-    if settings['players_per_position'] == 10000:
+    if settings['players_per_position'] == -1:
         players_per_pos_radio_group.value = settings['players_per_position']
     else:
         players_per_pos_tf.value = str(settings['players_per_position'])
-        players_per_pos_radio_group.value = -1
+        players_per_pos_radio_group.value = -2
 
     players_per_pos_tf.x = specify_players_radio_btn.right + radio_btn_space
     players_per_pos_tf.y = players_per_pos_label.top
     display_items.append(players_per_pos_tf)
 
+    # ========== Max Teams per Formation Label ==========
+    teams_per_formation_tf = TextField(font=std_tf_font, width=radio_btn_width, height=std_tf_height + 5)
+
+    teams_per_formation_label = Label(text="Max Teams per Formation: ", font=std_tf_font_bold,
+                                       width=std_tf_width, height=std_tf_height,
+                                       x=settings_indent - std_tf_width,
+                                       y=players_per_pos_label.bottom + title_border,
+                                       color=title_color, just='right')
+    display_items.append(teams_per_formation_label)
+
+    def get_teams_per_formation_rg():
+        if teams_per_formation_radio_group.value == -1:
+            settings['teams_per_formation'] = teams_per_formation_radio_group.value
+        else:
+            settings['teams_per_formation'] = int(teams_per_formation_tf.value)
+        win_ultimate_teams.become_target()
+
+    teams_per_formation_radio_group = RadioGroup(action=get_teams_per_formation_rg)
+
+    # Max Teams per Formation Radio Buttons
+    all_teams_per_formation_radio_btn = RadioButton('All', width=radio_btn_width,
+                                        x=teams_per_formation_label.right + radio_btn_space,
+                                        y=teams_per_formation_label.top,
+                                        group=teams_per_formation_radio_group, value=-1)
+    display_items.append(all_teams_per_formation_radio_btn)
+
+    specify_teams_per_formation_radio_btn = RadioButton('Specify: ', width=radio_btn_width,
+                                            x=all_players_radio_btn.right + radio_btn_space,
+                                            y=teams_per_formation_label.top,
+                                            group=teams_per_formation_radio_group, value=-2)
+    display_items.append(specify_teams_per_formation_radio_btn)
+
+    if settings['teams_per_formation'] == -1:
+        teams_per_formation_radio_group.value = settings['teams_per_formation']
+    else:
+        teams_per_formation_tf.value = str(settings['teams_per_formation'])
+        teams_per_formation_radio_group.value = -2
+
+    teams_per_formation_tf.x = specify_teams_per_formation_radio_btn.right + radio_btn_space
+    teams_per_formation_tf.y = teams_per_formation_label.top
+    display_items.append(teams_per_formation_tf)
+
+    # ========== Max Teams to Return Label ==========
+    teams_to_return_tf = TextField(font=std_tf_font, width=radio_btn_width, height=std_tf_height + 5)
+
+    teams_to_return_label = Label(text="Max Teams to Return: ", font=std_tf_font_bold,
+                                       width=std_tf_width, height=std_tf_height,
+                                       x=settings_indent - std_tf_width,
+                                       y=teams_per_formation_label.bottom + title_border,
+                                       color=title_color, just='right')
+    display_items.append(teams_to_return_label)
+
+    def get_teams_to_return_rg():
+        if teams_to_return_radio_group.value == -1:
+            settings['num_teams_returned'] = teams_to_return_radio_group.value
+        else:
+            settings['num_teams_returned'] = int(teams_to_return_tf.value)
+        win_ultimate_teams.become_target()
+
+    teams_to_return_radio_group = RadioGroup(action=get_teams_to_return_rg)
+
+    # Max Teams to Return Radio Buttons
+    max_teams_to_return_radio_btn = RadioButton('1000', width=radio_btn_width,
+                                        x=teams_to_return_label.right + radio_btn_space,
+                                        y=teams_to_return_label.top,
+                                        group=teams_to_return_radio_group, value=1000)
+    display_items.append(max_teams_to_return_radio_btn)
+
+    specify_teams_to_return_radio_btn = RadioButton('Specify: ', width=radio_btn_width,
+                                            x=max_teams_to_return_radio_btn.right + radio_btn_space,
+                                            y=teams_to_return_label.top,
+                                            group=teams_to_return_radio_group, value=-2)
+    display_items.append(specify_teams_to_return_radio_btn)
+
+    if settings['num_teams_returned'] >= 1000:
+        teams_to_return_radio_group.value = 1000
+    else:
+        teams_to_return_tf.value = str(settings['num_teams_returned'])
+        teams_to_return_radio_group.value = -2
+
+    teams_to_return_tf.x = specify_teams_to_return_radio_btn.right + radio_btn_space
+    teams_to_return_tf.y = teams_to_return_label.top
+    display_items.append(teams_to_return_tf)
+
+    # ========== Judging Teams Label ==========
+    judging_teams_label = Label(text="How to Judge Teams: ", font=std_tf_font_bold,
+                                       width=std_tf_width, height=std_tf_height,
+                                       x=settings_indent - std_tf_width,
+                                       y=teams_to_return_label.bottom + title_border,
+                                       color=title_color, just='right')
+    display_items.append(judging_teams_label)
+
+    judging_teams_attributes = Label(font=std_tf_font_bold,
+                                       width=std_tf_width, height=std_tf_height,
+                                       x=judging_teams_label.right + radio_btn_space,
+                                       y=judging_teams_label.top,
+                                       color=title_color, just='left')
+    judging_teams_attributes_text = ''
+    for attr in settings['sort_attributes']:
+        judging_teams_attributes_text += attr + ', '
+    judging_teams_attributes.text = judging_teams_attributes_text[:-2]
+    display_items.append(judging_teams_attributes)
 
 
     # ========== Button Declarations ==========
