@@ -304,8 +304,28 @@ class PlayerDB:
                 elif attribute in ['isGK', 'isSpecialType']:
                     if not player[attribute] == value:
                         match = False
-                elif attribute in ['rating', 'height', 'weight', 'birthdate', 'age', 'acceleration', 'aggression',
-                                   'agility', 'balance', 'ballcontrol', 'crossing', 'curve', 'dribbling', 'finishing',
+                elif attribute in ['birthdate']:
+                    # Convert birthday to a number
+                    player_birthday = (int(player[attribute][5:7]) * 100
+                                       + int(player[attribute][-2:]))
+                    value_birthday = (int(value[5:7]) * 100
+                                      + int(value[-2:]))
+                    if str.isdigit(value[:4]):
+                        player_birthday += int(player[attribute][:4]) * 10000
+                        value_birthday += int(value[:4]) * 10000
+                    # Higher means older
+                    if compare == 'higher':
+                        if not player_birthday <= value_birthday:
+                            match = False
+                    elif compare == 'exact':
+                        if not player_birthday == value_birthday:
+                            match = False
+                    # Lower means younger
+                    elif compare == 'lower':
+                        if not player_birthday >= value_birthday:
+                            match = False
+                elif attribute in ['rating', 'height', 'weight', 'age', 'acceleration', 'aggression', 'agility',
+                                   'balance', 'ballcontrol', 'crossing', 'curve', 'dribbling', 'finishing',
                                    'freekickaccuracy', 'gkdiving', 'gkhandling', 'gkkicking', 'gkpositioning',
                                    'gkreflexes', 'headingaccuracy', 'interceptions', 'jumping', 'longpassing',
                                    'longshots', 'marking', 'penalties', 'positioning', 'potential', 'reactions',

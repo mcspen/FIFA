@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
     # -------------------------PLAYER DB EXAMPLES---------------------------
     # Initialize DB
-    #player_db = PlayerDB()
+    # player_db = PlayerDB()
 
     # Download Database from Website
     # temp_time = time.time()
@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
     # Load Player Database from File
     # temp_time = time.time()
-    #player_db.load('FIFA 16 - Current', 'db')
+    # player_db.load('FIFA 16 - Current', 'db')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
     # Print strengths of a list of teams

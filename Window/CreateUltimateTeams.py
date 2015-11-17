@@ -235,7 +235,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
                                        color=title_color, just='right')
     display_items.append(judging_teams_label)
 
-    judging_teams_attributes = Label(font=std_tf_font_bold,
+    judging_teams_attributes = Label(font=std_tf_font,
                                        width=std_tf_width, height=std_tf_height,
                                        x=judging_teams_label.right + radio_btn_space,
                                        y=judging_teams_label.top,
@@ -246,16 +246,70 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     judging_teams_attributes.text = judging_teams_attributes_text[:-2]
     display_items.append(judging_teams_attributes)
 
+    # Judging Teams Edit Button
+    def judging_edit_btn_func():
+        win_ultimate_teams.hide()
+
+    judging_edit_btn_width = 40
+    judging_edit_btn = Button("Edit", x=teams_to_return_tf.right - judging_edit_btn_width, y=judging_teams_label.top,
+                              height=small_button_height-7, width=judging_edit_btn_width,
+                              font=small_button_font, action=judging_edit_btn_func, style = 'default',
+                              color=button_color, just='right')
+    display_items.append(judging_edit_btn)
+
+    # ========== Time Limit Label ==========
+    time_limit_tf = TextField(font=std_tf_font, width=radio_btn_width, height=std_tf_height + 5)
+
+    time_limit_label = Label(text="Time Limit: ", font=std_tf_font_bold,
+                                       width=std_tf_width, height=std_tf_height,
+                                       x=settings_indent - std_tf_width,
+                                       y=judging_teams_label.bottom + title_border,
+                                       color=title_color, just='right')
+    display_items.append(time_limit_label)
+
+    def get_time_limit_rg():
+        if time_limit_radio_group.value == -1:
+            settings['time_limit'] = time_limit_radio_group.value
+        else:
+            settings['time_limit'] = int(time_limit_tf.value)
+        win_ultimate_teams.become_target()
+
+    time_limit_radio_group = RadioGroup(action=get_time_limit_rg)
+
+    # Max Teams to Return Radio Buttons
+    days_time_limit_radio_btn = RadioButton('Days', width=radio_btn_width,
+                                        x=time_limit_label.right + radio_btn_space,
+                                        y=time_limit_label.top,
+                                        group=time_limit_radio_group, value=-1)
+    display_items.append(days_time_limit_radio_btn)
+
+    hours_time_limit_radio_btn = RadioButton('Hours', width=radio_btn_width,
+                                            x=days_time_limit_radio_btn.right + radio_btn_space,
+                                            y=time_limit_label.top,
+                                            group=time_limit_radio_group, value=-2)
+    display_items.append(hours_time_limit_radio_btn)
+
+    minutes_time_limit_radio_btn = RadioButton('Minutes', width=radio_btn_width,
+                                            x=hours_time_limit_radio_btn.right + radio_btn_space,
+                                            y=time_limit_label.top,
+                                            group=time_limit_radio_group, value=-3)
+    display_items.append(minutes_time_limit_radio_btn)
+
+    if settings['time_limit'] >= 1000:
+        time_limit_radio_group.value = 1000
+    else:
+        time_limit_tf.value = str(settings['time_limit'])
+        time_limit_radio_group.value = -2
+
+    time_limit_tf.x = minutes_time_limit_radio_btn.right + radio_btn_space
+    time_limit_tf.y = time_limit_label.top
+    display_items.append(time_limit_tf)
 
     # ========== Button Declarations ==========
-    edit_btn = Button("Edit")
     start_btn = Button("Start")
     back_btn = Button("Back")
 
     # ========== Button Functions ==========
-    def edit_btn_func():
-        win_ultimate_teams.hide()
-
     def start_btn_func():
         win_ultimate_teams.hide()
 
@@ -264,17 +318,6 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
         win_ultimate_teams.hide()
 
     # ========== Buttons ==========
-    edit_btn.x = (win_width - 2*button_width - button_spacing) / 2
-    edit_btn.y = win_ultimate_teams.height - 75
-    edit_btn.height = button_height
-    edit_btn.width = button_width
-    edit_btn.font = button_font
-    edit_btn.action = edit_btn_func
-    edit_btn.style = 'default'
-    edit_btn.color = button_color
-    edit_btn.just = 'right'
-    display_items.append(edit_btn)
-
     start_btn.x = (win_width - 2*button_width - button_spacing) / 2
     start_btn.y = win_ultimate_teams.height - 75
     start_btn.height = button_height
