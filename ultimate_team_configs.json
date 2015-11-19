@@ -1,6 +1,6 @@
 {"process_type": "multi",
   "num_teams_returned": 200,
   "time_limit": 3600,
-  "players_per_position": 10,
+  "players_per_position": 25,
   "teams_per_formation": 150000,
   "sort_attributes": ["strength", "rating", "total_ic"]}

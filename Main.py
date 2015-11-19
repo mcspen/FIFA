@@ -47,12 +47,12 @@ if __name__ == '__main__':
 
     # Calculate strengths and then print out for first 100 teams
     """teams = TeamDB()
-    teams.load('2015-11-06-long')
+    teams.load('2015-11-19_2')
 
-    for index, team in enumerate(teams.db):
+    '''for index, team in enumerate(teams.db):
         temp = Team(team)
         temp.calculate_strength()
-        teams.db[index] = temp.__dict__
+        teams.db[index] = temp.__dict__'''
     teams.sort(['strength', 'rating', 'total_ic'])
     #teams.sort(['rating', 'strength', 'total_ic'])
     for team in teams.db[:100]:
@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
     # Print strengths of a list of teams
     """teams = TeamDB()
-    teams.load('2015-10-08', 'db')
+    teams.load('2015-11-19')
     for index, team in enumerate(teams.db):
         print '============ TEAM %d ==============' % index
         Team(team).print_team_strengths()
@@ -99,15 +99,15 @@ if __name__ == '__main__':
 
     # Create ultimate teams and save
     """my_players = PlayerDB()
-    my_players.load('my_players_16', 'list')
+    #my_players.load('my_players_16', 'list')
+    my_players.load('courtois', 'list')
 
-    # Load Formation Database from file
     formation_db = FormationDB()
     formation_db.load('All Formations', 'db')
 
     ultimate_team = Team()
     teams = TeamDB(ultimate_team.create_team_ultimate(my_players, formation_db))
-    teams.save('2015-11-16')"""
+    teams.save('2015-11-19_2')"""
 
     # Create ultimate teams of silver players
     """silver_players = PlayerDB(my_players.search({'quality': ('silver', 'exact')}))
@@ -117,11 +117,16 @@ if __name__ == '__main__':
     teams.save('silver_teams')"""
 
     # Create ultimate teams of gold players
-    """gold_players = PlayerDB(my_players.search({'quality': ('gold', 'exact')}))
+    """my_players = PlayerDB()
+    my_players.load('my_players_16', 'list')
+    gold_players = PlayerDB(my_players.search({'quality': ('gold', 'exact')}))
+
+    formation_db = FormationDB()
+    formation_db.load('All Formations', 'db')
 
     ultimate_team = Team()
     teams = TeamDB(ultimate_team.create_team_ultimate(gold_players, formation_db))
-    teams.save('2015-10-30')"""
+    teams.save('2015-11-19')"""
 
     # Create teams of American players
     """americans = PlayerDB(player_db.search({'nation': ('United States',)}))
