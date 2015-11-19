@@ -225,9 +225,9 @@ def recursive_create(players, formation, time_limit, players_per_position, teams
     print_formation_name_and_team_count = False
     print_all_team_chemistry = False
     positions_less = 5
-    positions_greater = 6
+    positions_greater = 9
     print_positions_less = False
-    print_positions_greater = False
+    print_positions_greater = True
 
     # Set defaults
     if roster is None:
@@ -380,22 +380,7 @@ def recursive_create(players, formation, time_limit, players_per_position, teams
     players_checked = 0
 
     # Iterate through eligible players for current position
-    for index, player in enumerate(eligible_players.db):
-
-        # DELETE LATER ---------------------------------------------------------------------------------------------
-        if print_positions_less:
-            if pos_index <= positions_less:
-                print "Player " + str(pos_index) + " change!" + \
-                      "     Team team_count: " + str(team_count) + \
-                      "     Player " + str(index)
-        # ----------------------------------------------------------------------------------------------------------
-        # DELETE LATER ---------------------------------------------------------------------------------------------
-        if print_positions_greater:
-            if pos_index >= positions_greater:
-                print "Player " + str(pos_index) + " change!" + \
-                      "     Team team_count: " + str(team_count) + \
-                      "     Player " + str(index)
-        # ----------------------------------------------------------------------------------------------------------
+    for player in eligible_players.db:
 
         # Check if player is already used
         if player['baseId'] in base_ids:
@@ -406,6 +391,21 @@ def recursive_create(players, formation, time_limit, players_per_position, teams
             players_checked += 1
         else:
             break
+
+        # DELETE LATER ---------------------------------------------------------------------------------------------
+        if print_positions_less:
+            if pos_index <= positions_less:
+                print "Player" + ' '*(3-len(str(pos_index))) + str(pos_index) + " change!" + \
+                      "     Team team_count: " + str(team_count) + \
+                      "     Player " + str(players_checked)
+        # ----------------------------------------------------------------------------------------------------------
+        # DELETE LATER ---------------------------------------------------------------------------------------------
+        if print_positions_greater:
+            if pos_index >= positions_greater:
+                print "Player" + ' '*(3-len(str(pos_index))) + str(pos_index) + " change!" + \
+                      "     Team team_count: " + str(team_count) + \
+                      "     Player " + str(players_checked)
+        # ----------------------------------------------------------------------------------------------------------
 
         # Calculate current teammate potential chemistry
         potential_chemistry = 0.0
