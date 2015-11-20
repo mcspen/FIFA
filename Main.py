@@ -14,7 +14,7 @@ if __name__ == '__main__':
     multiprocessing.freeze_support()
 
     # Load defaults
-    with open('configs.json', 'r') as f:
+    """with open('configs.json', 'r') as f:
         configs = json.load(f)
         f.close()
     default_dbs = configs['default_databases']
@@ -98,16 +98,17 @@ if __name__ == '__main__':
     team.print_team_strengths()"""
 
     # Create ultimate teams and save
-    """my_players = PlayerDB()
+    my_players = PlayerDB()
     #my_players.load('my_players_16', 'list')
-    my_players.load('courtois', 'list')
+    my_players.load('all for courtois', 'list')
 
     formation_db = FormationDB()
     formation_db.load('All Formations', 'db')
 
     ultimate_team = Team()
     teams = TeamDB(ultimate_team.create_team_ultimate(my_players, formation_db))
-    teams.save('2015-11-19_3')"""
+    #teams.save('2015-11-20')
+    teams.save('Courtois Teams')
 
     # Create ultimate teams of silver players
     """silver_players = PlayerDB(my_players.search({'quality': ('silver', 'exact')}))
