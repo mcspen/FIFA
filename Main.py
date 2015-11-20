@@ -14,7 +14,7 @@ if __name__ == '__main__':
     multiprocessing.freeze_support()
 
     # Load defaults
-    """with open('configs.json', 'r') as f:
+    with open('configs.json', 'r') as f:
         configs = json.load(f)
         f.close()
     default_dbs = configs['default_databases']
@@ -47,14 +47,14 @@ if __name__ == '__main__':
 
     # Calculate strengths and then print out for first 100 teams
     """teams = TeamDB()
-    teams.load('2015-11-19_3')
+    teams.load('Courtois Teams')
 
     '''for index, team in enumerate(teams.db):
         temp = Team(team)
         temp.calculate_strength()
         teams.db[index] = temp.__dict__'''
-    teams.sort(['strength', 'rating', 'total_ic'])
-    #teams.sort(['rating', 'strength', 'total_ic'])
+    #teams.sort(['strength', 'rating', 'total_ic'])
+    teams.sort(['rating', 'strength', 'total_ic'])
     for team in teams.db[:100]:
         temp = Team(team)
         temp.print_summary()
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     team.print_team_strengths()"""
 
     # Create ultimate teams and save
-    my_players = PlayerDB()
+    """my_players = PlayerDB()
     #my_players.load('my_players_16', 'list')
     my_players.load('all for courtois', 'list')
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     ultimate_team = Team()
     teams = TeamDB(ultimate_team.create_team_ultimate(my_players, formation_db))
     #teams.save('2015-11-20')
-    teams.save('Courtois Teams')
+    teams.save('Courtois Teams')"""
 
     # Create ultimate teams of silver players
     """silver_players = PlayerDB(my_players.search({'quality': ('silver', 'exact')}))
