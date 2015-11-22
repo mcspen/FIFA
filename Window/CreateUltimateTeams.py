@@ -57,11 +57,14 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
                                  color=title_color, just='center')
     display_items.append(formation_list_label)
 
-    settings_indent = 2*win_width/5
+    settings_indent = 3*win_width/7
 
     # ========== Team name ==========
-    team_name_tf_width = 225
+    tf_width = 235
     team_name_label_width = 130
+    disabled_msg = "Disabled"
+
+
     team_list_name_label = Label(text="Team List Name: ", font=std_tf_font_bold,
                                  width=team_name_label_width, height=std_tf_height,
                                  x=settings_indent - team_name_label_width,
@@ -69,7 +72,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
                                  color=title_color, just='right')
     display_items.append(team_list_name_label)
 
-    team_list_name_tf = TextField(font=std_tf_font, width=team_name_tf_width, height=std_tf_height + 5,
+    team_list_name_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height + 5,
                                   x=team_list_name_label.right + small_button_spacing, y=team_list_name_label.top)
     display_items.append(team_list_name_tf)
 
@@ -103,135 +106,11 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
 
     process_type_radio_group.value = settings['process_type']
 
-    # ========== Players per Position Label ==========
-    players_per_pos_tf = TextField(font=std_tf_font, width=radio_btn_width, height=std_tf_height + 5)
-
-    players_per_pos_label = Label(text="Players per Position: ", font=std_tf_font_bold,
-                                       width=std_tf_width, height=std_tf_height,
-                                       x=settings_indent - std_tf_width,
-                                       y=process_type_label.bottom + title_border,
-                                       color=title_color, just='right')
-    display_items.append(players_per_pos_label)
-
-    def get_players_per_pos_rg():
-        if players_per_pos_radio_group.value == -1:
-            settings['players_per_position'] = players_per_pos_radio_group.value
-        else:
-            settings['players_per_position'] = int(players_per_pos_tf.value)
-        win_ultimate_teams.become_target()
-
-    players_per_pos_radio_group = RadioGroup(action=get_players_per_pos_rg)
-
-    # Players per Position Radio Buttons
-    all_players_radio_btn = RadioButton('All', width=radio_btn_width,
-                                        x=players_per_pos_label.right + radio_btn_space,
-                                        y=players_per_pos_label.top, group=players_per_pos_radio_group, value=-1)
-    display_items.append(all_players_radio_btn)
-
-    specify_players_radio_btn = RadioButton('Specify: ', width=radio_btn_width,
-                                            x=all_players_radio_btn.right + radio_btn_space,
-                                            y=players_per_pos_label.top, group=players_per_pos_radio_group, value=-2)
-    display_items.append(specify_players_radio_btn)
-
-    if settings['players_per_position'] == -1:
-        players_per_pos_radio_group.value = settings['players_per_position']
-    else:
-        players_per_pos_tf.value = str(settings['players_per_position'])
-        players_per_pos_radio_group.value = -2
-
-    players_per_pos_tf.x = specify_players_radio_btn.right + radio_btn_space
-    players_per_pos_tf.y = players_per_pos_label.top
-    display_items.append(players_per_pos_tf)
-
-    # ========== Max Teams per Formation Label ==========
-    teams_per_formation_tf = TextField(font=std_tf_font, width=radio_btn_width, height=std_tf_height + 5)
-
-    teams_per_formation_label = Label(text="Max Teams per Formation: ", font=std_tf_font_bold,
-                                       width=std_tf_width, height=std_tf_height,
-                                       x=settings_indent - std_tf_width,
-                                       y=players_per_pos_label.bottom + title_border,
-                                       color=title_color, just='right')
-    display_items.append(teams_per_formation_label)
-
-    def get_teams_per_formation_rg():
-        if teams_per_formation_radio_group.value == -1:
-            settings['teams_per_formation'] = teams_per_formation_radio_group.value
-        else:
-            settings['teams_per_formation'] = int(teams_per_formation_tf.value)
-        win_ultimate_teams.become_target()
-
-    teams_per_formation_radio_group = RadioGroup(action=get_teams_per_formation_rg)
-
-    # Max Teams per Formation Radio Buttons
-    all_teams_per_formation_radio_btn = RadioButton('All', width=radio_btn_width,
-                                        x=teams_per_formation_label.right + radio_btn_space,
-                                        y=teams_per_formation_label.top,
-                                        group=teams_per_formation_radio_group, value=-1)
-    display_items.append(all_teams_per_formation_radio_btn)
-
-    specify_teams_per_formation_radio_btn = RadioButton('Specify: ', width=radio_btn_width,
-                                            x=all_players_radio_btn.right + radio_btn_space,
-                                            y=teams_per_formation_label.top,
-                                            group=teams_per_formation_radio_group, value=-2)
-    display_items.append(specify_teams_per_formation_radio_btn)
-
-    if settings['teams_per_formation'] == -1:
-        teams_per_formation_radio_group.value = settings['teams_per_formation']
-    else:
-        teams_per_formation_tf.value = str(settings['teams_per_formation'])
-        teams_per_formation_radio_group.value = -2
-
-    teams_per_formation_tf.x = specify_teams_per_formation_radio_btn.right + radio_btn_space
-    teams_per_formation_tf.y = teams_per_formation_label.top
-    display_items.append(teams_per_formation_tf)
-
-    # ========== Max Teams to Return Label ==========
-    teams_to_return_tf = TextField(font=std_tf_font, width=radio_btn_width, height=std_tf_height + 5)
-
-    teams_to_return_label = Label(text="Max Teams to Return: ", font=std_tf_font_bold,
-                                       width=std_tf_width, height=std_tf_height,
-                                       x=settings_indent - std_tf_width,
-                                       y=teams_per_formation_label.bottom + title_border,
-                                       color=title_color, just='right')
-    display_items.append(teams_to_return_label)
-
-    def get_teams_to_return_rg():
-        if teams_to_return_radio_group.value == -1:
-            settings['num_teams_returned'] = teams_to_return_radio_group.value
-        else:
-            settings['num_teams_returned'] = int(teams_to_return_tf.value)
-        win_ultimate_teams.become_target()
-
-    teams_to_return_radio_group = RadioGroup(action=get_teams_to_return_rg)
-
-    # Max Teams to Return Radio Buttons
-    max_teams_to_return_radio_btn = RadioButton('1000', width=radio_btn_width,
-                                        x=teams_to_return_label.right + radio_btn_space,
-                                        y=teams_to_return_label.top,
-                                        group=teams_to_return_radio_group, value=1000)
-    display_items.append(max_teams_to_return_radio_btn)
-
-    specify_teams_to_return_radio_btn = RadioButton('Specify: ', width=radio_btn_width,
-                                            x=max_teams_to_return_radio_btn.right + radio_btn_space,
-                                            y=teams_to_return_label.top,
-                                            group=teams_to_return_radio_group, value=-2)
-    display_items.append(specify_teams_to_return_radio_btn)
-
-    if settings['num_teams_returned'] >= 1000:
-        teams_to_return_radio_group.value = 1000
-    else:
-        teams_to_return_tf.value = str(settings['num_teams_returned'])
-        teams_to_return_radio_group.value = -2
-
-    teams_to_return_tf.x = specify_teams_to_return_radio_btn.right + radio_btn_space
-    teams_to_return_tf.y = teams_to_return_label.top
-    display_items.append(teams_to_return_tf)
-
     # ========== Judging Teams Label ==========
     judging_teams_label = Label(text="How to Judge Teams: ", font=std_tf_font_bold,
                                        width=std_tf_width, height=std_tf_height,
                                        x=settings_indent - std_tf_width,
-                                       y=teams_to_return_label.bottom + title_border,
+                                       y=process_type_label.bottom + title_border,
                                        color=title_color, just='right')
     display_items.append(judging_teams_label)
 
@@ -251,59 +130,201 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
         win_ultimate_teams.hide()
 
     judging_edit_btn_width = 40
-    judging_edit_btn = Button("Edit", x=teams_to_return_tf.right - judging_edit_btn_width, y=judging_teams_label.top,
+    judging_edit_btn = Button("Edit",
+                              #x=teams_to_return_tf.right - judging_edit_btn_width,
+                              x=judging_teams_attributes.right,
+                              y=judging_teams_label.top,
                               height=small_button_height-7, width=judging_edit_btn_width,
                               font=small_button_font, action=judging_edit_btn_func, style = 'default',
                               color=button_color, just='right')
     display_items.append(judging_edit_btn)
 
-    # ========== Time Limit Label ==========
-    time_limit_tf = TextField(font=std_tf_font, width=radio_btn_width, height=std_tf_height + 5)
+    # ========== Limits Label ==========
+    limits_label = Label(text="Limitations", font=title_font_3,
+                                       width=std_tf_width, height=title_height-25,
+                                       x=(win_ultimate_teams.width - std_tf_width)/2,
+                                       y=judging_teams_label.bottom + title_border*4,
+                                       color=title_color, just='center')
+    display_items.append(limits_label)
 
-    time_limit_label = Label(text="Time Limit: ", font=std_tf_font_bold,
-                                       width=std_tf_width, height=std_tf_height,
-                                       x=settings_indent - std_tf_width,
-                                       y=judging_teams_label.bottom + title_border,
-                                       color=title_color, just='right')
-    display_items.append(time_limit_label)
+    # ========== Players per Position Label ==========
+    players_per_pos_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height + 5)
+
+    def players_per_pos_btn_func():
+        if not settings['players_per_position'][0]:
+            settings['players_per_position'][0] = True
+            players_per_pos_tf.value = str(settings['players_per_position'][1])
+            players_per_pos_tf.enabled = 1
+
+        else:
+            settings['players_per_position'][0] = False
+            players_per_pos_tf.value = disabled_msg
+            players_per_pos_tf.enabled = 0
+
+        win_ultimate_teams.become_target()
+
+    players_per_pos_btn = Button(title="Players per Position", font=std_tf_font_bold,
+                                 width=std_tf_width, height=std_tf_height,
+                                 x=settings_indent - std_tf_width,
+                                 y=limits_label.bottom + title_border,
+                                 action=players_per_pos_btn_func,
+                                 color=title_color, just='right')
+    display_items.append(players_per_pos_btn)
+
+    players_per_pos_tf.x = players_per_pos_btn.right + radio_btn_space
+    players_per_pos_tf.y = players_per_pos_btn.top
+    display_items.append(players_per_pos_tf)
+
+    # Disable based on settings
+    if not settings['players_per_position'][0]:
+        players_per_pos_tf.value = disabled_msg
+        players_per_pos_tf.enabled = 0
+    else:
+        players_per_pos_tf.value = str(settings['players_per_position'][1])
+
+    # ========== Max Teams per Formation Label ==========
+    teams_per_formation_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height + 5)
+
+    def teams_per_formation_btn_func():
+        if not settings['teams_per_formation'][0]:
+            settings['teams_per_formation'][0] = True
+            teams_per_formation_tf.value = str(settings['teams_per_formation'][1])
+            teams_per_formation_tf.enabled = 1
+
+        else:
+            settings['teams_per_formation'][0] = False
+            teams_per_formation_tf.value = disabled_msg
+            teams_per_formation_tf.enabled = 0
+
+        win_ultimate_teams.become_target()
+
+    teams_per_formation_btn = Button(title="Max Teams per Formation", font=std_tf_font_bold,
+                                     width=std_tf_width, height=std_tf_height,
+                                     x=settings_indent - std_tf_width,
+                                     y=players_per_pos_btn.bottom + title_border,
+                                     action=teams_per_formation_btn_func,
+                                     color=title_color, just='right')
+    display_items.append(teams_per_formation_btn)
+
+    teams_per_formation_tf.x = teams_per_formation_btn.right + radio_btn_space
+    teams_per_formation_tf.y = teams_per_formation_btn.top
+    display_items.append(teams_per_formation_tf)
+
+    # Disable based on settings
+    if not settings['teams_per_formation'][0]:
+        teams_per_formation_tf.value = disabled_msg
+        teams_per_formation_tf.enabled = 0
+    else:
+        teams_per_formation_tf.value = str(settings['teams_per_formation'][1])
+
+    # ========== Max Teams to Return Label ==========
+    teams_to_return_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height + 5)
+
+    def teams_to_return_btn_func():
+        if not settings['num_teams_returned'][0]:
+            settings['num_teams_returned'][0] = True
+            teams_to_return_tf.value = str(settings['num_teams_returned'][1])
+            teams_to_return_tf.enabled = 1
+
+        else:
+            settings['num_teams_returned'][0] = False
+            teams_to_return_tf.value = disabled_msg
+            teams_to_return_tf.enabled = 0
+
+        win_ultimate_teams.become_target()
+
+    teams_to_return_btn = Button(title="Max Teams to Return", font=std_tf_font_bold,
+                                 width=std_tf_width, height=std_tf_height,
+                                 x=settings_indent - std_tf_width,
+                                 y=teams_per_formation_btn.bottom + title_border,
+                                 action=teams_to_return_btn_func,
+                                 color=title_color, just='right')
+    display_items.append(teams_to_return_btn)
+
+    teams_to_return_tf.x = teams_to_return_btn.right + radio_btn_space
+    teams_to_return_tf.y = teams_to_return_btn.top
+    display_items.append(teams_to_return_tf)
+
+    # Disable based on settings
+    if not settings['num_teams_returned'][0]:
+        teams_to_return_tf.value = disabled_msg
+        teams_to_return_tf.enabled = 0
+    else:
+        teams_to_return_tf.value = str(settings['num_teams_returned'][1])
+
+    # ========== Time Limit Label ==========
+    time_limit_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height + 5)
+
+    def time_limit_btn_func():
+        if not settings['time_limit'][0]:
+            settings['time_limit'][0] = True
+            time_limit_tf.value = str(settings['time_limit'][1])
+            time_limit_tf.enabled = 1
+            days_time_limit_radio_btn.enabled = 1
+            hours_time_limit_radio_btn.enabled = 1
+            minutes_time_limit_radio_btn.enabled = 1
+            time_limit_radio_group.enabled = 1
+
+        else:
+            settings['time_limit'][0] = False
+            time_limit_tf.value = disabled_msg
+            time_limit_tf.enabled = 0
+            days_time_limit_radio_btn.enabled = 0
+            hours_time_limit_radio_btn.enabled = 0
+            minutes_time_limit_radio_btn.enabled = 0
+            time_limit_radio_group.enabled = 0
+
+        win_ultimate_teams.become_target()
+
+    time_limit_btn = Button(title="Time Limit", font=std_tf_font_bold,
+                            width=std_tf_width, height=std_tf_height,
+                            x=settings_indent - std_tf_width,
+                            y=teams_to_return_btn.bottom + title_border,
+                            action=time_limit_btn_func,
+                            color=title_color, just='right')
+    display_items.append(time_limit_btn)
 
     def get_time_limit_rg():
-        if time_limit_radio_group.value == -1:
-            settings['time_limit'] = time_limit_radio_group.value
-        else:
-            settings['time_limit'] = int(time_limit_tf.value)
+        settings['time_limit'][2] = time_limit_radio_group.value
         win_ultimate_teams.become_target()
 
     time_limit_radio_group = RadioGroup(action=get_time_limit_rg)
 
     # Max Teams to Return Radio Buttons
     days_time_limit_radio_btn = RadioButton('Days', width=radio_btn_width,
-                                        x=time_limit_label.right + radio_btn_space,
-                                        y=time_limit_label.top,
-                                        group=time_limit_radio_group, value=-1)
+                                        x=time_limit_btn.right + radio_btn_space,
+                                        y=time_limit_btn.bottom + title_border,
+                                        group=time_limit_radio_group, value='days')
     display_items.append(days_time_limit_radio_btn)
 
     hours_time_limit_radio_btn = RadioButton('Hours', width=radio_btn_width,
                                             x=days_time_limit_radio_btn.right + radio_btn_space,
-                                            y=time_limit_label.top,
-                                            group=time_limit_radio_group, value=-2)
+                                            y=days_time_limit_radio_btn.top,
+                                            group=time_limit_radio_group, value='hours')
     display_items.append(hours_time_limit_radio_btn)
 
     minutes_time_limit_radio_btn = RadioButton('Minutes', width=radio_btn_width,
                                             x=hours_time_limit_radio_btn.right + radio_btn_space,
-                                            y=time_limit_label.top,
-                                            group=time_limit_radio_group, value=-3)
+                                            y=days_time_limit_radio_btn.top,
+                                            group=time_limit_radio_group, value='minutes')
     display_items.append(minutes_time_limit_radio_btn)
 
-    if settings['time_limit'] >= 1000:
-        time_limit_radio_group.value = 1000
-    else:
-        time_limit_tf.value = str(settings['time_limit'])
-        time_limit_radio_group.value = -2
+    time_limit_radio_group.value = settings['time_limit'][2]
 
-    time_limit_tf.x = minutes_time_limit_radio_btn.right + radio_btn_space
-    time_limit_tf.y = time_limit_label.top
+    time_limit_tf.x = time_limit_btn.right + radio_btn_space
+    time_limit_tf.y = time_limit_btn.top
     display_items.append(time_limit_tf)
+
+    # Disable based on settings
+    if not settings['time_limit'][0]:
+        time_limit_tf.value = disabled_msg
+        time_limit_tf.enabled = 0
+        days_time_limit_radio_btn.enabled = 0
+        hours_time_limit_radio_btn.enabled = 0
+        minutes_time_limit_radio_btn.enabled = 0
+        time_limit_radio_group.enabled = 0
+    else:
+        time_limit_tf.value = str(settings['time_limit'][1])
 
     # ========== Button Declarations ==========
     start_btn = Button("Start")
@@ -319,7 +340,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
 
     # ========== Buttons ==========
     start_btn.x = (win_width - 2*button_width - button_spacing) / 2
-    start_btn.y = win_ultimate_teams.height - 75
+    start_btn.y = win_ultimate_teams.height - 100
     start_btn.height = button_height
     start_btn.width = button_width
     start_btn.font = button_font

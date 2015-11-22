@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     # Calculate strengths and then print out for first 100 teams
     """teams = TeamDB()
-    teams.load('Courtois Teams')
+    teams.load('2015-11-20')
 
     '''for index, team in enumerate(teams.db):
         temp = Team(team)
@@ -100,15 +100,15 @@ if __name__ == '__main__':
     # Create ultimate teams and save
     """my_players = PlayerDB()
     #my_players.load('my_players_16', 'list')
-    my_players.load('all for courtois', 'list')
+    my_players.load('courtois', 'list')
 
     formation_db = FormationDB()
     formation_db.load('All Formations', 'db')
 
     ultimate_team = Team()
     teams = TeamDB(ultimate_team.create_team_ultimate(my_players, formation_db))
-    #teams.save('2015-11-20')
-    teams.save('Courtois Teams')"""
+    teams.save('2015-11-20_2')
+    #teams.save('Courtois Teams')"""
 
     # Create ultimate teams of silver players
     """silver_players = PlayerDB(my_players.search({'quality': ('silver', 'exact')}))
