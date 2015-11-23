@@ -1,8 +1,1 @@
-{
-  "process_type": "multi",
-  "sort_attributes": ["strength", "rating", "total_ic"],
-  "num_teams_returned": [true, 200],
-  "players_per_position": [true, 25],
-  "teams_per_formation": [true, 1000000],
-  "time_limit": [true, 36000, "hours"]
-}
+{"time_limit": [true, 3600.0, "hours"], "teams_per_formation": [true, 1000000], "process_type": "multi", "num_teams_returned": [true, 200], "players_per_position": [true, 25], "sort_attributes": ["strength", "rating", "total_ic"]}

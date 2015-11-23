@@ -1,7 +1,7 @@
 from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
 
 from AppConfig import *
-import StartMenu
+import TeamsMenu
 import json
 
 
@@ -47,7 +47,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     file_name_width = 400
     player_list_label = Label(text="Player List: " + db_dict['player_list'][0], font=std_tf_font_bold,
                               width=file_name_width, height=std_tf_height,
-                              x=(win_width - file_name_width)/2, y=title.bottom + title_border,
+                              x=(win_width - file_name_width)/2, y=title.bottom + title_border*3,
                               color=title_color, just='center')
     display_items.append(player_list_label)
 
@@ -68,7 +68,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     team_list_name_label = Label(text="Team List Name: ", font=std_tf_font_bold,
                                  width=team_name_label_width, height=std_tf_height,
                                  x=settings_indent - team_name_label_width,
-                                 y=formation_list_label.bottom + top_border,
+                                 y=formation_list_label.bottom + title_border*4,
                                  color=title_color, just='right')
     display_items.append(team_list_name_label)
 
@@ -143,7 +143,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     limits_label = Label(text="Limitations", font=title_font_3,
                                        width=std_tf_width, height=title_height-25,
                                        x=(win_ultimate_teams.width - std_tf_width)/2,
-                                       y=judging_teams_label.bottom + title_border*4,
+                                       y=judging_teams_label.bottom + title_border*5,
                                        color=title_color, just='center')
     display_items.append(limits_label)
 
@@ -157,6 +157,10 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
             players_per_pos_tf.enabled = 1
 
         else:
+            # Get value from text field and assign to settings
+            if str.isdigit(players_per_pos_tf.value):
+                settings['players_per_position'][1] = int(players_per_pos_tf.value)
+
             settings['players_per_position'][0] = False
             players_per_pos_tf.value = disabled_msg
             players_per_pos_tf.enabled = 0
@@ -192,6 +196,10 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
             teams_per_formation_tf.enabled = 1
 
         else:
+            # Get value from text field and assign to settings
+            if str.isdigit(teams_per_formation_tf.value):
+                settings['teams_per_formation'][1] = int(teams_per_formation_tf.value)
+
             settings['teams_per_formation'][0] = False
             teams_per_formation_tf.value = disabled_msg
             teams_per_formation_tf.enabled = 0
@@ -227,6 +235,10 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
             teams_to_return_tf.enabled = 1
 
         else:
+            # Get value from text field and assign to settings
+            if str.isdigit(teams_to_return_tf.value):
+                settings['num_teams_returned'][1] = int(teams_to_return_tf.value)
+
             settings['num_teams_returned'][0] = False
             teams_to_return_tf.value = disabled_msg
             teams_to_return_tf.enabled = 0
@@ -258,7 +270,16 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     def time_limit_btn_func():
         if not settings['time_limit'][0]:
             settings['time_limit'][0] = True
-            time_limit_tf.value = str(settings['time_limit'][1])
+
+            time_limit_val = 0.0
+            if settings['time_limit'][2] == 'days':
+                time_limit_val = settings['time_limit'][1] / 86400.0
+            elif settings['time_limit'][2] == 'hours':
+                time_limit_val = settings['time_limit'][1] / 3600.0
+            if settings['time_limit'][2] == 'minutes':
+                time_limit_val = settings['time_limit'][1] / 60.0
+            time_limit_tf.value = str(time_limit_val)
+
             time_limit_tf.enabled = 1
             days_time_limit_radio_btn.enabled = 1
             hours_time_limit_radio_btn.enabled = 1
@@ -266,6 +287,17 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
             time_limit_radio_group.enabled = 1
 
         else:
+            # Get value from text field, convert to seconds, and assign to settings
+            try:
+                if settings['time_limit'][2] == 'days':
+                    settings['time_limit'][1] = float(time_limit_tf.value) * 86400.0
+                elif settings['time_limit'][2] == 'hours':
+                    settings['time_limit'][1] = float(time_limit_tf.value) * 3600.0
+                elif settings['time_limit'][2] == 'minutes':
+                    settings['time_limit'][1] = float(time_limit_tf.value) * 60.0
+            except ValueError:
+                print "Invalid time limit."
+
             settings['time_limit'][0] = False
             time_limit_tf.value = disabled_msg
             time_limit_tf.enabled = 0
@@ -285,28 +317,53 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     display_items.append(time_limit_btn)
 
     def get_time_limit_rg():
+        # Get value from text field, convert to seconds, and assign to settings
+        if time_limit_tf.value == '':
+            time_limit_tf.value = '0'
+        else:
+            try:
+                if settings['time_limit'][2] == 'days':
+                    settings['time_limit'][1] = float(time_limit_tf.value) * 86400.0
+                elif settings['time_limit'][2] == 'hours':
+                    settings['time_limit'][1] = float(time_limit_tf.value) * 3600.0
+                elif settings['time_limit'][2] == 'minutes':
+                    settings['time_limit'][1] = float(time_limit_tf.value) * 60.0
+            except ValueError:
+                print "Invalid time limit."
+
+        # Get new time limit units
         settings['time_limit'][2] = time_limit_radio_group.value
+
+        time_limit_val = 0.0
+        if settings['time_limit'][2] == 'days':
+            time_limit_val = settings['time_limit'][1] / 86400.0
+        elif settings['time_limit'][2] == 'hours':
+            time_limit_val = settings['time_limit'][1] / 3600.0
+        elif settings['time_limit'][2] == 'minutes':
+            time_limit_val = settings['time_limit'][1] / 60.0
+        time_limit_tf.value = str(time_limit_val)
+
         win_ultimate_teams.become_target()
 
     time_limit_radio_group = RadioGroup(action=get_time_limit_rg)
 
     # Max Teams to Return Radio Buttons
     days_time_limit_radio_btn = RadioButton('Days', width=radio_btn_width,
-                                        x=time_limit_btn.right + radio_btn_space,
-                                        y=time_limit_btn.bottom + title_border,
-                                        group=time_limit_radio_group, value='days')
+                                            x=time_limit_btn.right + radio_btn_space,
+                                            y=time_limit_btn.bottom + title_border,
+                                            group=time_limit_radio_group, value='days')
     display_items.append(days_time_limit_radio_btn)
 
     hours_time_limit_radio_btn = RadioButton('Hours', width=radio_btn_width,
-                                            x=days_time_limit_radio_btn.right + radio_btn_space,
-                                            y=days_time_limit_radio_btn.top,
-                                            group=time_limit_radio_group, value='hours')
+                                             x=days_time_limit_radio_btn.right + radio_btn_space,
+                                             y=days_time_limit_radio_btn.top,
+                                             group=time_limit_radio_group, value='hours')
     display_items.append(hours_time_limit_radio_btn)
 
     minutes_time_limit_radio_btn = RadioButton('Minutes', width=radio_btn_width,
-                                            x=hours_time_limit_radio_btn.right + radio_btn_space,
-                                            y=days_time_limit_radio_btn.top,
-                                            group=time_limit_radio_group, value='minutes')
+                                               x=hours_time_limit_radio_btn.right + radio_btn_space,
+                                               y=days_time_limit_radio_btn.top,
+                                               group=time_limit_radio_group, value='minutes')
     display_items.append(minutes_time_limit_radio_btn)
 
     time_limit_radio_group.value = settings['time_limit'][2]
@@ -324,18 +381,58 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
         minutes_time_limit_radio_btn.enabled = 0
         time_limit_radio_group.enabled = 0
     else:
-        time_limit_tf.value = str(settings['time_limit'][1])
+        time_limit_value = 0.0
+        if settings['time_limit'][2] == 'days':
+            time_limit_value = settings['time_limit'][1] / 86400.0
+        elif settings['time_limit'][2] == 'hours':
+            time_limit_value = settings['time_limit'][1] / 3600.0
+        elif settings['time_limit'][2] == 'minutes':
+            time_limit_value = settings['time_limit'][1] / 60.0
+        time_limit_tf.value = str(time_limit_value)
 
     # ========== Button Declarations ==========
     start_btn = Button("Start")
     back_btn = Button("Back")
 
     # ========== Button Functions ==========
+    def save_settings():
+        """
+        Save the ultimate team creation configuration settings
+        """
+
+        # Get the values from the text fields
+        # Players per position
+        if str.isdigit(players_per_pos_tf.value):
+                settings['players_per_position'][1] = int(players_per_pos_tf.value)
+        # Teams per formation
+        if str.isdigit(teams_per_formation_tf.value):
+                settings['teams_per_formation'][1] = int(teams_per_formation_tf.value)
+        # Number of teams returned
+        if str.isdigit(teams_to_return_tf.value):
+                settings['num_teams_returned'][1] = int(teams_to_return_tf.value)
+        # Time limit
+        try:
+            if settings['time_limit'][2] == 'days':
+                settings['time_limit'][1] = float(time_limit_tf.value) * 86400.0
+            elif settings['time_limit'][2] == 'hours':
+                settings['time_limit'][1] = float(time_limit_tf.value) * 3600.0
+            elif settings['time_limit'][2] == 'minutes':
+                settings['time_limit'][1] = float(time_limit_tf.value) * 60.0
+        except ValueError:
+            print "Invalid time limit."
+
+        # Save the settings
+        with open('ultimate_team_configs.json', 'w') as config_file:
+            json.dump(settings, config_file)
+            config_file.close()
+
     def start_btn_func():
+        save_settings()
         win_ultimate_teams.hide()
 
     def back_btn_func():
-        StartMenu.open_start_menu(win_ultimate_teams.x, win_ultimate_teams.y, db_dict)
+        save_settings()
+        TeamsMenu.open_teams_menu(win_ultimate_teams.x, win_ultimate_teams.y, db_dict)
         win_ultimate_teams.hide()
 
     # ========== Buttons ==========
