@@ -58,8 +58,11 @@ class FormationDB:
                 f.close()
 
         else:
-            print "File already exists. Adding ' - New' to file name"
-            self.save(file_name + ' - New', file_type, overwrite)
+            index = 1
+            while isfile(file_path[:-5] + ' (' + str(index) + ').json'):
+                index += 1
+            print "File already exists. Adding ' (%d)' to file name" % index
+            self.save(file_name + ' (' + str(index) + ')', file_type, overwrite)
 
         return True
 

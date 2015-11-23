@@ -411,15 +411,16 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
         if str.isdigit(teams_to_return_tf.value):
                 settings['num_teams_returned'][1] = int(teams_to_return_tf.value)
         # Time limit
-        try:
-            if settings['time_limit'][2] == 'days':
-                settings['time_limit'][1] = float(time_limit_tf.value) * 86400.0
-            elif settings['time_limit'][2] == 'hours':
-                settings['time_limit'][1] = float(time_limit_tf.value) * 3600.0
-            elif settings['time_limit'][2] == 'minutes':
-                settings['time_limit'][1] = float(time_limit_tf.value) * 60.0
-        except ValueError:
-            print "Invalid time limit."
+        if time_limit_tf.value != disabled_msg:
+            try:
+                if settings['time_limit'][2] == 'days':
+                    settings['time_limit'][1] = float(time_limit_tf.value) * 86400.0
+                elif settings['time_limit'][2] == 'hours':
+                    settings['time_limit'][1] = float(time_limit_tf.value) * 3600.0
+                elif settings['time_limit'][2] == 'minutes':
+                    settings['time_limit'][1] = float(time_limit_tf.value) * 60.0
+            except ValueError:
+                print "Invalid time limit."
 
         # Save the settings
         with open('ultimate_team_configs.json', 'w') as config_file:
