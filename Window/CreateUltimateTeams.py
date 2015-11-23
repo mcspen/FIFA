@@ -2,6 +2,7 @@ from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
 
 from AppConfig import *
 import TeamsMenu
+from Logic import Team
 import json
 
 
@@ -290,11 +291,11 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
             # Get value from text field, convert to seconds, and assign to settings
             try:
                 if settings['time_limit'][2] == 'days':
-                    settings['time_limit'][1] = float(time_limit_tf.value) * 86400.0
+                    settings['time_limit'][1] = int(float(time_limit_tf.value) * 86400.0)
                 elif settings['time_limit'][2] == 'hours':
-                    settings['time_limit'][1] = float(time_limit_tf.value) * 3600.0
+                    settings['time_limit'][1] = int(float(time_limit_tf.value) * 3600.0)
                 elif settings['time_limit'][2] == 'minutes':
-                    settings['time_limit'][1] = float(time_limit_tf.value) * 60.0
+                    settings['time_limit'][1] = int(float(time_limit_tf.value) * 60.0)
             except ValueError:
                 print "Invalid time limit."
 
@@ -323,11 +324,11 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
         else:
             try:
                 if settings['time_limit'][2] == 'days':
-                    settings['time_limit'][1] = float(time_limit_tf.value) * 86400.0
+                    settings['time_limit'][1] = int(float(time_limit_tf.value) * 86400.0)
                 elif settings['time_limit'][2] == 'hours':
-                    settings['time_limit'][1] = float(time_limit_tf.value) * 3600.0
+                    settings['time_limit'][1] = int(float(time_limit_tf.value) * 3600.0)
                 elif settings['time_limit'][2] == 'minutes':
-                    settings['time_limit'][1] = float(time_limit_tf.value) * 60.0
+                    settings['time_limit'][1] = int(float(time_limit_tf.value) * 60.0)
             except ValueError:
                 print "Invalid time limit."
 
@@ -414,11 +415,11 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
         if time_limit_tf.value != disabled_msg:
             try:
                 if settings['time_limit'][2] == 'days':
-                    settings['time_limit'][1] = float(time_limit_tf.value) * 86400.0
+                    settings['time_limit'][1] = int(float(time_limit_tf.value) * 86400.0)
                 elif settings['time_limit'][2] == 'hours':
-                    settings['time_limit'][1] = float(time_limit_tf.value) * 3600.0
+                    settings['time_limit'][1] = int(float(time_limit_tf.value) * 3600.0)
                 elif settings['time_limit'][2] == 'minutes':
-                    settings['time_limit'][1] = float(time_limit_tf.value) * 60.0
+                    settings['time_limit'][1] = int(float(time_limit_tf.value) * 60.0)
             except ValueError:
                 print "Invalid time limit."
 
@@ -429,7 +430,12 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
 
     def start_btn_func():
         save_settings()
-        win_ultimate_teams.hide()
+
+        teams = Team.Team()
+        teams.create_team_ultimate(db_dict['player_list'][1], db_dict['formation_list'][1])
+        teams.save(team_list_name_tf.value)
+
+        #win_ultimate_teams.hide()
 
     def back_btn_func():
         save_settings()

@@ -465,14 +465,24 @@ def find_teams_ultimate(players, formations):
         f.close()
 
     process = configs['process_type']
-    players_per_position = configs['players_per_position']
-    teams_per_formation = configs['teams_per_formation']
     sort_attributes = configs['sort_attributes']
-    num_teams = configs['num_teams_returned']
-    if configs['time_limit'] > 0:
-        time_limit = time.time() + configs['time_limit']
+
+    if configs['players_per_position'][0]:
+        players_per_position = configs['players_per_position'][1]
     else:
-        time_limit = time.time() + 31536000  # Max time is one year
+        players_per_position = configs['max_values']['players_per_position']
+    if configs['teams_per_formation'][0]:
+        teams_per_formation = configs['teams_per_formation'][1]
+    else:
+        teams_per_formation = configs['max_values']['teams_per_formation']
+    if configs['num_teams_returned'][0]:
+        num_teams = configs['num_teams_returned'][1]
+    else:
+        num_teams = configs['max_values']['num_teams_returned']
+    if configs['time_limit'][0]:
+        time_limit = time.time() + configs['time_limit'][1]
+    else:
+        time_limit = time.time() + configs['max_values']['time_limit']
 
     if process in ['multi', 'both']:
         # Multiprocess Method --------------------------------------------------------------------------------------
