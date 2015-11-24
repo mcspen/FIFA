@@ -48,18 +48,18 @@ def open_teams_menu(window_x, window_y, db_dict):
         win_teams.hide()
 
     # ========== Buttons ==========
-    create_ultimate_teams_btn.x = (win_width - 2 * button_width - button_spacing) / 2
-    create_ultimate_teams_btn.y = title.bottom
+    create_ultimate_teams_btn.x = (win_width - file_btn_width) / 2
+    create_ultimate_teams_btn.y = title.bottom + top_border
     create_ultimate_teams_btn.height = button_height
-    create_ultimate_teams_btn.width = button_width
+    create_ultimate_teams_btn.width = file_btn_width
     create_ultimate_teams_btn.font = button_font
     create_ultimate_teams_btn.action = create_ultimate_teams_btn_func
     create_ultimate_teams_btn.style = 'default'
     create_ultimate_teams_btn.color = button_color
     create_ultimate_teams_btn.just = 'right'
 
-    back_btn.x = create_ultimate_teams_btn.right + button_spacing
-    back_btn.y = create_ultimate_teams_btn.top
+    back_btn.x = (win_width - button_width) / 2
+    back_btn.y = create_ultimate_teams_btn.bottom + top_border*2
     back_btn.height = button_height
     back_btn.width = button_width
     back_btn.font = button_font

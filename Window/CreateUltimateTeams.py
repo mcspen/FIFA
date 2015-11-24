@@ -3,6 +3,7 @@ from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
 from AppConfig import *
 import TeamsMenu
 from Logic import Team
+from Logic import TeamDB
 import json
 
 
@@ -431,11 +432,9 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     def start_btn_func():
         save_settings()
 
-        teams = Team.Team()
-        teams.create_team_ultimate(db_dict['player_list'][1], db_dict['formation_list'][1])
+        team = Team.Team()
+        teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], db_dict['formation_list'][1]))
         teams.save(team_list_name_tf.value)
-
-        #win_ultimate_teams.hide()
 
     def back_btn_func():
         save_settings()

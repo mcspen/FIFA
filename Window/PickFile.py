@@ -142,6 +142,7 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
 
             # Enable back button
             settings['file_changes'] = False
+            settings['file_index'] = 0
             FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
             win_pick_file.hide()
 
@@ -187,7 +188,47 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
         else:
             file_x = (win_width - file_btn_width - 4*small_file_button_width - 4*file_btn_spacing) / 2
 
-        for filename in file_list:
+        if 'file_index' not in settings:
+            settings['file_index'] = 0
+
+        files_per_page = 10
+        file_index = settings['file_index']
+
+        # Previous page button function
+        def previous_btn_func():
+            settings['file_index'] -= files_per_page
+            win_pick_file.hide()
+            open_pick_file_window(win_pick_file.x, win_pick_file.y, db_dict, settings)
+
+        # Next page button function
+        def next_btn_func():
+            settings['file_index'] += files_per_page
+            win_pick_file.hide()
+            open_pick_file_window(win_pick_file.x, win_pick_file.y, db_dict, settings)
+
+        # Previous page button
+        previous_btn = Button('<<< Previous Page', height=small_button_height, width=file_btn_width,
+                          font=small_button_font, action=previous_btn_func, style='default',
+                          x=(win_pick_file.width - 2*file_btn_width - button_spacing)/2, y=file_y,
+                          color=small_button_color, just='center')
+        display_list.append(previous_btn)
+
+        if file_index < 1:
+            previous_btn.enabled = 0
+
+        # Next page button
+        next_btn = Button('Next Page >>>', height=small_button_height, width=file_btn_width,
+                          font=small_button_font, action=next_btn_func, style='default',
+                          x=previous_btn.right + button_spacing, y=file_y,
+                          color=small_button_color, just='center')
+        display_list.append(next_btn)
+
+        if file_index + files_per_page >= len(file_list):
+            next_btn.enabled = 0
+
+        file_y += top_border*2
+
+        for filename in file_list[file_index:file_index + files_per_page]:
 
             # Select file button with name
             file_btn = Button(filename, height=small_button_height, width=file_btn_width,
@@ -242,6 +283,7 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
     back_btn = Button("Back")
 
     def back_btn_func():
+        settings['file_index'] = 0
         FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
         win_pick_file.hide()
 

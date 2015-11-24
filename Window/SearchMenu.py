@@ -380,7 +380,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     # Teams DB RG
     teams_db_msg_width = 250
-    t_db_rg_msg = Label(text=("Database: " + db_dict['team_list'][0]), font=std_tf_font, width=teams_db_msg_width,
+    t_db_rg_msg = Label(text=("Team List: " + db_dict['team_list'][0]), font=std_tf_font, width=teams_db_msg_width,
                         height=std_tf_height, color=title_color)
     t_db_rg_msg.x = (win_search.width - teams_db_msg_width) / 2
     t_db_rg_msg.y = reset_btn.bottom + db_radio_btn_space
