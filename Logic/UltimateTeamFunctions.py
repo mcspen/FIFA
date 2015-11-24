@@ -396,14 +396,14 @@ def recursive_create(players, formation, time_limit, players_per_position, teams
         if print_positions_less:
             if pos_index <= positions_less:
                 print "Player" + ' '*(3-len(str(pos_index))) + str(pos_index) + " change!" + \
-                      "     Team team_count: " + str(team_count) + \
+                      "     Teams created: " + str(team_count) + \
                       "     Player " + str(players_checked)
         # ----------------------------------------------------------------------------------------------------------
         # DELETE LATER ---------------------------------------------------------------------------------------------
         if print_positions_greater:
             if pos_index >= positions_greater:
                 print "Player" + ' '*(3-len(str(pos_index))) + str(pos_index) + " change!" + \
-                      "     Team team_count: " + str(team_count) + \
+                      "     Teams created: " + str(team_count) + \
                       "     Player " + str(players_checked)
         # ----------------------------------------------------------------------------------------------------------
 
