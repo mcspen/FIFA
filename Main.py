@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     # Calculate strengths and then print out for first 100 teams
     """teams = TeamDB()
-    teams.load('2015-11-23')
+    teams.load('2015-11-20')
 
     '''for index, team in enumerate(teams.db):
         temp = Team(team)
