@@ -210,6 +210,13 @@ class FormationDB:
                         symbol_list.append(position['symbol'])
                     if string_value not in symbol_list:
                         match = False
+                elif attribute == 'position_all':
+                    string_value = str(value.upper())
+                    symbol_list = []
+                    for position in formation['positions'].itervalues():
+                        symbol_list.append(position['symbol'])
+                    if string_value not in (symbol_list + formation['positions']):
+                        match = False
                 else:
                     print "Invalid Attribute: %s" % attribute
                     match = False

@@ -159,8 +159,17 @@ def format_attr_name(attribute):
                        "aggression", "agility", "agility", "balance", "foot", "crossing", "curve", "dribbling",
                        "finishing", "interceptions", "jumping", "marking", "penalties", "positioning", "potential",
                        "reactions", "stamina", "strength", "vision", "volleys", "traits", "specialities", "attributes",
-                       "name", "quality", "color", "rating"]:
+                       "name", "quality", "color", "rating", "formation", "style", "description", "chemistry",
+                       "player"]:
         return attribute.capitalize()
+    elif attribute in ["num_links", "num_defenders", "num_attackers", "num_midfielders"]:
+        return "Number of " + attribute[4:].capitalize()
+    elif attribute in ["position_all"]:
+        return attribute[:-4].capitalize()
+    elif attribute in ["manager_league", "manager_nation"]:
+        return attribute[:7].capitalize() + " " + attribute[8:].capitalize()
+    elif attribute in ["total_ic"]:
+        return "Total Individual Chemistry"
     else:
         return "ERROR"
 

@@ -112,11 +112,40 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             search_results = db_dict[f_db_radio_group.value][1].search(attr_dict)
             search_results = FormationDB.FormationDB(search_results)
             search_results.sort(attr_list, sort_order_radio_group.value)
+
+            # Get attributes list and avoid duplicates
+            attributes_list = []
+
+            for attr in attr_list:
+                if attributes_list.count(attr) == 0:
+                    attributes_list.append(attr)
+
+            for attr_key in attr_dict.iterkeys():
+                if attributes_list.count(attr_key) == 0:
+                    attributes_list.append(attr_key)
+
+            # display_formations(search_results, attributes_list, (0, num_results))
             search_results.print_db_short()
 
         # Start button corresponds to teams
         elif settings['mode'] == 'teams':
-            stuff = 0
+            search_results = db_dict['team_list'][1].search(attr_dict)
+            search_results = TeamDB.TeamDB(search_results)
+            search_results.sort(attr_list, sort_order_radio_group.value)
+
+            # Get attributes list and avoid duplicates
+            attributes_list = []
+
+            for attr in attr_list:
+                if attributes_list.count(attr) == 0:
+                    attributes_list.append(attr)
+
+            for attr_key in attr_dict.iterkeys():
+                if attributes_list.count(attr_key) == 0:
+                    attributes_list.append(attr_key)
+
+            # display_teams(search_results, attributes_list, (0, num_results))
+            search_results.print_db(num_results)
 
         win_search.become_target()
 
@@ -190,19 +219,41 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         # Delete results
         del settings['messages']['results'][:]
 
+        # Set type argument
+        attr_type = ''
+        if settings['mode'] == 'players':
+            attr_type = 'player_search'
+        elif settings['mode'] == 'formations':
+            attr_type = 'formation_search'
+        elif settings['mode'] == 'teams':
+            attr_type = 'team_search'
+        else:
+            print "Invalid mode."
+
         # Open new window and close current window
         win_search.hide()
-        AddAttribute.open_attribute_window(win_search.x, win_search.y,
-                                           db_dict, attr_dict, attr_list, 'search', settings)
+        AddAttribute.open_attribute_window(win_search.x, win_search.y, db_dict,
+                                           attr_dict, attr_list, attr_type, settings)
 
     def sort_btn_func():
         # Delete results
         del settings['messages']['results'][:]
 
+        # Set type argument
+        attr_type = ''
+        if settings['mode'] == 'players':
+            attr_type = 'player_sort'
+        elif settings['mode'] == 'formations':
+            attr_type = 'formation_sort'
+        elif settings['mode'] == 'teams':
+            attr_type = 'team_sort'
+        else:
+            print "Invalid mode."
+
         # Open new window and close current window
         win_search.hide()
         AddAttribute.open_attribute_window(win_search.x, win_search.y, db_dict,
-                                           attr_dict, attr_list, 'sort', settings)
+                                           attr_dict, attr_list, attr_type, settings)
 
     def reset_btn_func():
         # Remove messages off page

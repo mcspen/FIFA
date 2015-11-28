@@ -179,6 +179,9 @@ class TeamDB:
                     stat = team['formation']['style'].upper()
                     if not stat.startswith(string_value):
                         match = False
+                elif attribute in ['player']:
+                    if not team.has_player(value):
+                        match = False
                 else:
                     print "Invalid Attribute: %s" % attribute
                     match = False

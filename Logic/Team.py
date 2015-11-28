@@ -150,6 +150,42 @@ class Team:
 
         return team_name'''
 
+    def has_player(self, player_name):
+        """
+        Checks if the player is on the team
+        Input: The player name or part of name
+        Output: Boolean value of if player is on team
+        """
+
+        has_player = False
+        name = player_name.upper()
+
+        # Only starting initial
+        if len(name) == 1:
+            for position in self.formation['positions'].itervalues():
+                player = position['player']
+
+                if (player['commonName'].upper().startswith(name) or
+                        player['firstName'].upper().startswith(name) or
+                        player['lastName'].upper().startswith(name) or
+                        player['name'].upper().startswith(name)):
+                    has_player = True
+                    break
+
+        # Find part of name anywhere
+        else:
+            for position in self.formation['positions'].itervalues():
+                player = position['player']
+
+                if (name in player['commonName'].upper()) or \
+                    (name in player['firstName'].upper()) or \
+                    (name in player['lastName'].upper()) or \
+                    (name in player['name'].upper()):
+                    has_player = True
+                    break
+
+        return has_player
+
     def print_roster(self, symbol='normal'):
         """
         Print out the roster of the team

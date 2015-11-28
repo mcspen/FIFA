@@ -55,32 +55,56 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     radio_group = RadioGroup(action=selection_made)
     radio_button_list = []
 
+    config_file = '_attributes'
+    if attr_type[:4] == 'play':
+        config_file = 'player' + config_file
+    elif attr_type[:4] == 'form':
+        config_file = 'formation' + config_file
+    elif attr_type[:4] == 'team':
+        config_file = 'team' + config_file
+    else:
+        print "Invalid attribute type."
+
     with open('configs.json', 'r') as f:
-            attributes_list = json.load(f)['player_attributes']['all']
+            attributes_list = json.load(f)[config_file]['all']
             f.close()
 
     for idx, attribute in enumerate(attributes_list):
         button = RadioButton(attribute)
 
-        if idx < 10:
-            button.width = 45
-            button.x = (idx / 10) * (button.width + 5) + 5
-        elif idx < 30:
-            button.width = 100
-            button.x = (idx / 10) * (button.width + 5) - 50
-        elif idx < 40:
-            button.width = 110
-            button.x = (idx / 10) * (button.width + 5) - 80
+        if attr_type[:4] == 'play':
+            if idx < 10:
+                button.width = 45
+                button.x = (idx / 10) * (button.width + 5) + 5
+            elif idx < 30:
+                button.width = 100
+                button.x = (idx / 10) * (button.width + 5) - 50
+            elif idx < 40:
+                button.width = 110
+                button.x = (idx / 10) * (button.width + 5) - 80
+            else:
+                button.width = 100
+                button.x = (idx / 10) * (button.width + 5) - 40
+
+            button.y = (idx % 10) * 25 + title.bottom + 5
+
+            # Added for 81st item
+            if idx == 80:
+                button.x = 7 * (button.width + 5) - 40
+                button.y = 10 * 25 + title.bottom + 5
+
+        elif attr_type[:4] == 'form':
+            button.width = 150
+            button.x = (win_attribute.width - button.width) / 2
+            button.y = idx * 25 + title.bottom + 5
+
+        elif attr_type[:4] == 'team':
+            button.width = 150
+            button.x = (win_attribute.width - button.width) / 2
+            button.y = idx * 25 + title.bottom + 5
+
         else:
-            button.width = 100
-            button.x = (idx / 10) * (button.width + 5) - 40
-
-        button.y = (idx % 10) * 25 + title.bottom + 5
-
-        # Added for 81st item
-        if idx == 80:
-            button.x = 7 * (button.width + 5) - 40
-            button.y = 10 * 25 + title.bottom + 5
+            print "Invalid attribute type."
 
         button.group = radio_group
         button.value = attribute
@@ -93,7 +117,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         valid = False
         return_value = None
 
-        if attr_type == 'sort':
+        # Player
+        if attr_type == 'player_sort':
             # Check for doubles
             if attr_list.count(radio_group.value) == 0:
                 attr_list.append(radio_group.value)
@@ -101,7 +126,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
             show_attributes(attribute_display_list)
             erase_btn.enabled = 1
 
-        elif attr_type == 'search':
+        elif attr_type == 'player_search':
             # Value checks
             if radio_group.value in ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY", "DIV", "HAN", "KIC", "REF", "SPD", "POS",
                                      "acceleration", "aggression", "agility", "balance", "ballcontrol", "crossing",
@@ -149,15 +174,125 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
             else:
                 print "Invalid attribute value."
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        # Formation
+        elif attr_type == 'formation_sort':
+            # Check for doubles
+            if attr_list.count(radio_group.value) == 0:
+                attr_list.append(radio_group.value)
+
+            show_attributes(attribute_display_list)
+            erase_btn.enabled = 1
+
+        elif attr_type == 'formation_search':
+            # Value checks
+            if radio_group.value in ["num_attackers", "num_midfielders", "num_defenders"]:
+                # Value should be an integer between 0 and 10
+                if value_tf.value.isdigit():
+                    return_value = int(value_tf.value)
+                    if 0 < return_value < 10:
+                        valid = True
+
+            elif radio_group.value in ["num_links"]:
+                # Value should be an integer
+                if value_tf.value.isdigit():
+                    return_value = int(value_tf.value)
+                    valid = True
+
+            elif radio_group.value in ["name", "style", "description", "position_all"]:
+                # Value should be a string
+                if type(value_tf.value) is str:
+                    return_value = value_tf.value
+                    valid = True
+
+            if valid:
+                attr_dict[radio_group.value] = (return_value, compare_group.value)
+                value_tf.value = ''
+                show_attributes(attribute_display_list)
+                erase_btn.enabled = 1
+            else:
+                print "Invalid attribute value."
+
+        # Team
+        elif attr_type == 'team_sort':
+            # Check for doubles
+            if attr_list.count(radio_group.value) == 0:
+                attr_list.append(radio_group.value)
+
+            show_attributes(attribute_display_list)
+            erase_btn.enabled = 1
+
+        elif attr_type == 'team_search':
+            # Value checks
+            if radio_group.value in ["rating", "chemistry", "total_ic"]:
+                # Value should be an integer between -1 and 111
+                if value_tf.value.isdigit():
+                    return_value = int(value_tf.value)
+                    if -1 < return_value < 111:
+                        valid = True
+
+            elif radio_group.value in ["strength"]:
+                # Value should be an integer
+                if value_tf.value.isdigit():
+                    return_value = int(value_tf.value)
+                    valid = True
+
+            elif radio_group.value in ["player", "formation", "manager_league", "manager_nation", "style"]:
+                # Value should be a string
+                if type(value_tf.value) is str:
+                    return_value = value_tf.value
+                    valid = True
+
+            if valid:
+                attr_dict[radio_group.value] = (return_value, compare_group.value)
+                value_tf.value = ''
+                show_attributes(attribute_display_list)
+                erase_btn.enabled = 1
+            else:
+                print "Invalid attribute value."
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         else:
             print 'Invalid attr_type for AddAttribute.'
 
         win_attribute.become_target()
 
     def erase_btn_func():
-        if attr_type == 'sort':
+        if attr_type[-4:] == 'sort':
             del attr_list[:]
-        elif attr_type == 'search':
+        elif attr_type[-6:] == 'search':
             attr_dict.clear()
 
         show_attributes(attribute_display_list)
@@ -184,8 +319,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     erase_btn.style = 'default'
     erase_btn.color = button_color
     erase_btn.just = 'right'
-    if (attr_type == 'sort' and len(attr_list) == 0) or \
-       (attr_type == 'search' and len(attr_dict) == 0):
+    if (attr_type[-4:] == 'sort' and len(attr_list) == 0) or \
+       (attr_type[-6:] == 'search' and len(attr_dict) == 0):
         erase_btn.enabled = 0
 
     enter_btn.x = erase_btn.left - button_spacing - button_width
@@ -251,7 +386,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         message_x = 10
         message_y = win_attribute.height - 150
 
-        if attr_type == 'search':
+        if attr_type[-6:] == 'search':
             display_list.append(Label(text="Search Attributes:", font=title_tf_font, width=std_tf_width,
                                       height=std_tf_height, x=message_x, y=message_y, color=title_color))
             message_y += std_tf_height
@@ -280,7 +415,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                 index += 1
 
         # Display new sort attributes on screen
-        elif attr_type == 'sort':
+        elif attr_type[-4:] == 'sort':
             display_list.append(Label(text="Sort Attributes:", font=title_tf_font, width=std_tf_width,
                                       height=std_tf_height, x=message_x, y=message_y, color=title_color))
             message_y += std_tf_height
@@ -307,7 +442,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     view.add(back_btn)
 
     # Shows only for getting attribute for search, not sort
-    if attr_type == 'search':
+    if attr_type[-6:] == 'search':
         view.add(value_tf)
 
         for button in comp_button_list:
