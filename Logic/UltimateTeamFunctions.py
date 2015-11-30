@@ -585,7 +585,7 @@ def find_teams_ultimate(players, formations):
 def find_team_ultimate(players, formations):
     """
     Calls the find_teams_ultimate function and sorts and returns the results.
-    Input: PlayerDB of players, FormationDB of formations, process type, and the minimum number of teams to return.
+    Input: PlayerDB of players and FormationDB of formations.
     Output: The best team using my thorough method.
     """
 
@@ -600,7 +600,11 @@ def find_team_ultimate(players, formations):
     with open('ultimate_team_configs.json', 'r') as f:
         configs = json.load(f)
         f.close()
-    num_teams = configs['num_teams_returned']
+
+    if configs['num_teams_returned'][0]:
+        num_teams = configs['num_teams_returned'][1]
+    else:
+        num_teams = configs['max_values']['num_teams_returned']
 
     # Iterate through teams until tie is broken if more than specified number of teams
     if len(team_list) > num_teams:

@@ -1,3 +1,5 @@
+Number of teams returned were not limited correctly
+
 Move team creation function to TeamDB?
 
 Change Edit function for manage menu to have separate windows for players (already implemented), formations, and teams.

@@ -272,7 +272,7 @@ class PlayerDB:
 
                 # Make sure the comparison value is valid
                 if compare not in ['higher', 'exact', 'lower']:
-                    print "Compare value is not valid. Use 'higher', 'exact', or 'lower'."
+                    print "Compare value is not valid. Use 'higher', 'exact', 'not', or 'lower'."
                     return []
 
                 if attribute in ['id', 'baseId']:

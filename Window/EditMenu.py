@@ -202,19 +202,39 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
         # Delete results
         del settings['messages']['results'][:]
 
+        attr_type = ''
+        if settings['edit_subject'] == 'players':
+            attr_type = 'player_search'
+        elif settings['edit_subject'] == 'formations':
+            attr_type = 'formation_search'
+        elif settings['team_subject'] == 'teams':
+            attr_type = 'player_search'
+        else:
+            print "Invalid edit_subject settings."
+
         # Open new window and close current window
         win_edit.hide()
         AddAttribute.open_attribute_window(win_edit.x, win_edit.y,
-                                           db_dict, attr_dict, attr_list, 'search', settings)
+                                           db_dict, attr_dict, attr_list, attr_type, settings)
 
     def sort_btn_func():
         # Delete results
         del settings['messages']['results'][:]
 
+        attr_type = ''
+        if settings['edit_subject'] == 'players':
+            attr_type = 'player_sort'
+        elif settings['edit_subject'] == 'formations':
+            attr_type = 'formation_sort'
+        elif settings['team_subject'] == 'teams':
+            attr_type = 'player_sort'
+        else:
+            print "Invalid edit_subject settings."
+
         # Open new window and close current window
         win_edit.hide()
         AddAttribute.open_attribute_window(win_edit.x, win_edit.y, db_dict,
-                                           attr_dict, attr_list, 'sort', settings)
+                                           attr_dict, attr_list, attr_type, settings)
 
     def display_attributes():
         for search_item in settings['messages']['search']:

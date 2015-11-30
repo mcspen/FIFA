@@ -174,25 +174,6 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
             else:
                 print "Invalid attribute value."
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         # Formation
         elif attr_type == 'formation_sort':
             # Check for doubles
@@ -268,21 +249,6 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                 erase_btn.enabled = 1
             else:
                 print "Invalid attribute value."
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         else:
             print 'Invalid attr_type for AddAttribute.'

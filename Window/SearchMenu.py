@@ -145,7 +145,16 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                     attributes_list.append(attr_key)
 
             # display_teams(search_results, attributes_list, (0, num_results))
-            search_results.print_db(num_results)
+            #search_results.print_db(num_results)
+            from Logic.Team import Team
+            for team in search_results.db[:100]:
+                temp = Team(team)
+                temp.print_summary()
+                print
+                temp.print_chemistry_stats()
+                print
+                temp.print_team_strengths()
+                print('\n')
 
         win_search.become_target()
 

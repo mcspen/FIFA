@@ -1,6 +1,7 @@
 import copy
 import json
 from os.path import isfile
+from Team import Team
 
 
 class TeamDB:
@@ -121,25 +122,44 @@ class TeamDB:
 
         self.db = sorted(self.db, key=compare, reverse=descend)
 
-    def search(self, attributes, compare='exact'):
+    def search(self, attributes):
         """
         Search for teams
-        Input: A dictionary the attributes and values, and the optional comparison type('higher', 'exact', 'lower')
-        Example 1: arguments = {'attr1': value1}, 'exact'
+        Input: A dictionary the attribute values, and the optional comparison type
+        Comparison: 'higher', 'exact', 'lower', 'not'
+        Example 1: arguments = {'attr1': (value1, 'exact')}
         or without the comparison operator
-        Example 2: arguments = {'attr1': value1, 'attr2': value2, 'attr3': value3}
+        Example 2: arguments = {'attr1': (value1,), 'attr2': (value2,), 'attr3': (value3,)}
         Output: A list of all matching teams
         """
 
         teams = []
 
-        if not (compare == 'higher' or compare == 'exact' or compare == 'lower'):
-            print "Compare field is not valid. Use 'higher', 'exact', or 'lower'."
-            return teams
-
         for team in self.db:
             match = True
-            for attribute, value in attributes.iteritems():
+            for attribute, tup in attributes.iteritems():
+
+                if type(tup) is not tuple:
+                    print "Attributes parameter is not valid. Must be a dict with a tuple value."
+                    return []
+
+                # Assign attribute value
+                value = tup[0]
+
+                # Assign comparison value and set default
+                if len(tup) < 2:
+                    compare = 'exact'
+                # Treat 'not' like 'exact' and flip at the end
+                elif tup[1] == 'not':
+                    compare = 'exact'
+                else:
+                    compare = tup[1]
+
+                # Make sure the comparison value is valid
+                if compare not in ['higher', 'exact', 'lower']:
+                    print "Compare value is not valid. Use 'higher', 'exact', 'not', or 'lower'."
+                    return []
+
                 if attribute in ['formation']:
                     string_value = str(value.upper())
                     stat = str(team[attribute]['name'].upper())
@@ -180,16 +200,23 @@ class TeamDB:
                     if not stat.startswith(string_value):
                         match = False
                 elif attribute in ['player']:
-                    if not team.has_player(value):
+                    if not Team(team).has_player(value):
                         match = False
                 else:
                     print "Invalid Attribute: %s" % attribute
                     match = False
                     break
 
+                # Switch matching boolean if comparison is 'not'
+                if len(tup) > 1:
+                    if tup[1] == 'not':
+                        match = not match
+
+                # If still matching, check next attribute
                 if not match:
                     break
 
+            # If all attributes match, add to the list
             if match:
                 teams.append(copy.deepcopy(team))
 
