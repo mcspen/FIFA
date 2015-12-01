@@ -5,10 +5,12 @@ from AppConfig import *
 import StartMenu
 import AddAttribute
 import PlayerBio
+import FormationBio
 from Logic import PlayerDB
 from Logic import FormationDB
 from Logic import TeamDB
 from Logic.HelperFunctions import format_attr_name, player_info_labels, player_info
+from Logic.HelperFunctions import formation_info_labels, formation_info
 
 
 def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, settings=None):
@@ -124,8 +126,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                 if attributes_list.count(attr_key) == 0:
                     attributes_list.append(attr_key)
 
-            # display_formations(search_results, attributes_list, (0, num_results))
-            search_results.print_db_short()
+            display_formations(search_results, attributes_list, (0, num_results))
+            #search_results.print_db_short()
 
         # Start button corresponds to teams
         elif settings['mode'] == 'teams':
@@ -287,6 +289,12 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         win_search.hide()
         PlayerBio.open_player_bio_window(win_search.x, win_search.y, player, win_search,
                                          db_dict['player_list'][0], db_dict['player_list'][1])
+        win_search.become_target()
+
+    def formation_bio_btn_func(formation):
+        win_search.hide()
+        FormationBio.open_formation_bio_window(win_search.x, win_search.y, formation, win_search,
+                                               db_dict['formation_list'][0], db_dict['formation_list'][1])
         win_search.become_target()
 
     # ========== Action Buttons ==========
@@ -548,89 +556,171 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     total_num_results_label = Label()
     pages_label = Label()
 
-    def add_to_list_btn_func(player_list, func_type):
+    def add_to_list_btn_func(results_list, func_type):
         if func_type == 'add all':
-            added_players = []
-            # Add current results to player list
-            for player in player_list:
-                if db_dict['player_list'][1].db.count(player) == 0:
-                    db_dict['player_list'][1].db.append(player)
-                    added_players.append(player)
+            if settings['mode'] == 'players':
+                added_players = []
+                # Add current results to player list
+                for player in results_list:
+                    if db_dict['player_list'][1].db.count(player) == 0:
+                        db_dict['player_list'][1].db.append(player)
+                        added_players.append(player)
 
-            # Sort
-            db_dict['player_list'][1].sort(['rating'])
-            # Save
-            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
+                # Sort
+                db_dict['player_list'][1].sort(['rating'])
+                # Save
+                db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
 
-            # Change button title and action
-            add_to_list_btn.title = "Remove Added Players"
-            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'remove select')
+                # Change button title and action
+                add_to_list_btn.title = "Remove Added Players"
+                add_to_list_btn.action = (add_to_list_btn_func, results_list, 'remove select')
 
-            # Keep track of just added players
-            settings['messages']['players_changed'] = added_players
+                # Keep track of just added players
+                settings['messages']['players_changed'] = added_players
+
+            elif settings['mode'] == 'formations':
+                added_formations = []
+                # Add current results to formation list
+                for formation in results_list:
+                    if db_dict['formation_list'][1].db.count(formation) == 0:
+                        db_dict['formation_list'][1].db.append(formation)
+                        added_formations.append(formation)
+
+                # Sort
+                db_dict['formation_list'][1].sort(['name'])
+                # Save
+                db_dict['formation_list'][1].save(db_dict['formation_list'][0], 'list', True)
+
+                # Change button title and action
+                add_to_list_btn.title = "Remove Added Formations"
+                add_to_list_btn.action = (add_to_list_btn_func, results_list, 'remove select')
+
+                # Keep track of just added formations
+                settings['messages']['formations_changed'] = added_formations
 
         elif func_type == 'remove all':
-            removed_players = []
-            # Remove current results from player list
-            for player in player_list:
-                if db_dict['player_list'][1].db.count(player) > 0:
-                    db_dict['player_list'][1].db.remove(player)
-                    removed_players.append(player)
+            if settings['mode'] == 'players':
+                removed_players = []
+                # Remove current results from player list
+                for player in results_list:
+                    if db_dict['player_list'][1].db.count(player) > 0:
+                        db_dict['player_list'][1].db.remove(player)
+                        removed_players.append(player)
 
-            # Sort
-            db_dict['player_list'][1].sort(['rating'])
-            # Save
-            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
+                # Sort
+                db_dict['player_list'][1].sort(['rating'])
+                # Save
+                db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
 
-            # Change button title and action
-            add_to_list_btn.title = "Add Removed Players"
-            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'add select')
+                # Change button title and action
+                add_to_list_btn.title = "Add Removed Players"
+                add_to_list_btn.action = (add_to_list_btn_func, results_list, 'add select')
 
-            # Keep track of just removed players
-            settings['messages']['players_changed'] = removed_players
+                # Keep track of just removed players
+                settings['messages']['players_changed'] = removed_players
+
+            elif settings['mode'] == 'formations':
+                removed_formations = []
+                # Remove current results from formation list
+                for formation in results_list:
+                    if db_dict['formation_list'][1].db.count(formation) > 0:
+                        db_dict['formation_list'][1].db.remove(formation)
+                        removed_formations.append(formation)
+
+                # Sort
+                db_dict['formation_list'][1].sort(['name'])
+                # Save
+                db_dict['formation_list'][1].save(db_dict['formation_list'][0], 'list', True)
+
+                # Change button title and action
+                add_to_list_btn.title = "Add Removed Formations"
+                add_to_list_btn.action = (add_to_list_btn_func, results_list, 'add select')
+
+                # Keep track of just removed players
+                settings['messages']['formations_changed'] = removed_formations
 
         elif func_type == 'add select':
-            # Add select players back to player list
-            for player in settings['messages']['players_changed']:
-                if db_dict['player_list'][1].db.count(player) == 0:
-                    db_dict['player_list'][1].db.append(player)
+            if settings['mode'] == 'players':
+                # Add select players back to player list
+                for player in settings['messages']['players_changed']:
+                    if db_dict['player_list'][1].db.count(player) == 0:
+                        db_dict['player_list'][1].db.append(player)
 
-            # Sort
-            db_dict['player_list'][1].sort(['rating'])
-            # Save
-            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
+                # Sort
+                db_dict['player_list'][1].sort(['rating'])
+                # Save
+                db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
 
-            # Change button title and action
-            add_to_list_btn.title = "Remove Added Players"
-            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'remove select')
+                # Change button title and action
+                add_to_list_btn.title = "Remove Added Players"
+                add_to_list_btn.action = (add_to_list_btn_func, results_list, 'remove select')
+
+            elif settings['mode'] == 'formations':
+                # Add select formations back to formation list
+                for formation in settings['messages']['formations_changed']:
+                    if db_dict['formation_list'][1].db.count(formation) == 0:
+                        db_dict['formation_list'][1].db.append(formation)
+
+                # Sort
+                db_dict['formation_list'][1].sort(['name'])
+                # Save
+                db_dict['formation_list'][1].save(db_dict['formation_list'][0], 'list', True)
+
+                # Change button title and action
+                add_to_list_btn.title = "Remove Added Formations"
+                add_to_list_btn.action = (add_to_list_btn_func, results_list, 'remove select')
 
         elif func_type == 'remove select':
-            # Remove select players from player list
-            for player in settings['messages']['players_changed']:
-                if db_dict['player_list'][1].db.count(player) > 0:
-                    db_dict['player_list'][1].db.remove(player)
+            if settings['mode'] == 'players':
+                # Remove select players from player list
+                for player in settings['messages']['players_changed']:
+                    if db_dict['player_list'][1].db.count(player) > 0:
+                        db_dict['player_list'][1].db.remove(player)
 
-            # Sort
-            db_dict['player_list'][1].sort(['rating'])
-            # Save
-            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
+                # Sort
+                db_dict['player_list'][1].sort(['rating'])
+                # Save
+                db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
 
-            # Change button title and action
-            add_to_list_btn.title = "Add Removed Players"
-            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'add select')
+                # Change button title and action
+                add_to_list_btn.title = "Add Removed Players"
+                add_to_list_btn.action = (add_to_list_btn_func, results_list, 'add select')
+
+            elif settings['mode'] == 'formations':
+                # Remove select formations from formation list
+                for formation in settings['messages']['formations_changed']:
+                    if db_dict['formation_list'][1].db.count(formation) > 0:
+                        db_dict['formation_list'][1].db.remove(formation)
+
+                # Sort
+                db_dict['formation_list'][1].sort(['name'])
+                # Save
+                db_dict['formation_list'][1].save(db_dict['formation_list'][0], 'list', True)
+
+                # Change button title and action
+                add_to_list_btn.title = "Add Removed Formations"
+                add_to_list_btn.action = (add_to_list_btn_func, results_list, 'add select')
 
         win_search.become_target()
 
-    def previous_btn_func(display_player_db=None, attributes=None, index_range=None):
-        if display_player_db is not None:
-            # display previous results
-            display_players(display_player_db, attributes, index_range)
+    def previous_btn_func(results_list, attributes, index_range):
+        # display previous results
+        if settings['mode'] == 'players':
+            display_players(results_list, attributes, index_range)
+        elif settings['mode'] == 'formations':
+            display_formations(results_list, attributes, index_range)
+        #elif settings['mode'] == 'teams':
+        #    display_teams(results_list, attributes, index_range)
         win_search.become_target()
 
-    def next_btn_func(display_player_db=None, attributes=None, index_range=None):
-        if display_player_db is not None:
-            # display next results
-            display_players(display_player_db, attributes, index_range)
+    def next_btn_func(results_list, attributes, index_range):
+        # display next results
+        if settings['mode'] == 'players':
+            display_players(results_list, attributes, index_range)
+        elif settings['mode'] == 'formations':
+            display_formations(results_list, attributes, index_range)
+        #elif settings['mode'] == 'teams':
+        #    display_teams(results_list, attributes, index_range)
         win_search.become_target()
 
     add_to_list_btn.x = attribute_btn.right + small_button_spacing
@@ -647,7 +737,6 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     previous_btn.x = add_to_list_btn.left - previous_btn.width - small_button_spacing
     previous_btn.y = add_to_list_btn.top
     previous_btn.font = small_button_font
-    previous_btn.action = previous_btn_func
     previous_btn.style = 'default'
     previous_btn.color = small_button_color
     previous_btn.just = 'right'
@@ -657,7 +746,6 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     next_btn.x = add_to_list_btn.right + small_button_spacing
     next_btn.y = add_to_list_btn.top
     next_btn.font = small_button_font
-    next_btn.action = next_btn_func
     next_btn.style = 'default'
     next_btn.color = small_button_color
     next_btn.just = 'right'
@@ -679,7 +767,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     pages_label.just = 'left'
 
     # ========== Display players from search ==========
-    def display_players(display_player_db, attributes, index_range):
+    def display_players(results_list, attributes, index_range):
         # Remove old messages off page
         for message in settings['messages']['results']:
             view.remove(message)
@@ -688,28 +776,28 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         # Add navigation buttons to page
         if settings['p_db_rg'] == 'player_db':
             add_to_list_btn.title = 'Add All Players'
-            add_to_list_btn.action = (add_to_list_btn_func, display_player_db.db, 'add all')
+            add_to_list_btn.action = (add_to_list_btn_func, results_list.db, 'add all')
         elif settings['p_db_rg'] == 'player_list':
             add_to_list_btn.title = 'Remove All Players'
-            add_to_list_btn.action = (add_to_list_btn_func, display_player_db.db, 'remove all')
+            add_to_list_btn.action = (add_to_list_btn_func, results_list.db, 'remove all')
         else:
             print "Invalid edit type."
 
         previous_range = (index_range[0]-num_results, index_range[0])
-        previous_btn.action = (previous_btn_func, display_player_db, attributes, previous_range)
+        previous_btn.action = (previous_btn_func, results_list, attributes, previous_range)
 
         next_range = (index_range[1], index_range[1]+num_results)
-        next_btn.action = (next_btn_func, display_player_db, attributes, next_range)
+        next_btn.action = (next_btn_func, results_list, attributes, next_range)
 
-        total_num_results_label.text = str(len(display_player_db.db)) + " Players"
+        total_num_results_label.text = str(len(results_list.db)) + " Players"
         pages_label.text = "Page %d of %d" % (int(index_range[1]/num_results),
-                                              math.ceil(len(display_player_db.db)/num_results) + 1)
+                                              math.ceil(len(results_list.db)/num_results) + 1)
 
         if index_range[0] > 0:
             previous_btn.enabled = 1
         else:
             previous_btn.enabled = 0
-        if index_range[1] <= len(display_player_db.db) - 1:
+        if index_range[1] <= len(results_list.db) - 1:
             next_btn.enabled = 1
         else:
             next_btn.enabled = 0
@@ -740,7 +828,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         msg_y += std_tf_height + 5
 
         # Print out players
-        for idx, player in enumerate(display_player_db.db[index_range[0]:index_range[1]]):
+        for idx, player in enumerate(results_list.db[index_range[0]:index_range[1]]):
             msg_x = left_border
             player_stats = player_info(player, attributes)
             stat_index = 0
@@ -761,6 +849,93 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                                      height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
 
                 settings['messages']['results'].append(player_label)
+                msg_x += spacing_list[stat_index]
+                if stat_index < len(spacing_list) - 1:
+                    stat_index += 1
+
+            msg_y += std_tf_height
+
+        for results_msg in settings['messages']['results']:
+            view.add(results_msg)
+
+    # ========== Display formations from search ==========
+    def display_formations(results_list, attributes, index_range):
+        # Remove old messages off page
+        for message in settings['messages']['results']:
+            view.remove(message)
+        del settings['messages']['results'][:]
+
+        # Add navigation buttons to page
+        if settings['f_db_rg'] == 'formation_db':
+            add_to_list_btn.title = 'Add All Formations'
+            add_to_list_btn.action = (add_to_list_btn_func, results_list.db, 'add all')
+        elif settings['f_db_rg'] == 'formation_list':
+            add_to_list_btn.title = 'Remove All Formations'
+            add_to_list_btn.action = (add_to_list_btn_func, results_list.db, 'remove all')
+        else:
+            print "Invalid edit type."
+
+        previous_range = (index_range[0]-num_results, index_range[0])
+        previous_btn.action = (previous_btn_func, results_list, attributes, previous_range)
+
+        next_range = (index_range[1], index_range[1]+num_results)
+        next_btn.action = (next_btn_func, results_list, attributes, next_range)
+
+        total_num_results_label.text = str(len(results_list.db)) + " Formations"
+        pages_label.text = "Page %d of %d" % (int(index_range[1]/num_results),
+                                              math.ceil(len(results_list.db)/num_results) + 1)
+
+        if index_range[0] > 0:
+            previous_btn.enabled = 1
+        else:
+            previous_btn.enabled = 0
+        if index_range[1] <= len(results_list.db) - 1:
+            next_btn.enabled = 1
+        else:
+            next_btn.enabled = 0
+
+        settings['messages']['results'].append(add_to_list_btn)
+        settings['messages']['results'].append(previous_btn)
+        settings['messages']['results'].append(next_btn)
+        settings['messages']['results'].append(total_num_results_label)
+        settings['messages']['results'].append(pages_label)
+
+        # Print out labels
+        labels = formation_info_labels()
+        stat_index = 0
+        spacing_list = [100, 100, 55, 55, 55, 55, 140, 160]
+        left_border = (win_width - sum(spacing_list))/2
+        msg_x = left_border
+        msg_y = add_to_list_btn.bottom + 5
+
+        for info_label in labels:
+            formation_label = Label(text=info_label, font=std_tf_font_bold, width=spacing_list[stat_index]-5,
+                                    height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
+            settings['messages']['results'].append(formation_label)
+            msg_x += spacing_list[stat_index]
+
+            if stat_index < len(spacing_list)-1:
+                stat_index += 1
+
+        msg_y += std_tf_height + 5
+
+        # Print out formations
+        for formation in results_list.db[index_range[0]:index_range[1]]:
+            msg_x = left_border
+            formation_stats = formation_info(formation)
+            stat_index = 0
+
+            bio_btn = Button(title=formation_stats[0], width=spacing_list[stat_index]-5, height=15, x=msg_x, y=msg_y,
+                             action=(formation_bio_btn_func, formation))
+            settings['messages']['results'].append(bio_btn)
+            msg_x += spacing_list[stat_index]
+            stat_index += 1
+
+            for formation_stat in formation_stats[1:]:
+                formation_label = Label(text=formation_stat, font=small_button_font, width=spacing_list[stat_index]-5,
+                                        height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
+
+                settings['messages']['results'].append(formation_label)
                 msg_x += spacing_list[stat_index]
                 if stat_index < len(spacing_list) - 1:
                     stat_index += 1

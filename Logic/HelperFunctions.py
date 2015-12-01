@@ -42,11 +42,24 @@ def player_info_labels(attributes):
     return labels
 
 
+def formation_info_labels():
+    """
+    Gets the labels of the formations info to be displayed
+    Input: The list of attributes
+    Output: A list of the labels of the formations info
+    """
+
+    # Formation's base info
+    labels = ['Name', 'Style', 'Links', 'Dfnds', 'Mids', 'Atkrs', 'Positions', 'Description']
+
+    return labels
+
+
 def player_info(player, attributes):
     """
     Gets the name and attributes of the given player and specified attributes
     Input: The player and list of attributes
-    Output: A list of the players info
+    Output: A list of the player's info
     """
 
     player_info = []
@@ -120,6 +133,44 @@ def player_info(player, attributes):
             player_info.append(str(player[attribute]))
 
     return player_info
+
+
+def formation_info(formation):
+    """
+    Gets the basic attributes of the given formation and specified attributes
+    Input: The formation and list of attributes
+    Output: A list of the formation's info
+    """
+
+    formation_info = []
+
+    # Formation's name
+    formation_info.append(formation['name'])
+
+    # Formation's style
+    formation_info.append(formation['style'])
+
+    # Formation's number of links
+    formation_info.append(str(formation['num_links']))
+
+    # Formation's number of defenders
+    formation_info.append(str(formation['num_defenders']))
+
+    # Formation's number of midfielders
+    formation_info.append(str(formation['num_midfielders']))
+
+    # Formation's number of attackers
+    formation_info.append(str(formation['num_attackers']))
+
+    # Formation's positions
+    position_list = list(formation['positions'].keys())
+    position_string = ', '.join(position_list[:4]) + '...'
+    formation_info.append(position_string)
+
+    # Formation's description
+    formation_info.append(formation['description'][:35] + '...')
+
+    return formation_info
 
 
 def format_attr_name(attribute):

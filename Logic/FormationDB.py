@@ -122,6 +122,9 @@ class FormationDB:
 
                 if attr in current_formation:
                     attribute_tuple += (current_formation[attr],)
+                elif attr in ['position_all']:
+                    position_list = list(current_formation['positions'].keys())
+                    attribute_tuple += (position_list,)
                 else:
                     print "Invalid Attribute: %s" % attr
 
@@ -167,26 +170,9 @@ class FormationDB:
                     print "Compare value is not valid. Use 'higher', 'exact', or 'lower'."
                     return []
 
-                if attribute == 'name':
-                    string_value = str(value.upper())
-                    stat = str(formation['name'].upper())
-                    if compare == 'higher':
-                        if not stat >= string_value:
-                            match = False
-                    elif compare == 'exact':
-                        if stat != string_value:
-                            match = False
-                    elif compare == 'lower':
-                        if not stat <= string_value:
-                            match = False
-                elif attribute == 'style':
+                if attribute in ['name', 'style', 'description']:
                     string_value = value.upper()
-                    stat = formation['style'].upper()
-                    if not stat.startswith(string_value):
-                        match = False
-                elif attribute == 'description':
-                    string_value = value.upper()
-                    stat = formation['description'].upper()
+                    stat = formation[attribute].upper()
                     if string_value not in stat:
                         match = False
                 elif attribute in ['num_links', 'num_defenders', 'num_midfielders', 'num_attackers']:
