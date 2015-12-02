@@ -63,6 +63,7 @@ dark_silver = GUI.StdColors.rgb(0.52, 0.52, 0.52)
 bronze = GUI.StdColors.rgb(0.8, 0.5, 0.2)
 dark_bronze = GUI.StdColors.rgb(0.59, 0.29, 0)
 darker = GUI.StdColors.rgb(0, 0, 0, 0.75)
+lighter = GUI.StdColors.rgb(1, 1, 1, 0.75)
 
 
 def attr_color(value):

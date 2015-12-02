@@ -18,6 +18,14 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     win_formation_bio.name = formation_bio_title + " Window"
     win_formation_bio.show()
 
+    # ========== Load Formation Spacing ==========
+    # Get attribute lists
+    with open('configs.json', 'r') as f:
+        formation_spacing = json.load(f)['formation_coordinates'][formation['name']]
+        f.close()
+
+    labels_list = []
+
     # ========== Field Ratio ==========
     x_to_y_ratio = 1.25
     y_to_x_ratio = 0.8
@@ -28,11 +36,12 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
 
     # Field
     field_color = dark_green
-    field_length = 540
+    field_length = 600
     field_width = field_length*y_to_x_ratio
 
     # Field positioning on screen
-    field_x_offset = (win_formation_bio.width - field_width) / 2
+    # field_x_offset = (win_formation_bio.width - field_width) / 2
+    field_x_offset = (win_formation_bio.width - field_width - button_width - 100) / 2
     field_y_offset = top_border + title_height + title_border
 
     # Center circle
@@ -49,6 +58,12 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
 
     # Corner semi circles
     corner_semi_circle_radius = int(field_length*2/100)
+
+    # ========== Player Spacing Values ==========
+    x_space = int(field_width/12)
+    y_space = int(field_length/12)
+    player_box_width = 80
+    player_box_height = 50
 
     # ========== Window Image View ==========
     class StartWindowImageView(View):
@@ -135,6 +150,34 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
             c.stroke_arc((dst_rect[0], dst_rect[3]-line_size), corner_semi_circle_radius, 270, 0)
             c.frame_arc((dst_rect[2], dst_rect[3]-line_size), corner_semi_circle_radius, 180, 270)
 
+            # Links
+            for symbol, position in formation['positions'].iteritems():
+                # Place links
+                c.forecolor = yellow
+                position_coordinates = formation_spacing[symbol]
+                for link in position['links']:
+                    link_coordinates = formation_spacing[link]
+                    c.moveto(dst_rect[0]+position_coordinates[0]*x_space,
+                             dst_rect[1]+position_coordinates[1]*y_space)
+                    c.lineto(dst_rect[0]+link_coordinates[0]*x_space,
+                             dst_rect[1]+link_coordinates[1]*y_space)
+                    c.stroke()
+                    # Get poly to work to get thicker lines?
+                    """c.fill_poly(((int(dst_rect[0]+position_coordinates[0]*x_space)-line_size/2,
+                                int(dst_rect[1]+position_coordinates[1]*y_space)-line_size/2),
+                                 (int(dst_rect[0]+link_coordinates[0]*x_space+line_size/2),
+                                int(dst_rect[1]+link_coordinates[1]*y_space)+line_size/2)))"""
+
+            # Player Markers
+            for symbol, position in formation['positions'].iteritems():
+                # Player marker
+                c.forecolor = lighter
+                position_coordinates = formation_spacing[symbol]
+                c.fill_oval((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
+                             dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
+                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2))
+
     view = StartWindowImageView(size=win_formation_bio.size)
 
     # ========== Button Declarations ==========
@@ -199,38 +242,23 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     back_btn.style = 'default'
     back_btn.color = small_button_color
 
+    # ========== Name ==========
+    formation_name_label = Label(text=formation['name'],font=title_font, width=title_width, height=title_height,
+                                 x=(win_width - title_width)/2, y=top_border, color=title_color, just='center')
+    formation_name_label.x = (win_formation_bio.width - title_width - button_width - 100) / 2
+    labels_list.append(formation_name_label)
+
     """# ========== Formation Info Labels ==========
     # Get attribute lists
     with open('configs.json', 'r') as f:
         attribute_lists = json.load(f)['formation_attributes']
         f.close()
 
-    labels_list = []
-
-    name_width = 300
-    rating_big_width = 70
-
     traits_offset_left = 25
     traits_label_width = 100
     traits_list_label_width = 500 - traits_label_width
 
     section_label_width = 115
-
-    # ========== Name and Rating ==========
-    player_name_label = Label(font=title_font, width=name_width, height=title_height, x=(win_width - name_width)/2,
-                              y=top_border, color=title_color, just='center')
-    labels_list.append(player_name_label)
-    player_full_name_label = Label(font=title_tf_font, width=name_width, height=std_tf_height,
-                                   x=(win_width - name_width)/2, y=player_name_label.bottom - title_border,
-                                   color=title_color, just='center')
-    labels_list.append(player_full_name_label)
-    rating_big_label = Label(font=title_font, width=rating_big_width, height=title_height,
-                             x=player_full_name_label.left - rating_big_width + 12,
-                             y=player_full_name_label.top - title_border, color=title_color, just='center')
-    labels_list.append(rating_big_label)
-    position_big_label = Label(font=title_font_2, width=rating_big_width, height=title_height,
-                               x=rating_big_label.left, y=rating_big_label.bottom-15, color=title_color, just='center')
-    labels_list.append(position_big_label)
 
     # ========== Traits and Specialities ==========
     traits_label = Label(font=std_tf_font_bold, width=traits_label_width, height=std_tf_height,
@@ -515,8 +543,8 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     view.add(player_full_name_label)
     view.add(rating_big_label)"""
 
-    """for label in labels_list:
-        view.add(label)"""
+    for label in labels_list:
+        view.add(label)
 
     win_formation_bio.add(view)
     view.become_target()
