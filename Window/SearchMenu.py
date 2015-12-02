@@ -18,16 +18,16 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     num_results = 20
 
     with open('configs.json', 'r') as f:
-        default_search = json.load(f)['default_player_search']
+        default_search = json.load(f)['default_search']
         f.close()
 
     if attr_dict is None:
         attr_dict = {}
-        for default in default_search['search_attributes']:
+        for default in default_search['player']['search_attributes']:
             attr_dict[default[0]] = (default[1], default[2])
 
     if attr_list is None:
-        attr_list = default_search['sort_attributes']
+        attr_list = default_search['player']['sort_attributes']
 
     if settings is None:
         settings = {
@@ -92,9 +92,18 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     def start_btn_func():
         # Start button corresponds to players
         if settings['mode'] == 'players':
-            search_results = db_dict[p_db_radio_group.value][1].search(attr_dict)
-            search_results = PlayerDB.PlayerDB(search_results)
-            search_results.sort(attr_list, sort_order_radio_group.value)
+            # Search - if no attribute selected, return all
+            if len(attr_dict) == 0:
+                search_results = db_dict[p_db_radio_group.value][1]
+            else:
+                search_results = db_dict[p_db_radio_group.value][1].search(attr_dict)
+                search_results = PlayerDB.PlayerDB(search_results)
+
+            # Sort - if no attribute selected, use rating
+            if len(attr_list) == 0:
+                search_results.sort(['rating'], sort_order_radio_group.value)
+            else:
+                search_results.sort(attr_list, sort_order_radio_group.value)
 
             # Get attributes list and avoid duplicates
             attributes_list = []
@@ -111,9 +120,18 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
         # Start button corresponds to formations
         elif settings['mode'] == 'formations':
-            search_results = db_dict[f_db_radio_group.value][1].search(attr_dict)
-            search_results = FormationDB.FormationDB(search_results)
-            search_results.sort(attr_list, sort_order_radio_group.value)
+            # Search - if no attribute selected, return all
+            if len(attr_dict) == 0:
+                search_results = db_dict[f_db_radio_group.value][1]
+            else:
+                search_results = db_dict[f_db_radio_group.value][1].search(attr_dict)
+                search_results = FormationDB.FormationDB(search_results)
+
+            # Sort - if no attribute selected, use name
+            if len(attr_list) == 0:
+                search_results.sort(['name'], sort_order_radio_group.value)
+            else:
+                search_results.sort(attr_list, sort_order_radio_group.value)
 
             # Get attributes list and avoid duplicates
             attributes_list = []
@@ -131,9 +149,18 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
         # Start button corresponds to teams
         elif settings['mode'] == 'teams':
-            search_results = db_dict['team_list'][1].search(attr_dict)
-            search_results = TeamDB.TeamDB(search_results)
-            search_results.sort(attr_list, sort_order_radio_group.value)
+            # Search - if no attribute selected, return all
+            if len(attr_dict) == 0:
+                search_results = db_dict['team_list'][1]
+            else:
+                search_results = db_dict['team_list'][1].search(attr_dict)
+                search_results = TeamDB.TeamDB(search_results)
+
+            # Sort - if no attribute selected, use rating
+            if len(attr_list) == 0:
+                search_results.sort(['rating'], sort_order_radio_group.value)
+            else:
+                search_results.sort(attr_list, sort_order_radio_group.value)
 
             # Get attributes list and avoid duplicates
             attributes_list = []
@@ -281,7 +308,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         del settings['messages']['results'][:]
 
         # Disable start button
-        start_btn.enabled = 0
+        #start_btn.enabled = 0
 
         win_search.become_target()
 
@@ -544,10 +571,10 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             settings['messages']['sort'].append(attr_label)
 
     # Disable start button if no search or sort parameters
-    if len(attr_dict) == 0 and len(attr_list) == 0:
-        start_btn.enabled = 0
-    else:
-        start_btn.enabled = 1
+    #if len(attr_dict) == 0 and len(attr_list) == 0:
+    #    start_btn.enabled = 0
+    #else:
+    #    start_btn.enabled = 1
 
     # ========== Previous, Add to List, Next Buttons ==========
     previous_btn = Button("<<< Previous %d" % num_results)

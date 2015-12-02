@@ -18,31 +18,124 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     win_formation_bio.name = formation_bio_title + " Window"
     win_formation_bio.show()
 
+    # ========== Field Ratio ==========
+    x_to_y_ratio = 1.25
+    y_to_x_ratio = 0.8
+
+    # Line specification
+    line_color = white
+    line_size = 2
+
+    # Field
+    field_color = dark_green
+    field_length = 540
+    field_width = field_length*y_to_x_ratio
+
+    # Field positioning on screen
+    field_x_offset = (win_formation_bio.width - field_width) / 2
+    field_y_offset = top_border + title_height + title_border
+
+    # Center circle
+    center_spot_x = field_x_offset + field_width/2
+    center_spot_y = field_y_offset + field_length/2
+    circle_radius = int(field_length/10)
+
+    # Goal box
+    penalty_spot_height = int(field_length*12/100)
+    eighteen_box_height = int(field_length*18/100)
+    eighteen_box_width = int(field_length*44/100)
+    six_box_height = int(field_length*6/100)
+    six_box_width = int(field_length*20/100)
+
+    # Corner semi circles
+    corner_semi_circle_radius = int(field_length*2/100)
+
     # ========== Window Image View ==========
     class StartWindowImageView(View):
         def draw(self, c, r):
             c.backcolor = view_backcolor
             c.erase_rect(r)
 
-            image_pos = ((player_name_label.left - player_headshot.width)/2,
-                         player_name_label.top)
-            src_rect = player_headshot.bounds
+            image_pos = (field_x_offset, field_y_offset)
+            src_rect = (0, 0, field_width, field_length)
             dst_rect = Geometry.offset_rect(src_rect, image_pos)
 
-            c.forecolor = quality_color(formation['color'])
-            c.fill_rect((dst_rect[0]-2, dst_rect[1]-2, dst_rect[2]+2, dst_rect[3]+3*std_tf_height+2))
-            c.forecolor = darker
-            c.fill_rect((dst_rect[0], dst_rect[3]+5, dst_rect[2], dst_rect[3]+3*std_tf_height))
+            # Field and sidelines
+            c.forecolor = field_color
+            c.fill_rect((dst_rect[0]-5, dst_rect[1]-5, dst_rect[2]+5, dst_rect[3]+5))
+            c.forecolor = line_color
+            c.fill_rect((dst_rect[0], dst_rect[1], dst_rect[2], dst_rect[3]))
+            c.forecolor = field_color
+            c.fill_rect((dst_rect[0]+line_size, dst_rect[1]+line_size, dst_rect[2]-line_size, dst_rect[3]-line_size))
 
-            player_headshot.draw(c, src_rect, dst_rect)
+            # Center circle, center spot, and half-way line
+            c.forecolor = line_color
+            c.fill_oval((center_spot_x-circle_radius, center_spot_y-circle_radius,
+                         center_spot_x+circle_radius, center_spot_y+circle_radius))
+            c.forecolor = field_color
+            c.fill_oval((center_spot_x-circle_radius+line_size, center_spot_y-circle_radius+line_size,
+                         center_spot_x+circle_radius-line_size, center_spot_y+circle_radius-line_size))
+            c.forecolor = line_color
+            c.fill_rect((dst_rect[0], center_spot_y-line_size/2, dst_rect[2], center_spot_y+line_size/2))
+            c.fill_oval((center_spot_x-line_size*2, center_spot_y-line_size*2,
+                         center_spot_x+line_size*2, center_spot_y+line_size*2))
+
+            # Goal box semi circle
+            c.forecolor = line_color
+            c.fill_oval((center_spot_x-circle_radius, dst_rect[1]+penalty_spot_height-circle_radius,
+                         center_spot_x+circle_radius, dst_rect[1]+penalty_spot_height+circle_radius))
+            c.fill_oval((center_spot_x-circle_radius, dst_rect[3]-penalty_spot_height-circle_radius,
+                         center_spot_x+circle_radius, dst_rect[3]-penalty_spot_height+circle_radius))
+            c.forecolor = field_color
+            c.fill_oval((center_spot_x-circle_radius+line_size,
+                         dst_rect[1]+penalty_spot_height-circle_radius+line_size,
+                         center_spot_x+circle_radius-line_size,
+                         dst_rect[1]+penalty_spot_height+circle_radius-line_size))
+            c.fill_oval((center_spot_x-circle_radius+line_size,
+                         dst_rect[3]-penalty_spot_height-circle_radius+line_size,
+                         center_spot_x+circle_radius-line_size,
+                         dst_rect[3]-penalty_spot_height+circle_radius-line_size))
+
+            # Eighteen yard box
+            c.forecolor = line_color
+            c.fill_rect((center_spot_x-eighteen_box_width/2, dst_rect[1],
+                         center_spot_x+eighteen_box_width/2, dst_rect[1]+eighteen_box_height))
+            c.fill_rect((center_spot_x-eighteen_box_width/2, dst_rect[3]-eighteen_box_height,
+                         center_spot_x+eighteen_box_width/2, dst_rect[3]))
+            c.forecolor = field_color
+            c.fill_rect((center_spot_x-eighteen_box_width/2+line_size,
+                         dst_rect[1]+line_size,
+                         center_spot_x+eighteen_box_width/2-line_size,
+                         dst_rect[1]+eighteen_box_height-line_size))
+            c.fill_rect((center_spot_x-eighteen_box_width/2+line_size,
+                         dst_rect[3]-eighteen_box_height+line_size,
+                         center_spot_x+eighteen_box_width/2-line_size,
+                         dst_rect[3]-line_size))
+
+            # Six yard box
+            c.forecolor = line_color
+            c.fill_rect((center_spot_x-six_box_width/2, dst_rect[1],
+                         center_spot_x+six_box_width/2, dst_rect[1]+six_box_height))
+            c.fill_rect((center_spot_x-six_box_width/2, dst_rect[3]-six_box_height,
+                         center_spot_x+six_box_width/2, dst_rect[3]))
+            c.forecolor = field_color
+            c.fill_rect((center_spot_x-six_box_width/2+line_size,
+                         dst_rect[1]+line_size,
+                         center_spot_x+six_box_width/2-line_size,
+                         dst_rect[1]+six_box_height-line_size))
+            c.fill_rect((center_spot_x-six_box_width/2+line_size,
+                         dst_rect[3]-six_box_height+line_size,
+                         center_spot_x+six_box_width/2-line_size,
+                         dst_rect[3]-line_size))
+
+            # Corner circles
+            c.forecolor = line_color
+            c.stroke_arc((dst_rect[0], dst_rect[1]), corner_semi_circle_radius, 0, 90)
+            c.frame_arc((dst_rect[2], dst_rect[1]), corner_semi_circle_radius, 90, 180)
+            c.stroke_arc((dst_rect[0], dst_rect[3]-line_size), corner_semi_circle_radius, 270, 0)
+            c.frame_arc((dst_rect[2], dst_rect[3]-line_size), corner_semi_circle_radius, 180, 270)
 
     view = StartWindowImageView(size=win_formation_bio.size)
-
-    # ========== Player Headshot ==========
-    image_url = formation['headshotImgUrl']
-    player_id = formation['id']
-    image_file_name = save_image(image_url, player_id)
-    player_headshot = Image(file=image_file_name)
 
     # ========== Button Declarations ==========
     add_formation_btn = Button()
@@ -60,7 +153,7 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
             current_list.save(file_name, 'list', True)
 
             # Switch button title
-            add_formation_btn.title = "Add Player to List"
+            add_formation_btn.title = "Add Formation to List"
 
         # Add formation to the list
         else:
@@ -106,7 +199,7 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     back_btn.style = 'default'
     back_btn.color = small_button_color
 
-    # ========== Formation Info Labels ==========
+    """# ========== Formation Info Labels ==========
     # Get attribute lists
     with open('configs.json', 'r') as f:
         attribute_lists = json.load(f)['formation_attributes']
@@ -412,7 +505,7 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     else:
         specialities_list = 'No specialities..'
     specialities_list_label.text = specialities_list[:-2]
-    specialities_list_label_2.text = specialities_list_2[:-2]
+    specialities_list_label_2.text = specialities_list_2[:-2]"""
 
     # ========== Add buttons to window ==========
     view.add(add_formation_btn)
@@ -422,8 +515,8 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     view.add(player_full_name_label)
     view.add(rating_big_label)"""
 
-    for label in labels_list:
-        view.add(label)
+    """for label in labels_list:
+        view.add(label)"""
 
     win_formation_bio.add(view)
     view.become_target()

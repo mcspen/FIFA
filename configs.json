@@ -36,8 +36,29 @@
   "formation_list": "All Formations",
   "player_list": "Test List"},
   "window": {"width": 800, "y_pos": 100, "x_pos": 300, "height": 700},
-  "default_player_search": {
-  "search_attributes": [["color", "legend", "not"]],
-  "sort_attributes": ["rating"]
+  "default_search": {
+    "player": {
+      "search_attributes": [["color", "legend", "not"]],
+      "sort_attributes": ["rating"]
+    },
+    "formation": {
+      "search_attributes": [],
+      "sort_attributes": ["name"]
+    }
+  },
+  "formation_coordinates": {
+    "3-4-1-2": {
+      "LST": [4, 1],
+      "RST": [8, 1],
+      "LM": [1, 4],
+      "LCM": [4, 5],
+      "CAM": [6, 3],
+      "RCM": [8, 5],
+      "RM": [11, 4],
+      "LCB": [3, 9],
+      "CB": [6, 9],
+      "RCB": [9, 9],
+      "GK": [6, 11]
+    }
   }
 }
