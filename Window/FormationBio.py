@@ -60,20 +60,23 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     corner_semi_circle_radius = int(field_length*2/100)
 
     # ========== Player Spacing Values ==========
-    x_space = int(field_width/12)
-    y_space = int(field_length/12)
+    x_space = int(field_width/20)
+    y_space = int(field_length/24)
     player_box_width = 80
     player_box_height = 50
+    player_box_color = lighter
+    link_size = 5
+    link_color = red
 
     # ========== Window Image View ==========
+    image_pos = (field_x_offset, field_y_offset)
+    src_rect = (0, 0, field_width, field_length)
+    dst_rect = Geometry.offset_rect(src_rect, image_pos)
+
     class StartWindowImageView(View):
         def draw(self, c, r):
             c.backcolor = view_backcolor
             c.erase_rect(r)
-
-            image_pos = (field_x_offset, field_y_offset)
-            src_rect = (0, 0, field_width, field_length)
-            dst_rect = Geometry.offset_rect(src_rect, image_pos)
 
             # Field and sidelines
             c.forecolor = field_color
@@ -127,6 +130,13 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
                          center_spot_x+eighteen_box_width/2-line_size,
                          dst_rect[3]-line_size))
 
+            # Penalty spot
+            c.forecolor = line_color
+            c.fill_oval((center_spot_x-line_size*2, dst_rect[1]+six_box_height*2-line_size*2,
+                         center_spot_x+line_size*2, dst_rect[1]+six_box_height*2+line_size*2))
+            c.fill_oval((center_spot_x-line_size*2, dst_rect[3]-six_box_height*2-line_size*2,
+                         center_spot_x+line_size*2, dst_rect[3]-six_box_height*2+line_size*2))
+
             # Six yard box
             c.forecolor = line_color
             c.fill_rect((center_spot_x-six_box_width/2, dst_rect[1],
@@ -145,33 +155,50 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
 
             # Corner circles
             c.forecolor = line_color
-            c.stroke_arc((dst_rect[0], dst_rect[1]), corner_semi_circle_radius, 0, 90)
+            c.stroke_arc((dst_rect[0]+1, dst_rect[1]), corner_semi_circle_radius, 0, 90)
             c.frame_arc((dst_rect[2], dst_rect[1]), corner_semi_circle_radius, 90, 180)
-            c.stroke_arc((dst_rect[0], dst_rect[3]-line_size), corner_semi_circle_radius, 270, 0)
+            c.stroke_arc((dst_rect[0]+1, dst_rect[3]-line_size), corner_semi_circle_radius, 270, 0)
             c.frame_arc((dst_rect[2], dst_rect[3]-line_size), corner_semi_circle_radius, 180, 270)
 
             # Links
             for symbol, position in formation['positions'].iteritems():
-                # Place links
-                c.forecolor = yellow
+
+                c.forecolor = link_color
                 position_coordinates = formation_spacing[symbol]
+
                 for link in position['links']:
                     link_coordinates = formation_spacing[link]
-                    c.moveto(dst_rect[0]+position_coordinates[0]*x_space,
-                             dst_rect[1]+position_coordinates[1]*y_space)
-                    c.lineto(dst_rect[0]+link_coordinates[0]*x_space,
-                             dst_rect[1]+link_coordinates[1]*y_space)
-                    c.stroke()
-                    # Get poly to work to get thicker lines?
-                    """c.fill_poly(((int(dst_rect[0]+position_coordinates[0]*x_space)-line_size/2,
-                                int(dst_rect[1]+position_coordinates[1]*y_space)-line_size/2),
-                                 (int(dst_rect[0]+link_coordinates[0]*x_space+line_size/2),
-                                int(dst_rect[1]+link_coordinates[1]*y_space)+line_size/2)))"""
+
+                    # Determine line direction to decide which points to use
+                    change_y = (link_coordinates[1]-position_coordinates[1])*y_space
+                    change_x = (link_coordinates[0]-position_coordinates[0])*x_space+0.0001
+                    ratio = change_y/change_x
+
+                    # Horizontal width line
+                    if abs(ratio) >= 1:
+                        c.fill_poly([(int(dst_rect[0]+position_coordinates[0]*x_space)-link_size/2,
+                                      int(dst_rect[1]+position_coordinates[1]*y_space)),
+                                     (int(dst_rect[0]+position_coordinates[0]*x_space)+link_size/2,
+                                      int(dst_rect[1]+position_coordinates[1]*y_space)),
+                                     (int(dst_rect[0]+link_coordinates[0]*x_space+link_size/2),
+                                      int(dst_rect[1]+link_coordinates[1]*y_space)),
+                                     (int(dst_rect[0]+link_coordinates[0]*x_space-link_size/2),
+                                      int(dst_rect[1]+link_coordinates[1]*y_space))])
+
+                    # Vertical width line
+                    else:
+                        c.fill_poly([(int(dst_rect[0]+position_coordinates[0]*x_space),
+                                      int(dst_rect[1]+position_coordinates[1]*y_space)-link_size/2),
+                                     (int(dst_rect[0]+position_coordinates[0]*x_space),
+                                      int(dst_rect[1]+position_coordinates[1]*y_space)+link_size/2),
+                                     (int(dst_rect[0]+link_coordinates[0]*x_space),
+                                      int(dst_rect[1]+link_coordinates[1]*y_space)+link_size/2),
+                                     (int(dst_rect[0]+link_coordinates[0]*x_space),
+                                      int(dst_rect[1]+link_coordinates[1]*y_space)-link_size/2)])
 
             # Player Markers
             for symbol, position in formation['positions'].iteritems():
-                # Player marker
-                c.forecolor = lighter
+                c.forecolor = player_box_color
                 position_coordinates = formation_spacing[symbol]
                 c.fill_oval((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
@@ -179,6 +206,20 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
                              dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2))
 
     view = StartWindowImageView(size=win_formation_bio.size)
+
+    # ========== Position Labels ==========
+    label_width = player_box_width
+    label_height = 35
+    pos_label_color = blue
+
+    for symbol, position in formation['positions'].iteritems():
+        pos_coordinates = formation_spacing[symbol]
+        label_x = int(dst_rect[0]+pos_coordinates[0]*x_space-label_width/2)
+        label_y = int(dst_rect[1]+pos_coordinates[1]*y_space-label_height/2)
+
+        pos_label = Label(text=position['symbol'],font=title_font_2, width=label_width, height=label_height,
+                                 x=label_x, y=label_y, color=pos_label_color, just='center')
+        labels_list.append(pos_label)
 
     # ========== Button Declarations ==========
     add_formation_btn = Button()

@@ -285,13 +285,18 @@ def save_image(image_url, image_file_name):
     Saves the image from the specified url and returns the file name.
     """
 
-    image_file_name = 'Images/temp/' + image_file_name + '.png'
+    try:
+        image_file_name = 'Images/temp/' + image_file_name + '.png'
 
-    if not os.path.isfile(image_file_name):
-        image_file = cStringIO.StringIO(urllib2.urlopen(image_url).read())
-        image_info = Image.open(image_file)
-        image_info.save(image_file_name)
-        image_file.close()
+        if not os.path.isfile(image_file_name):
+            image_file = cStringIO.StringIO(urllib2.urlopen(image_url).read())
+            image_info = Image.open(image_file)
+            image_info.save(image_file_name)
+            image_file.close()
+
+    # In case of no internet connection
+    except Exception:
+        image_file_name = 'Images/no_internet.png'
 
     return image_file_name
 
