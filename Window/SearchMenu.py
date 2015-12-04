@@ -17,17 +17,11 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     num_results = 20
 
-    with open('configs.json', 'r') as f:
-        default_search = json.load(f)['default_search']
-        f.close()
-
     if attr_dict is None:
         attr_dict = {}
-        for default in default_search['player']['search_attributes']:
-            attr_dict[default[0]] = (default[1], default[2])
 
     if attr_list is None:
-        attr_list = default_search['player']['sort_attributes']
+        attr_list = []
 
     if settings is None:
         settings = {

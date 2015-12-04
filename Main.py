@@ -26,13 +26,11 @@ if __name__ == '__main__':
     formation_list = FormationDB()
     team_list = TeamDB()
 
-    temp_time = time.time()
     player_db.load(default_dbs['player_db'], 'db')
     player_list.load(default_dbs['player_list'], 'list')
     formation_db.load(default_dbs['formation_db'], 'db')
     formation_list.load(default_dbs['formation_list'], 'list')
     team_list.load(default_dbs['team_list'])
-    print "Time to load DBs: %f" % (time.time()-temp_time)
 
     db_dict = {
         'player_db': (default_dbs['player_db'], player_db),
@@ -45,14 +43,10 @@ if __name__ == '__main__':
     FifaApp.start_app(db_dict)
     # delete_all_temp_images()"""
 
-    # Calculate strengths and then print out for first 100 teams
+    # Print out strengths for first 100 teams
     """teams = TeamDB()
     teams.load('2015-11-30_shorter')
 
-    '''for index, team in enumerate(teams.db):
-        temp = Team(team)
-        temp.calculate_strength()
-        teams.db[index] = temp.__dict__'''
     #teams.sort(['strength', 'rating', 'total_ic'])
     teams.sort(['rating', 'strength', 'total_ic'])
     for team in teams.db[:100]:
