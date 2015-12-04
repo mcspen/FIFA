@@ -6,16 +6,19 @@ import StartMenu
 import AddAttribute
 import PlayerBio
 import FormationBio
+import TeamBio
 from Logic import PlayerDB
 from Logic import FormationDB
 from Logic import TeamDB
 from Logic.HelperFunctions import format_attr_name, player_info_labels, player_info
 from Logic.HelperFunctions import formation_info_labels, formation_info
+from Logic.HelperFunctions import team_info_labels, team_info
 
 
 def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, settings=None):
 
     num_results = 20
+    general_display = []
 
     if attr_dict is None:
         attr_dict = {}
@@ -63,6 +66,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     title.y = top_border
     title.color = title_color
     title.just = 'center'
+    general_display.append(title)
 
     # ========== Action Button Declarations ==========
     start_btn = Button("Start")
@@ -139,7 +143,6 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                     attributes_list.append(attr_key)
 
             display_formations(search_results, attributes_list, (0, num_results))
-            #search_results.print_db_short()
 
         # Start button corresponds to teams
         elif settings['mode'] == 'teams':
@@ -167,7 +170,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                 if attributes_list.count(attr_key) == 0:
                     attributes_list.append(attr_key)
 
-            # display_teams(search_results, attributes_list, (0, num_results))
+            display_teams(search_results, attributes_list, (0, num_results))
             #search_results.print_db(num_results)
             from Logic.Team import Team
             for team in search_results.db[:100]:
@@ -301,9 +304,6 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         del attr_list[:]
         del settings['messages']['results'][:]
 
-        # Disable start button
-        #start_btn.enabled = 0
-
         win_search.become_target()
 
     def player_bio_btn_func(player):
@@ -318,6 +318,12 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                                                db_dict['formation_list'][0], db_dict['formation_list'][1])
         win_search.become_target()
 
+    def team_bio_btn_func(team):
+        win_search.hide()
+        TeamBio.open_team_bio_window(win_search.x, win_search.y, team, win_search,
+                                          db_dict['team_list'][0], db_dict['team_list'][1])
+        win_search.become_target()
+
     # ========== Action Buttons ==========
     start_btn.x = (win_width - 2*small_button_width - small_button_spacing) / 2
     start_btn.y = title.bottom + small_button_top_spacing
@@ -328,6 +334,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     start_btn.style = 'default'
     start_btn.color = small_button_color
     start_btn.just = 'right'
+    general_display.append(start_btn)
 
     back_btn.x = start_btn.right + small_button_spacing
     back_btn.y = start_btn.top
@@ -338,6 +345,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     back_btn.style = 'default'
     back_btn.color = small_button_color
     back_btn.just = 'right'
+    general_display.append(back_btn)
 
     # ========== Search Type Buttons ==========
     players_btn.x = (win_width - 3*small_button_width - 2*small_button_spacing) / 2
@@ -351,6 +359,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     players_btn.just = 'right'
     if settings['mode'] == 'players':
         players_btn.enabled = 0
+    general_display.append(players_btn)
 
     formations_btn.x = players_btn.right + small_button_spacing
     formations_btn.y = players_btn.top
@@ -363,6 +372,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     formations_btn.just = 'right'
     if settings['mode'] == 'formations':
         formations_btn.enabled = 0
+    general_display.append(formations_btn)
 
     teams_btn.x = formations_btn.right + small_button_spacing
     teams_btn.y = players_btn.top
@@ -375,6 +385,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     teams_btn.just = 'right'
     if settings['mode'] == 'teams':
         teams_btn.enabled = 0
+    general_display.append(teams_btn)
 
     # ========== Tool Buttons ==========
     attribute_btn.x = (win_width - 3*small_button_width - 2*small_button_spacing) / 2
@@ -386,6 +397,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     attribute_btn.style = 'default'
     attribute_btn.color = small_button_color
     attribute_btn.just = 'right'
+    general_display.append(attribute_btn)
 
     sort_btn.x = attribute_btn.right + small_button_spacing
     sort_btn.y = attribute_btn.top
@@ -396,6 +408,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     sort_btn.style = 'default'
     sort_btn.color = small_button_color
     sort_btn.just = 'right'
+    general_display.append(sort_btn)
 
     reset_btn.x = sort_btn.right + small_button_spacing
     reset_btn.y = attribute_btn.top
@@ -406,6 +419,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     reset_btn.style = 'default'
     reset_btn.color = small_button_color
     reset_btn.just = 'right'
+    general_display.append(reset_btn)
 
     # ========== DB Radio Buttons ==========
     def get_attribute_p_db_rg():
@@ -502,6 +516,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                             color=title_color)
     asc_desc_rg_msg.x = (win_search.width - 2*asc_desc_radio_btn_width - radio_btn_space - asc_msg_width) / 2
     asc_desc_rg_msg.y = formation_db_radio_btn.bottom + radio_btn_space
+    general_display.append(asc_desc_rg_msg)
 
     descend_radio_btn = RadioButton("Descending")
     descend_radio_btn.width = asc_desc_radio_btn_width
@@ -509,6 +524,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     descend_radio_btn.y = asc_desc_rg_msg.top
     descend_radio_btn.group = sort_order_radio_group
     descend_radio_btn.value = True
+    general_display.append(descend_radio_btn)
 
     ascend_radio_btn = RadioButton("Ascending")
     ascend_radio_btn.width = asc_desc_radio_btn_width
@@ -516,6 +532,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     ascend_radio_btn.y = descend_radio_btn.top
     ascend_radio_btn.group = sort_order_radio_group
     ascend_radio_btn.value = False
+    general_display.append(ascend_radio_btn)
 
     sort_order_radio_group.value = settings['order_rg']
 
@@ -563,12 +580,6 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                                color=title_color)
             lowest_msg_r += std_tf_height
             settings['messages']['sort'].append(attr_label)
-
-    # Disable start button if no search or sort parameters
-    #if len(attr_dict) == 0 and len(attr_list) == 0:
-    #    start_btn.enabled = 0
-    #else:
-    #    start_btn.enabled = 1
 
     # ========== Previous, Add to List, Next Buttons ==========
     previous_btn = Button("<<< Previous %d" % num_results)
@@ -730,8 +741,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             display_players(results_list, attributes, index_range)
         elif settings['mode'] == 'formations':
             display_formations(results_list, attributes, index_range)
-        #elif settings['mode'] == 'teams':
-        #    display_teams(results_list, attributes, index_range)
+        elif settings['mode'] == 'teams':
+            display_teams(results_list, attributes, index_range)
         win_search.become_target()
 
     def next_btn_func(results_list, attributes, index_range):
@@ -740,8 +751,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             display_players(results_list, attributes, index_range)
         elif settings['mode'] == 'formations':
             display_formations(results_list, attributes, index_range)
-        #elif settings['mode'] == 'teams':
-        #    display_teams(results_list, attributes, index_range)
+        elif settings['mode'] == 'teams':
+            display_teams(results_list, attributes, index_range)
         win_search.become_target()
 
     add_to_list_btn.x = attribute_btn.right + small_button_spacing
@@ -966,21 +977,98 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         for results_msg in settings['messages']['results']:
             view.add(results_msg)
 
+    # ========== Display teams from search ==========
+    def display_teams(results_list, attributes, index_range):
+        # Remove old messages off page
+        for message in settings['messages']['results']:
+            view.remove(message)
+        del settings['messages']['results'][:]
+
+        # Add navigation buttons to page
+        '''if settings['f_db_rg'] == 'formation_db':
+            add_to_list_btn.title = 'Add All Formations'
+            add_to_list_btn.action = (add_to_list_btn_func, results_list.db, 'add all')
+        elif settings['f_db_rg'] == 'formation_list':
+            add_to_list_btn.title = 'Remove All Formations'
+            add_to_list_btn.action = (add_to_list_btn_func, results_list.db, 'remove all')
+        else:
+            print "Invalid edit type."'''
+        add_to_list_btn.title = ""
+        add_to_list_btn.action = ()
+
+        previous_range = (index_range[0]-num_results, index_range[0])
+        previous_btn.action = (previous_btn_func, results_list, attributes, previous_range)
+
+        next_range = (index_range[1], index_range[1]+num_results)
+        next_btn.action = (next_btn_func, results_list, attributes, next_range)
+
+        total_num_results_label.text = str(len(results_list.db)) + " Teams"
+        pages_label.text = "Page %d of %d" % (int(index_range[1]/num_results),
+                                              math.ceil(len(results_list.db)/num_results) + 1)
+
+        if index_range[0] > 0:
+            previous_btn.enabled = 1
+        else:
+            previous_btn.enabled = 0
+        if index_range[1] <= len(results_list.db) - 1:
+            next_btn.enabled = 1
+        else:
+            next_btn.enabled = 0
+
+        settings['messages']['results'].append(add_to_list_btn)
+        settings['messages']['results'].append(previous_btn)
+        settings['messages']['results'].append(next_btn)
+        settings['messages']['results'].append(total_num_results_label)
+        settings['messages']['results'].append(pages_label)
+
+        # Print out labels
+        labels = team_info_labels(attributes)
+        stat_index = 0
+        spacing_list = [60, 40, 55, 90, 100, 115, 115, 40]
+        left_border = (win_width - sum(spacing_list))/2
+        msg_x = left_border
+        msg_y = add_to_list_btn.bottom + 5
+
+        for info_label in labels:
+            team_label = Label(text=info_label, font=std_tf_font_bold, width=spacing_list[stat_index]-5,
+                                    height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
+            settings['messages']['results'].append(team_label)
+            msg_x += spacing_list[stat_index]
+
+            if stat_index < len(spacing_list)-1:
+                stat_index += 1
+
+        msg_y += std_tf_height + 5
+
+        # Print out teams
+        for team in results_list.db[index_range[0]:index_range[1]]:
+            msg_x = left_border
+            team_stats = team_info(team, attributes)
+            stat_index = 0
+
+            bio_btn = Button(title=team_stats[0], width=spacing_list[stat_index]-5, height=15, x=msg_x, y=msg_y,
+                             action=(team_bio_btn_func, team))
+            settings['messages']['results'].append(bio_btn)
+            msg_x += spacing_list[stat_index]
+            stat_index += 1
+
+            for team_stat in team_stats[1:]:
+                team_label = Label(text=team_stat, font=small_button_font, width=spacing_list[stat_index]-5,
+                                   height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
+
+                settings['messages']['results'].append(team_label)
+                msg_x += spacing_list[stat_index]
+                if stat_index < len(spacing_list) - 1:
+                    stat_index += 1
+
+            msg_y += std_tf_height
+
+        for results_msg in settings['messages']['results']:
+            view.add(results_msg)
+
     # ========== Add components to view and add view to window ==========
-    view.add(title)
-    view.add(start_btn)
-    view.add(back_btn)
-    view.add(players_btn)
-    view.add(formations_btn)
-    view.add(teams_btn)
-    view.add(attribute_btn)
-    view.add(sort_btn)
-    view.add(reset_btn)
-
-    view.add(descend_radio_btn)
-    view.add(ascend_radio_btn)
-    view.add(asc_desc_rg_msg)
-
+    for msg in general_display:
+        view.add(msg)
     for msg in settings['messages']['search']:
         view.add(msg)
     for msg in settings['messages']['sort']:

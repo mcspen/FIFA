@@ -4,7 +4,6 @@ Helper functions that don't belong to any class
 
 __author__ = 'mspencer'
 
-import random
 import unicodedata
 from PIL import Image
 import urllib2
@@ -45,12 +44,34 @@ def player_info_labels(attributes):
 def formation_info_labels():
     """
     Gets the labels of the formations info to be displayed
-    Input: The list of attributes
+    Input: None
     Output: A list of the labels of the formations info
     """
 
     # Formation's base info
     labels = ['Name', 'Style', 'Links', 'Dfnds', 'Mids', 'Atkrs', 'Positions', 'Description']
+
+    return labels
+
+
+def team_info_labels(attributes):
+    """
+    Gets the labels of the players info to be displayed
+    Input: The list of attributes
+    Output: A list of the labels of the players info
+    """
+
+    # Player's base info
+    labels = ['Rating', 'Str.', 'Chem.', 'Formation', 'Style', 'Mgr League', 'Mgr Nation']
+
+    # Remove attributes already displayed
+    for attr in ['rating', 'strength', 'chemistry', 'formation', 'style', 'manager_league', 'manager_nation']:
+        while attributes.count(attr) > 0:
+            attributes.remove(attr)
+
+    # Add attributes from list
+    for attribute in attributes:
+        labels.append(attribute[:3].capitalize()+'.')
 
     return labels
 
@@ -65,11 +86,10 @@ def player_info(player, attributes):
     player_info = []
 
     # Get player's common name
-    common_name = unicodedata.normalize('NFKD', player['commonName']).encode('ascii', 'ignore')
+    common_name = ascii_text(player['commonName'])
 
     # Get player's name
-    player_name = unicodedata.normalize('NFKD', player['firstName']).encode('ascii', 'ignore') + ' ' + \
-                  unicodedata.normalize('NFKD', player['lastName']).encode('ascii', 'ignore')
+    player_name = ascii_text(player['firstName']) + ' ' + ascii_text(player['lastName'])
 
     # If the player has a common name, use it
     if len(common_name) > 0:
@@ -87,15 +107,15 @@ def player_info(player, attributes):
     player_info.append(player['color'])
 
     # Player's nation
-    nation = unicodedata.normalize('NFKD', player['nation']['name']).encode('ascii', 'ignore')
+    nation = ascii_text(player['nation']['name'])
     player_info.append(nation[:20])
 
     # Player's league
-    league = unicodedata.normalize('NFKD', player['league']['name']).encode('ascii', 'ignore')
+    league = ascii_text(player['league']['name'])
     player_info.append(league[:20])
 
     # Get player's club
-    club = unicodedata.normalize('NFKD', player['club']['name']).encode('ascii', 'ignore')
+    club = ascii_text(player['club']['name'])
     player_info.append(club[:20])
 
     # Remove attributes already displayed
@@ -138,7 +158,7 @@ def player_info(player, attributes):
 def formation_info(formation):
     """
     Gets the basic attributes of the given formation and specified attributes
-    Input: The formation and list of attributes
+    Input: The formation
     Output: A list of the formation's info
     """
 
@@ -171,6 +191,51 @@ def formation_info(formation):
     formation_info.append(formation['description'][:35] + '...')
 
     return formation_info
+
+
+def team_info(team, attributes):
+    """
+    Gets the basic attributes of the given team and specified attributes
+    Input: The team and list of attributes
+    Output: A list of the team's info
+    """
+
+    team_info = []
+
+    # Team's rating
+    team_info.append(str(team['rating'])[:7])
+
+    # Team's strength
+    team_info.append(str(team['strength']))
+
+    # Team's chemistry
+    team_info.append(str(team['chemistry']))
+
+    # Team's formation
+    team_info.append(team['formation']['name'])
+
+    # Team's formation style
+    team_info.append(team['formation']['style'])
+
+    # Team's manager's league
+    team_info.append(ascii_text(team['manager']['league'])[:20])
+
+    # Team's manager's nation
+    team_info.append(ascii_text(team['manager']['nation'])[:20])
+
+    # Remove attributes already displayed
+    for attr in ['rating', 'strength', 'chemistry', 'formation', 'style', 'manager_league', 'manager_nation']:
+        while attributes.count(attr) > 0:
+            attributes.remove(attr)
+
+    # Add attributes from list
+    for attribute in attributes:
+        if attribute in []:
+            team_info.append(str(team[attribute]))
+        else:
+            team_info.append(str(team[attribute]))
+
+    return team_info
 
 
 def format_attr_name(attribute):
