@@ -201,7 +201,7 @@ class FormationDB:
                     symbol_list = []
                     for position in formation['positions'].itervalues():
                         symbol_list.append(position['symbol'])
-                    if string_value not in (symbol_list + formation['positions']):
+                    if string_value not in (symbol_list + formation['positions'].keys()):
                         match = False
                 else:
                     print "Invalid Attribute: %s" % attribute
