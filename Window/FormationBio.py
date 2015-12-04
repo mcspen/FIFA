@@ -27,7 +27,7 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     labels_list = []
 
     # ========== Field Ratio ==========
-    x_to_y_ratio = 1.25
+    # x_to_y_ratio = 1.25
     y_to_x_ratio = 0.8
 
     # Line specification
@@ -161,12 +161,12 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
             c.frame_arc((dst_rect[2], dst_rect[3]-line_size), corner_semi_circle_radius, 180, 270)
 
             # Links
-            for symbol, position in formation['positions'].iteritems():
+            for sym, pos in formation['positions'].iteritems():
 
                 c.forecolor = link_color
-                position_coordinates = formation_spacing[symbol]
+                position_coordinates = formation_spacing[sym]
 
-                for link in position['links']:
+                for link in pos['links']:
                     link_coordinates = formation_spacing[link]
 
                     # Determine line direction to decide which points to use
@@ -197,9 +197,9 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
                                       int(dst_rect[1]+link_coordinates[1]*y_space)-link_size/2)])
 
             # Player Markers
-            for symbol, position in formation['positions'].iteritems():
+            for sym in formation['positions'].iterkeys():
                 c.forecolor = player_box_color
-                position_coordinates = formation_spacing[symbol]
+                position_coordinates = formation_spacing[sym]
                 c.fill_oval((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
                              dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
@@ -259,11 +259,11 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     # ========== Buttons ==========
     button_x_offset = 50
 
-    add_formation_btn.x = win_width - button_width - button_x_offset
+    add_formation_btn.x = win_formation_bio.width - button_width - button_x_offset
     add_formation_btn.y = top_border
     add_formation_btn.height = small_button_height
     add_formation_btn.width = button_width
-    add_formation_btn.font = small_button_font
+    add_formation_btn.font = smaller_button_font
     add_formation_btn.action = add_formation_btn_func
     add_formation_btn.style = 'default'
     add_formation_btn.color = small_button_color
@@ -284,305 +284,68 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     back_btn.color = small_button_color
 
     # ========== Name ==========
-    formation_name_label = Label(text=formation['name'],font=title_font, width=title_width, height=title_height,
+    formation_name_label = Label(text=formation['name'], font=title_font, width=title_width, height=title_height,
                                  x=(win_width - title_width)/2, y=top_border, color=title_color, just='center')
+    # Shift title over the field
     formation_name_label.x = (win_formation_bio.width - title_width - button_width - 100) / 2
     labels_list.append(formation_name_label)
 
-    """# ========== Formation Info Labels ==========
-    # Get attribute lists
-    with open('configs.json', 'r') as f:
-        attribute_lists = json.load(f)['formation_attributes']
-        f.close()
 
-    traits_offset_left = 25
-    traits_label_width = 100
-    traits_list_label_width = 500 - traits_label_width
 
-    section_label_width = 115
+    # ========== Formation Info Title Label ==========
+    info_title = Label(text="Formation Info", font=title_font_2,
+                             width=title_width, height=title_height,
+                             x=add_formation_btn.right - button_width/2 - title_width/2,
+                             y=back_btn.bottom + top_border*3,
+                             color=title_color, just='center')
+    labels_list.append(info_title)
 
-    # ========== Traits and Specialities ==========
-    traits_label = Label(font=std_tf_font_bold, width=traits_label_width, height=std_tf_height,
-                         x=player_full_name_label.left - traits_offset_left,
-                         y=player_full_name_label.bottom+title_border*2, color=title_color, just='right')
-    labels_list.append(traits_label)
-    traits_list_label = Label(font=small_tf_font, width=traits_list_label_width, height=std_tf_height,
-                              x=traits_label.right + small_button_spacing,
-                              y=traits_label.top+3, color=title_color, just='left')
-    labels_list.append(traits_list_label)
-    traits_list_label_2 = Label(font=small_tf_font, width=traits_list_label_width, height=std_tf_height,
-                                x=traits_label.right + small_button_spacing,
-                                y=traits_list_label.bottom, color=title_color, just='left')
-    labels_list.append(traits_list_label_2)
-    specialities_label = Label(font=std_tf_font_bold, width=traits_label_width, height=std_tf_height,
-                               x=traits_label.left,
-                               y=traits_list_label_2.bottom, color=title_color, just='right')
-    labels_list.append(specialities_label)
-    specialities_list_label = Label(font=small_tf_font, width=traits_list_label_width, height=std_tf_height,
-                                    x=specialities_label.right + small_button_spacing,
-                                    y=specialities_label.top+3, color=title_color, just='left')
-    labels_list.append(specialities_list_label)
-    specialities_list_label_2 = Label(font=small_tf_font, width=traits_list_label_width, height=std_tf_height,
-                                      x=specialities_label.right + small_button_spacing,
-                                      y=specialities_list_label.bottom, color=title_color, just='left')
-    labels_list.append(specialities_list_label_2)
+    # ========== Formation Info Labels ==========
+    info_width = 110
+    info_label_text = "Style:\n# Links:\n# Attackers:\n# Midfielders:\n# Defenders:"
+    info_title_label = Label(text=info_label_text, font=std_tf_font_bold,
+                             width=info_width, height=std_tf_height*5,
+                             x=add_formation_btn.left - button_x_offset, y=info_title.bottom + title_border,
+                             color=title_color, just='right')
+    labels_list.append(info_title_label)
 
-    # ========== Attributes Under Picture Section ==========
-    attr_title_label_width = 30
-    attr_label_width = 20
-    attribute_x_offset = 30
-    label_x = (player_name_label.left - player_headshot.width)/2 + player_headshot.width/2 - attribute_x_offset
-    label_y = player_name_label.top + player_headshot.height + 5
+    # ========== Formation Info ==========
+    info_text = (formation['style'] + "\n" + str(formation['num_links']) + "\n" + str(formation['num_attackers']) +
+                 "\n" + str(formation['num_midfielders']) + "\n" + str(formation['num_defenders']))
+    info_label = Label(text=info_text, font=std_tf_font_bold,
+                       width=info_width, height=std_tf_height*5,
+                       x=info_title_label.right + 10, y=info_title_label.top,
+                       color=title_color, just='left')
+    labels_list.append(info_label)
 
-    for idx, attr in enumerate(formation['attributes']):
-        if idx == 3:
-            label_x = (player_name_label.left - player_headshot.width)/2 + player_headshot.width/2 + attribute_x_offset
-            label_y = player_name_label.top + player_headshot.height + 5
+    # ========== Description Label ==========
+    description_title_label = Label(text="Description:", font=std_tf_font_bold,
+                                    width=small_button_width, height=std_tf_height,
+                                    x=add_formation_btn.left, y=info_title_label.bottom + top_border,
+                                    color=title_color, just='center')
+    labels_list.append(description_title_label)
 
-        stat_title_label = Label(font=small_tf_font, width=attr_title_label_width, height=std_tf_height,
-                                 x=label_x-attr_title_label_width, y=label_y, color=title_color, just='right')
-        stat_title_label.text = format_attr_name(attr['name'][-3:]) + ':'
-        labels_list.append(stat_title_label)
+    # ========== Description ==========
+    description = formation['description']
+    description_text = ''
+    max_chars = 25
+    counter = 0
+    for word in description.split():
+        counter += len(word) + 1
+        description_text += ' ' + word
+        if counter >= max_chars:
+            description_text += '\n'
+            counter = 0
+    description_label = Label(text=description_text, font=std_tf_font,
+                              width=small_button_width+100, height=std_tf_height*13,
+                              x=info_title_label.left, y=description_title_label.bottom + title_border,
+                              color=title_color, just='left')
+    labels_list.append(description_label)
 
-        color = attr_color(attr['value'])
-
-        stat_label = Label(font=small_tf_font, width=attr_label_width, height=std_tf_height,
-                           x=label_x, y=label_y, color=color, just='right')
-        stat_label.text = str(attr['value'])
-        labels_list.append(stat_label)
-
-        label_y += std_tf_height
-
-    # ========== Personal Section ==========
-    personal_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
-                           x=3*(win_width - 9*section_label_width)/10 + 2*section_label_width,
-                           y=specialities_list_label_2.bottom + top_border, color=title_color, just='center')
-    personal_label.text = "Personal"
-    labels_list.append(personal_label)
-
-    personal_title_stat_width = 100
-    personal_stat_width = 60
-    personal_stat_just = 'right'
-    personal_x_offset = personal_stat_width + 60
-    label_x = personal_label.left + section_label_width/2 - personal_x_offset
-    label_y = personal_label.bottom
-
-    for idx, personal in enumerate(attribute_lists['personal']):
-        if idx == 7:
-            personal_title_stat_width = 75
-            personal_stat_width = 200
-            personal_stat_just = 'left'
-            personal_x_offset = personal_title_stat_width - 55
-            label_x = personal_label.left + section_label_width/2 + personal_x_offset
-            label_y = personal_label.bottom
-
-        # Skip these since other labels use them
-        if personal == 'positionFull':
-            continue
-
-        stat_title_label = Label(font=small_tf_font, width=personal_title_stat_width, height=std_tf_height,
-                                 x=label_x-personal_title_stat_width, y=label_y, color=title_color, just='right')
-        stat_title_label.text = format_attr_name(personal) + ':'
-        labels_list.append(stat_title_label)
-
-        color = white
-        # Change color for rating and potential
-        if personal in ['rating', 'potential']:
-            color = attr_color(formation[personal])
-        # Change color for quality and color
-        elif personal in ['quality', 'color', 'playerType']:
-            color = quality_color(formation[personal])
-
-        stat_label = Label(font=small_tf_font, width=personal_stat_width, height=std_tf_height,
-                           x=label_x+5, y=label_y, color=color, just=personal_stat_just)
-        if personal == 'height':
-            centimeters = formation[personal]
-            converted_height = convert_height(centimeters, 'string')
-            stat_label.text = '%s (%d cm)' % (converted_height, centimeters)
-        elif personal == 'weight':
-            kilograms = formation[personal]
-            pounds = convert_weight(kilograms)
-            stat_label.text = '%.1f lb (%d kg)' % (pounds, kilograms)
-        elif personal in ['club', 'league', 'nation']:
-            stat_label.text = ascii_text(formation[personal]['name'])
-        elif personal == 'birthdate':
-            b_day = format_birthday(formation['birthdate'])
-            stat_label.text = b_day
-        elif personal == 'position':
-            stat_label.text = '%s (%s)' % (formation['positionFull'], formation[personal])
-        else:
-            stat_label.text = str(formation[personal])
-        labels_list.append(stat_label)
-
-        label_y += std_tf_height
-
-    # ========== Database Info Section ==========
-    db_info_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
-                          x=7*(win_width - 9*section_label_width)/10 + 6*section_label_width,
-                          y=personal_label.top, color=title_color, just='center')
-    db_info_label.text = "Database Info"
-    labels_list.append(db_info_label)
-
-    db_info_title_label_width = 80
-    db_info_label_width = 55
-    attribute_x_offset = 40
-    label_x = db_info_label.left + section_label_width/2 - attribute_x_offset
-    label_y = db_info_label.bottom
-
-    for idx, db_info in enumerate(attribute_lists['db']):
-        if idx == 5:
-            attribute_x_offset = 85
-            db_info_title_label_width = 60
-            db_info_label_width = 50
-            label_x = db_info_label.left + section_label_width/2 + attribute_x_offset
-            label_y = db_info_label.bottom
-
-        if db_info == 'modelName':
-                db_info_label_width = 95
-
-        stat_title_label = Label(font=small_tf_font, width=db_info_title_label_width, height=std_tf_height,
-                                 x=label_x-db_info_title_label_width, y=label_y, color=title_color, just='right')
-        stat_title_label.text = format_attr_name(db_info) + ':'
-        labels_list.append(stat_title_label)
-
-        stat_label = Label(font=small_tf_font, width=db_info_label_width, height=std_tf_height,
-                           x=label_x, y=label_y, color=title_color, just='right')
-        if db_info in ['clubId', 'leagueId', 'nationId']:
-            stat_label.text = str(formation[db_info[:-2]]['id'])
-        else:
-            stat_label.text = str(formation[db_info])
-        labels_list.append(stat_label)
-
-        label_y += std_tf_height
-
-    # ========== Detailed Attribute Sections ==========
-    attribute_group_list = ['characteristics', 'pace', 'shooting', 'passing',
-                            'goalkeeping', 'dribbling', 'defending', 'physicality']
-
-    group_spacing = (win_formation_bio.width - 4*section_label_width)/5
-    group_x = group_spacing
-    group_y = personal_label.bottom + 150
-
-    for idx, group in enumerate(attribute_group_list):
-
-        if idx == 4:
-            group_x = group_spacing
-            group_y += 150
-
-        stat_group_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
-                                 x=group_x, y=group_y, color=title_color, just='center')
-        stat_group_label.text = group.capitalize()
-        if idx in [1, 2, 3, 5, 6, 7] and not formation['isGK']:
-            stat_group_label.text += ':'
-        labels_list.append(stat_group_label)
-
-        if idx in [1, 2, 3, 5, 6, 7] and not formation['isGK']:
-            rating_offset = [0, 25, 12, 16, 0, 8, 6, 2]
-            stat_group_rating_label = Label(font=std_tf_font_bold, width=20, height=std_tf_height,
-                                            x=stat_group_label.right - rating_offset[idx],
-                                            y=group_y, color=title_color, just='center')
-            stat_group_rating_label.text = str(formation['attributes'][idx - (1 + int(idx/4))]['value'])
-            stat_group_rating_label.color = attr_color(formation['attributes'][idx - (1 + int(idx/4))]['value'])
-            labels_list.append(stat_group_rating_label)
-
-        # ========== Detailed Attribute Stats Sections ==========
-        stat_title_label_width = 110
-        stat_width = 25
-        label_y = stat_group_label.bottom
-        label_x = stat_group_label.left + section_label_width/2 + 25
-
-        if group == 'characteristics':
-            stat_width = 60
-
-        for attribute in attribute_lists[group]:
-            stat_title_label = Label(font=small_tf_font, width=stat_title_label_width, height=std_tf_height,
-                                     x=label_x-stat_title_label_width, y=label_y, color=title_color, just='right')
-            stat_title_label.text = format_attr_name(attribute) + ':'
-            labels_list.append(stat_title_label)
-
-            color = white
-            if type(formation[attribute]) is int and attribute not in ['weakFoot', 'skillMoves']:
-                color = attr_color(formation[attribute])
-
-            elif attribute in ['weakFoot', 'skillMoves']:
-                color = attr_color(40 + 10*formation[attribute])
-
-            stat_label = Label(font=small_tf_font, width=stat_width, height=std_tf_height,
-                               x=label_x, y=label_y, color=color, just='right')
-            if attribute in ['weakFoot', 'skillMoves']:
-                stat_label.text = '* '*formation[attribute]
-            else:
-                stat_label.text = str(formation[attribute])
-            labels_list.append(stat_label)
-
-            label_y += std_tf_height
-
-        group_x += section_label_width + group_spacing
-
-    # ========== Label Text ==========
-    # Player's normal name
-    player_name = ascii_text(formation['name'])
-    player_name_label.text = player_name
-
-    # Player's name
-    player_full_name = ascii_text(formation['firstName']) + ' ' + ascii_text(formation['lastName'])
-    player_full_name_label.text = player_full_name
-
-    # Player's rating
-    color = attr_color(formation['rating'])
-    rating_big_label.text = str(formation['rating'])
-    rating_big_label.color = color
-
-    # Player's position
-    color = attr_color(formation['rating'])
-    position_big_label.text = formation['position']
-    position_big_label.color = color
-
-    # Player's traits
-    traits_label.text = 'Traits:'
-    traits_list = ''
-    traits_list_2 = ''
-    if formation['traits'] is not None:
-        index = 0
-        for trait in formation['traits']:
-            if len(traits_list + trait) < 70:
-                traits_list += trait + ', '
-                index += 1
-            else:
-                break
-        for trait in formation['traits'][index:]:
-            traits_list_2 += trait + ', '
-    else:
-        traits_list = 'No traits..'
-    traits_list_label.text = traits_list[:-2]
-    traits_list_label_2.text = traits_list_2[:-2]
-
-    # Player's specialities
-    specialities_label.text = 'Specialities:'
-    specialities_list = ''
-    specialities_list_2 = ''
-    if formation['specialities'] is not None:
-        index = 0
-        for speciality in formation['specialities']:
-            if len(specialities_list + speciality) < 70:
-                specialities_list += speciality + ', '
-                index += 1
-            else:
-                break
-        for speciality in formation['specialities'][index:]:
-            specialities_list_2 += speciality + ', '
-    else:
-        specialities_list = 'No specialities..'
-    specialities_list_label.text = specialities_list[:-2]
-    specialities_list_label_2.text = specialities_list_2[:-2]"""
 
     # ========== Add buttons to window ==========
     view.add(add_formation_btn)
     view.add(back_btn)
-
-    """view.add(player_name_label)
-    view.add(player_full_name_label)
-    view.add(rating_big_label)"""
 
     for label in labels_list:
         view.add(label)

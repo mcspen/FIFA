@@ -137,6 +137,7 @@ small_button_width = 110
 small_button_height = 30
 small_button_spacing = 3
 small_button_font = Font("Times", 0.9 * system_font.size, ['bold'])
+smaller_button_font = Font("Times", 0.8 * system_font.size, ['bold'])
 small_button_color = red
 small_button_top_spacing = 10
 
