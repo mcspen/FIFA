@@ -12,8 +12,8 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     display_items = []
 
     # Get create ultimate team configuration values
-    with open('ultimate_team_configs.json', 'r') as f:
-        settings = json.load(f)
+    with open('configs.json', 'r') as f:
+        settings = json.load(f)['ultimate_team_configs']
         f.close()
 
     # ========== Window ==========
@@ -424,17 +424,27 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
             except ValueError:
                 print "Invalid time limit."
 
+        # Load configurations
+        with open('configs.json', 'r') as config_file:
+            configurations = json.load(config_file)
+            config_file.close()
+
+        # Edit configurations
+        configurations['ultimate_team_configs'] = settings
+
         # Save the settings
-        with open('ultimate_team_configs.json', 'w') as config_file:
-            json.dump(settings, config_file)
+        with open('configs.json', 'w') as config_file:
+            json.dump(configurations, config_file)
             config_file.close()
 
     def start_btn_func():
+        win_ultimate_teams.become_target()
         save_settings()
 
         team = Team.Team()
         teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], db_dict['formation_list'][1]))
         teams.save(team_list_name_tf.value)
+        win_ultimate_teams.become_target()
 
     def back_btn_func():
         save_settings()

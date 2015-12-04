@@ -4,8 +4,7 @@
 import sys
 import os
 
-# Yet another *hack* to get py2exe to work.  It can't seem to find
-# win32com.shell.
+# Yet another *hack* to get py2exe to work.  It can't seem to find win32com.shell.
 
 # ModuleFinder can't handle runtime changes to __path__, but win32com uses them
 try:
@@ -55,7 +54,7 @@ class Target:
         self.__dict__.update(kw)
         # for the version info resources
         self.version = "1.0.0"
-        self.company_name = "Me Company"
+        self.company_name = "MS Company"
         self.copyright = "Copyright 2015 Me. All rights reserved."
         self.name = "FIFA Squad Builder App"
 

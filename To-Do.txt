@@ -1,5 +1,3 @@
-Number of teams returned were not limited correctly
-
 Move team creation function to TeamDB?
 
 Change Edit function for manage menu to have separate windows for players (already implemented), formations, and teams.
@@ -8,10 +6,6 @@ Tweak strength eval function. (evaluates each player and the team on stats and s
 
 Add more options to TeamDB search
 Add team names?
-
-Finish PlayerDB search/sort.  Remove redundancy in other search/sort classes.
-
-Add try loops for printing out names for those exception cases (non-ascii)
 
 Add option for manager and/or option for team not requiring manager
 

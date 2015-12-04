@@ -460,8 +460,8 @@ def find_teams_ultimate(players, formations):
     count_sp = 0  # Count of teams created in single process
 
     # Get configuration values
-    with open('ultimate_team_configs.json', 'r') as f:
-        configs = json.load(f)
+    with open('configs.json', 'r') as f:
+        configs = json.load(f)['ultimate_team_configs']
         f.close()
 
     process = configs['process_type']
@@ -597,8 +597,8 @@ def find_team_ultimate(players, formations):
     team_list = sorted(team_list, key=lambda k: (k['rating'], k['total_ic']), reverse=True)
 
     # Get number of teams to return (plus tied teams)
-    with open('ultimate_team_configs.json', 'r') as f:
-        configs = json.load(f)
+    with open('configs.json', 'r') as f:
+        configs = json.load(f)['ultimate_team_configs']
         f.close()
 
     if configs['num_teams_returned'][0]:
