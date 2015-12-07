@@ -14,20 +14,14 @@ from Logic.HelperFunctions import format_attr_name, player_info_labels, player_i
 
 def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, settings=None):
 
-    with open('configs.json', 'r') as f:
-        default_search = json.load(f)['default_player_search']
-        f.close()
-
     list_players = PlayerDB.PlayerDB()
     list_players.load(settings['file_name'], 'list')
 
     if attr_dict is None:
         attr_dict = {}
-        for default in default_search['search_attributes']:
-            attr_dict[default[0]] = (default[1], default[2])
 
     if attr_list is None:
-        attr_list = default_search['sort_attributes']
+        attr_list = []
 
     if settings is None:
         settings = {
@@ -115,7 +109,10 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
 
             # Get the attributes to search with based on what mode is in use
             if simple_btn.enabled == 0:
-                search_dict = {'name_custom': (name_tf.value, 'exact')}
+                if len(name_tf.value) > 0:
+                    search_dict = {'name_custom': (name_tf.value, 'exact')}
+                else:
+                    search_dict = {}
                 if rating_tf.value.isdigit():
                     search_dict['rating'] = (int(rating_tf.value), 'exact')
             else:
@@ -125,15 +122,26 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
             if settings['edit_type'] == 'add':
 
                 db_players = db_dict['player_db'][1]
-                search_results = db_players.search(search_dict)
+
+                if len(search_dict) == 0:
+                    search_results = db_players
+                else:
+                    search_results = db_players.search(search_dict)
+                    search_results = PlayerDB.PlayerDB(search_results)
 
             # Get players from list to edit or delete and search
             else:
-                search_results = list_players.search(search_dict)
+                if len(search_dict) == 0:
+                    search_results = list_players
+                else:
+                    search_results = list_players.search(search_dict)
+                    search_results = PlayerDB.PlayerDB(search_results)
 
-            # Sort players
-            search_results = PlayerDB.PlayerDB(search_results)
-            search_results.sort(attr_list, sort_order_radio_group.value)
+            # Sort players - if no attribute selected, use rating
+            if len(attr_list) == 0:
+                search_results.sort(['rating'], sort_order_radio_group.value)
+            else:
+                search_results.sort(attr_list, sort_order_radio_group.value)
 
             # Get attributes list and avoid duplicates
             attributes_list = []
@@ -268,9 +276,6 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
         attr_dict.clear()
         del attr_list[:]
         del settings['messages']['results'][:]
-
-        # Disable start button
-        start_btn.enabled = 0
 
         win_edit.become_target()
 
@@ -538,12 +543,6 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
                                color=title_color)
             lowest_msg_r += std_tf_height
             settings['messages']['sort'].append(attr_label)
-
-    # Disable start button if no search or sort parameters
-    if len(attr_dict) == 0 and len(attr_list) == 0:
-        start_btn.enabled = 0
-    else:
-        start_btn.enabled = 1
 
     # ========== Previous, Add to List, Next Buttons ==========
     previous_btn = Button("<<< Previous %d" % num_results)

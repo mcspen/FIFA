@@ -28,3 +28,6 @@ New player recommendations to improve team
 Change how create club/league/nation functions return/assign the teams.
 
 Change nation/league/club name comparisons to id comparisons? (avoid mix ups by clubs with same name)
+
+Can't find:
+80 CM     INAN    Turkey     Galatasaray     Super Lig     68 76 82 80 69 68
