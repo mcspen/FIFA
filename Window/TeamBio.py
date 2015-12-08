@@ -4,6 +4,7 @@ import json
 from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
     save_image, get_file_prefix
 from Logic import PlayerDB
+from Logic import Team
 
 
 def open_team_bio_window(window_x, window_y, team, win_previous, file_name, current_list):
@@ -17,18 +18,17 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     win_team_bio.resizable = 0
     win_team_bio.name = team_bio_title + " Window"
     win_team_bio.show()
-    """
+
     # ========== Load Formation Spacing ==========
     # Get attribute lists
     with open('configs.json', 'r') as f:
-        formation_spacing = json.load(f)['formation_coordinates'][team['name']]
+        team_spacing = json.load(f)['team_coordinates'][team['formation']['name']]
         f.close()
 
     labels_list = []
 
     # ========== Field Ratio ==========
-    # x_to_y_ratio = 1.25
-    y_to_x_ratio = 0.8
+    y_to_x_ratio = 0.825
 
     # Line specification
     line_color = white
@@ -36,13 +36,12 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
     # Field
     field_color = dark_green
-    field_length = 600
+    field_length = 680
     field_width = field_length*y_to_x_ratio
 
     # Field positioning on screen
-    # field_x_offset = (win_team_bio.width - field_width) / 2
     field_x_offset = (win_team_bio.width - field_width - button_width - 100) / 2
-    field_y_offset = top_border + title_height + title_border
+    field_y_offset = title_border
 
     # Center circle
     center_spot_x = field_x_offset + field_width/2
@@ -62,11 +61,9 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     # ========== Player Spacing Values ==========
     x_space = int(field_width/20)
     y_space = int(field_length/24)
-    player_box_width = 80
-    player_box_height = 50
-    player_box_color = lighter
-    link_size = 5
-    link_color = red
+    player_box_width = 130
+    player_box_height = 130
+    link_size = 10
 
     # ========== Window Image View ==========
     image_pos = (field_x_offset, field_y_offset)
@@ -161,13 +158,16 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             c.frame_arc((dst_rect[2], dst_rect[3]-line_size), corner_semi_circle_radius, 180, 270)
 
             # Links
-            for sym, pos in team['positions'].iteritems():
+            for sym, pos in team['formation']['positions'].iteritems():
 
-                c.forecolor = link_color
-                position_coordinates = formation_spacing[sym]
+                position_coordinates = team_spacing[sym]
 
                 for link in pos['links']:
-                    link_coordinates = formation_spacing[link]
+                    colors = [red, orange, yellow, green]
+                    color_num = Team.Team.teammate_chemistry(pos['player'],
+                                                             team['formation']['positions'][symbol]['player'])
+                    c.forecolor = colors[color_num]
+                    link_coordinates = team_spacing[link]
 
                     # Determine line direction to decide which points to use
                     change_y = (link_coordinates[1]-position_coordinates[1])*y_space
@@ -197,60 +197,39 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                                       int(dst_rect[1]+link_coordinates[1]*y_space)-link_size/2)])
 
             # Player Markers
-            for sym in team['positions'].iterkeys():
-                c.forecolor = player_box_color
-                position_coordinates = formation_spacing[sym]
-                c.fill_oval((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
+            for sym, pos in team['formation']['positions'].iteritems():
+                c.forecolor = quality_color(pos['player']['color'])
+                position_coordinates = team_spacing[sym]
+                c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
                              dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2))
 
     view = StartWindowImageView(size=win_team_bio.size)
 
+    # DELETE LATER ======================================================================================================================================================================
     # ========== Position Labels ==========
     label_width = player_box_width
     label_height = 35
     pos_label_color = blue
 
-    for symbol, position in team['positions'].iteritems():
-        pos_coordinates = formation_spacing[symbol]
+    for symbol, position in team['formation']['positions'].iteritems():
+        pos_coordinates = team_spacing[symbol]
         label_x = int(dst_rect[0]+pos_coordinates[0]*x_space-label_width/2)
         label_y = int(dst_rect[1]+pos_coordinates[1]*y_space-label_height/2)
 
         pos_label = Label(text=position['symbol'],font=title_font_2, width=label_width, height=label_height,
                                  x=label_x, y=label_y, color=pos_label_color, just='center')
         labels_list.append(pos_label)
+    # DELETE LATER ======================================================================================================================================================================
 
     # ========== Button Declarations ==========
-    add_formation_btn = Button()
+    next_trait_btn = Button("Next Trait")
     back_btn = Button("Back")
 
     # ========== Button Functions ==========
-    def add_formation_btn_func():
-        # Check if formation is already on selected formations list
-        # Remove formation from list
-        if team in current_list.db:
-            # Remove
-            current_list.db.remove(team)
-            # Save
-            current_list.sort(['name'])
-            current_list.save(file_name, 'list', True)
-
-            # Switch button title
-            add_formation_btn.title = "Add Formation to List"
-
-        # Add formation to the list
-        else:
-            # Add
-            current_list.db.append(team)
-            # Save
-            current_list.sort(['name'])
-            current_list.save(file_name, 'list', True)
-
-            # Switch button title
-            add_formation_btn.title = "Remove Formation from List"
-
-        win_team_bio.become_target()
+    def next_trait_btn_func():
+         win_team_bio.become_target()
 
     def back_btn_func():
         win_team_bio.hide()
@@ -259,23 +238,17 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     # ========== Buttons ==========
     button_x_offset = 50
 
-    add_formation_btn.x = win_team_bio.width - button_width - button_x_offset
-    add_formation_btn.y = top_border
-    add_formation_btn.height = small_button_height
-    add_formation_btn.width = button_width
-    add_formation_btn.font = smaller_button_font
-    add_formation_btn.action = add_formation_btn_func
-    add_formation_btn.style = 'default'
-    add_formation_btn.color = small_button_color
+    next_trait_btn.x = win_team_bio.width - button_width - button_x_offset
+    next_trait_btn.y = top_border
+    next_trait_btn.height = small_button_height
+    next_trait_btn.width = button_width
+    next_trait_btn.font = small_button_font
+    next_trait_btn.action = next_trait_btn_func
+    next_trait_btn.style = 'default'
+    next_trait_btn.color = small_button_color
 
-    # Check if formation is already on selected formations list
-    if team in current_list.db:
-        add_formation_btn.title = "Remove Formation from List"
-    else:
-        add_formation_btn.title = "Add Formation to List"
-
-    back_btn.x = add_formation_btn.left
-    back_btn.y = add_formation_btn.bottom
+    back_btn.x = next_trait_btn.left
+    back_btn.y = next_trait_btn.bottom
     back_btn.height = small_button_height
     back_btn.width = button_width
     back_btn.font = small_button_font
@@ -283,29 +256,28 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     back_btn.style = 'default'
     back_btn.color = small_button_color
 
-    # ========== Name ==========
-    formation_name_label = Label(text=team['name'], font=title_font, width=title_width, height=title_height,
+    """# ========== Name ==========
+    team_name_label = Label(text="Rating: " + str(team['rating']), font=title_font,
+                                 width=title_width, height=title_height,
                                  x=(win_width - title_width)/2, y=top_border, color=title_color, just='center')
     # Shift title over the field
-    formation_name_label.x = (win_team_bio.width - title_width - button_width - 100) / 2
-    labels_list.append(formation_name_label)
-
-
+    team_name_label.x = (win_team_bio.width - title_width - button_width - 100) / 2
+    labels_list.append(team_name_label)"""
 
     # ========== Formation Info Title Label ==========
-    info_title = Label(text="Formation Info", font=title_font_2,
+    info_title = Label(text="Team Info", font=title_font_2,
                              width=title_width, height=title_height,
-                             x=add_formation_btn.right - button_width/2 - title_width/2,
+                             x=next_trait_btn.right - button_width/2 - title_width/2,
                              y=back_btn.bottom + top_border*3,
                              color=title_color, just='center')
     labels_list.append(info_title)
 
-    # ========== Formation Info Labels ==========
+    """# ========== Formation Info Labels ==========
     info_width = 110
     info_label_text = "Style:\n# Links:\n# Attackers:\n# Midfielders:\n# Defenders:"
     info_title_label = Label(text=info_label_text, font=std_tf_font_bold,
                              width=info_width, height=std_tf_height*5,
-                             x=add_formation_btn.left - button_x_offset, y=info_title.bottom + title_border,
+                             x=next_trait_btn.left - button_x_offset, y=info_title.bottom + title_border,
                              color=title_color, just='right')
     labels_list.append(info_title_label)
 
@@ -321,7 +293,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     # ========== Description Label ==========
     description_title_label = Label(text="Description:", font=std_tf_font_bold,
                                     width=small_button_width, height=std_tf_height,
-                                    x=add_formation_btn.left, y=info_title_label.bottom + top_border,
+                                    x=next_trait_btn.left, y=info_title_label.bottom + top_border,
                                     color=title_color, just='center')
     labels_list.append(description_title_label)
 
@@ -340,16 +312,15 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                               width=small_button_width+100, height=std_tf_height*13,
                               x=info_title_label.left, y=description_title_label.bottom + title_border,
                               color=title_color, just='left')
-    labels_list.append(description_label)
-
+    labels_list.append(description_label)"""
 
     # ========== Add buttons to window ==========
-    view.add(add_formation_btn)
+    view.add(next_trait_btn)
     view.add(back_btn)
 
     for label in labels_list:
         view.add(label)
 
     win_team_bio.add(view)
-    view.become_target()"""
+    view.become_target()
     win_team_bio.show()

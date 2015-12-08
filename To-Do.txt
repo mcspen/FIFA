@@ -14,6 +14,7 @@ Add option for manager and/or option for team not requiring manager
 # **********************************************
 https://en.wikipedia.org/wiki/Combinatorial_optimization
 https://en.wikipedia.org/wiki/Knapsack_problem
+https://en.wikipedia.org/wiki/Dynamic_programming
 https://en.wikipedia.org/wiki/Memoization
 # **********************************************
 

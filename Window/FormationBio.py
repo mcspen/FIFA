@@ -27,7 +27,6 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     labels_list = []
 
     # ========== Field Ratio ==========
-    # x_to_y_ratio = 1.25
     y_to_x_ratio = 0.8
 
     # Line specification
@@ -40,7 +39,6 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     field_width = field_length*y_to_x_ratio
 
     # Field positioning on screen
-    # field_x_offset = (win_formation_bio.width - field_width) / 2
     field_x_offset = (win_formation_bio.width - field_width - button_width - 100) / 2
     field_y_offset = top_border + title_height + title_border
 
@@ -290,8 +288,6 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
     formation_name_label.x = (win_formation_bio.width - title_width - button_width - 100) / 2
     labels_list.append(formation_name_label)
 
-
-
     # ========== Formation Info Title Label ==========
     info_title = Label(text="Formation Info", font=title_font_2,
                              width=title_width, height=title_height,
@@ -341,7 +337,6 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
                               x=info_title_label.left, y=description_title_label.bottom + title_border,
                               color=title_color, just='left')
     labels_list.append(description_label)
-
 
     # ========== Add buttons to window ==========
     view.add(add_formation_btn)
