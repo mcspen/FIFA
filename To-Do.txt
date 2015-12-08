@@ -9,7 +9,13 @@ Add team names?
 
 Add option for manager and/or option for team not requiring manager
 
-Optimize ultimate team function to go faster
+# **********************************************
+# Optimize ultimate team function to go faster #
+# **********************************************
+https://en.wikipedia.org/wiki/Combinatorial_optimization
+https://en.wikipedia.org/wiki/Knapsack_problem
+https://en.wikipedia.org/wiki/Memoization
+# **********************************************
 
 Finish special_sort function for PlayerDB to search for specific stats for each position
 
