@@ -158,14 +158,16 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             c.frame_arc((dst_rect[2], dst_rect[3]-line_size), corner_semi_circle_radius, 180, 270)
 
             # Links
+            # Iterate through players on team
             for sym, pos in team['formation']['positions'].iteritems():
 
                 position_coordinates = team_spacing[sym]
 
+                # Iterate through links of player
                 for link in pos['links']:
                     colors = [red, orange, yellow, green]
                     color_num = Team.Team.teammate_chemistry(pos['player'],
-                                                             team['formation']['positions'][symbol]['player'])
+                                                             team['formation']['positions'][link]['player'])
                     c.forecolor = colors[color_num]
                     link_coordinates = team_spacing[link]
 
@@ -207,21 +209,34 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
     view = StartWindowImageView(size=win_team_bio.size)
 
-    # DELETE LATER ======================================================================================================================================================================
-    # ========== Position Labels ==========
-    label_width = player_box_width
-    label_height = 35
-    pos_label_color = blue
+    # ========== Player Headshots ==========
+    player_headshots = []
 
-    for symbol, position in team['formation']['positions'].iteritems():
-        pos_coordinates = team_spacing[symbol]
-        label_x = int(dst_rect[0]+pos_coordinates[0]*x_space-label_width/2)
-        label_y = int(dst_rect[1]+pos_coordinates[1]*y_space-label_height/2)
+    for sym, position in team['formation']['positions'].iteritems():
+        # Get player information
+        player = position['player']
+        image_url = player['headshotImgUrl']
+        player_id = player['id']
+        image_file_name = save_image(image_url, player_id)
+        player_headshot = Image(file=image_file_name)
+        position_coordinates = team_spacing[sym]
 
-        pos_label = Label(text=position['symbol'],font=title_font_2, width=label_width, height=label_height,
-                                 x=label_x, y=label_y, color=pos_label_color, just='center')
-        labels_list.append(pos_label)
-    # DELETE LATER ======================================================================================================================================================================
+        class HeadshotImageView(View):
+            def draw(self, c, r):
+                dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
+
+                headshot_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
+                                 dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2))
+                headshot_rect = player_headshot.bounds
+                headshot_dst_rect = Geometry.offset_rect(headshot_rect, headshot_pos)
+
+                player_headshot.draw(c, headshot_rect, headshot_dst_rect)
+
+        player_headshots.append(HeadshotImageView(size=win_team_bio.size))
+
+    def display_headshots():
+        for headshot in player_headshots:
+            view.add(headshot)
 
     # ========== Button Declarations ==========
     next_trait_btn = Button("Next Trait")
@@ -266,10 +281,10 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
     # ========== Formation Info Title Label ==========
     info_title = Label(text="Team Info", font=title_font_2,
-                             width=title_width, height=title_height,
-                             x=next_trait_btn.right - button_width/2 - title_width/2,
-                             y=back_btn.bottom + top_border*3,
-                             color=title_color, just='center')
+                       width=title_width, height=title_height,
+                       x=next_trait_btn.right - button_width/2 - title_width/2,
+                       y=back_btn.bottom + top_border*3,
+                       color=title_color, just='center')
     labels_list.append(info_title)
 
     """# ========== Formation Info Labels ==========
@@ -320,6 +335,8 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
     for label in labels_list:
         view.add(label)
+
+    display_headshots()
 
     win_team_bio.add(view)
     view.become_target()
