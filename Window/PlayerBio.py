@@ -169,12 +169,12 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name, 
     attr_title_label_width = 30
     attr_label_width = 20
     attribute_x_offset = 30
-    label_x = (player_name_label.left - player_headshot.width)/2 + player_headshot.width/2 - attribute_x_offset
+    label_x = (player_name_label.left - player_headshot.width)/2 + player_headshot.width/2 - attribute_x_offset+3
     label_y = player_name_label.top + player_headshot.height + 5
 
     for idx, attr in enumerate(player['attributes']):
         if idx == 3:
-            label_x = (player_name_label.left - player_headshot.width)/2 + player_headshot.width/2 + attribute_x_offset
+            label_x += 2*attribute_x_offset
             label_y = player_name_label.top + player_headshot.height + 5
 
         stat_title_label = Label(font=small_tf_font, width=attr_title_label_width, height=std_tf_height,

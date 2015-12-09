@@ -61,7 +61,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     # ========== Player Spacing Values ==========
     x_space = int(field_width/20)
     y_space = int(field_length/24)
-    player_border = 5
+    player_border = 2
     player_box_width = 120 + player_border*2
     player_box_height = 120 + player_border*2
     link_size = 10
@@ -207,10 +207,18 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
                              dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2))
+                c.forecolor = darker
+                c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border,
+                             dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2-player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-player_border))
 
     view = StartWindowImageView(size=win_team_bio.size)
 
     # ========== Player Headshots ==========
+    player_headshots = []
+
+    # Player headshots
     class HeadshotImageView(View):
         def draw(self, c, r):
             dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
@@ -224,6 +232,12 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                 player_headshot = Image(file=image_file_name)
                 position_coordinates = team_spacing[sym]
 
+                c.forecolor = quality_color(position['player']['color'])
+                c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
+                             dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
+                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2))
+
                 headshot_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
                                  dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border))
                 headshot_rect = player_headshot.bounds
@@ -231,10 +245,76 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
                 player_headshot.draw(c, headshot_rect, headshot_dst_rect)
 
-    player_headshots = HeadshotImageView(size=(int(field_x_offset+field_width), int(field_y_offset+field_length)))
+    player_headshots.append(HeadshotImageView(size=(int(field_x_offset+field_width+5),
+                                                    int(field_y_offset+field_length+5))))
+
+    # Player ratings and position
+    rating_width = 30
+    for sym, position in team['formation']['positions'].iteritems():
+        # Get player information
+        player = position['player']
+        position_coordinates = team_spacing[sym]
+        rating_color = quality_text_color(position['player']['color'])
+
+        rating_label = Label(text=str(player['rating']), font=title_font_2,
+                             width=rating_width, height=title_height,
+                             x=int(dst_rect[0]+position_coordinates[0]*x_space-player_box_height/2+player_border),
+                             y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2),
+                             color=rating_color, just='left')
+        player_headshots.append(rating_label)
 
     def display_headshots():
-        view.add(player_headshots)
+        for item in player_headshots:
+            view.add(item)
+        win_team_bio.become_target()
+
+    def hide_headshots():
+        for item in player_headshots:
+            view.remove(item)
+        win_team_bio.become_target()
+
+    # ========== Player Summary Stats ==========
+    summary_stats = []
+
+    attr_title_label_width = 30
+    attr_label_width = 20
+    attribute_x_offset = 30
+
+    for sym, position in team['formation']['positions'].iteritems():
+        # Get player information
+        player = position['player']
+        position_coordinates = team_spacing[sym]
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-attribute_x_offset+3)
+        label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border)
+
+        for idx, attr in enumerate(player['attributes']):
+            if idx == 3:
+                label_x += 2*attribute_x_offset
+                label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border)
+
+            stat_title_label = Label(font=small_tf_font, width=attr_title_label_width, height=std_tf_height,
+                                     x=label_x-attr_title_label_width, y=label_y, color=title_color, just='right')
+            stat_title_label.text = format_attr_name(attr['name'][-3:]) + ':'
+            summary_stats.append(stat_title_label)
+
+            color = attr_color(attr['value'])
+
+            stat_label = Label(font=small_tf_font, width=attr_label_width, height=std_tf_height,
+                               x=label_x, y=label_y, color=color, just='right')
+            stat_label.text = str(attr['value'])
+            summary_stats.append(stat_label)
+
+            label_y += std_tf_height
+
+    def display_summary_stats():
+        for stat in summary_stats:
+            view.add(stat)
+        win_team_bio.become_target()
+
+    def hide_summary_stats():
+        for stat in summary_stats:
+            view.remove(stat)
+        win_team_bio.become_target()
 
     # ========== Button Declarations ==========
     next_trait_btn = Button("Next Trait")
@@ -242,7 +322,9 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
     # ========== Button Functions ==========
     def next_trait_btn_func():
-         win_team_bio.become_target()
+        hide_headshots()
+        display_summary_stats()
+        win_team_bio.become_target()
 
     def back_btn_func():
         win_team_bio.hide()

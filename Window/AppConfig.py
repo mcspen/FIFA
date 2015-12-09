@@ -107,6 +107,14 @@ def quality_color(value):
 
     return color
 
+def quality_text_color(value):
+    if value in ['rare_silver', 'rare_gold']:
+        color = black
+    else:
+        color = white
+
+    return color
+
 # ========== Window ==========
 win_width = 800
 win_height = 700
