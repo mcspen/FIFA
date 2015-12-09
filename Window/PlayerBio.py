@@ -418,10 +418,6 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name, 
     view.add(add_player_btn)
     view.add(back_btn)
 
-    """view.add(player_name_label)
-    view.add(player_full_name_label)
-    view.add(rating_big_label)"""
-
     for label in labels_list:
         view.add(label)
 

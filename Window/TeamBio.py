@@ -61,8 +61,9 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     # ========== Player Spacing Values ==========
     x_space = int(field_width/20)
     y_space = int(field_length/24)
-    player_box_width = 130
-    player_box_height = 130
+    player_border = 5
+    player_box_width = 120 + player_border*2
+    player_box_height = 120 + player_border*2
     link_size = 10
 
     # ========== Window Image View ==========
@@ -210,33 +211,30 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     view = StartWindowImageView(size=win_team_bio.size)
 
     # ========== Player Headshots ==========
-    player_headshots = []
+    class HeadshotImageView(View):
+        def draw(self, c, r):
+            dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
 
-    for sym, position in team['formation']['positions'].iteritems():
-        # Get player information
-        player = position['player']
-        image_url = player['headshotImgUrl']
-        player_id = player['id']
-        image_file_name = save_image(image_url, player_id)
-        player_headshot = Image(file=image_file_name)
-        position_coordinates = team_spacing[sym]
+            for sym, position in team['formation']['positions'].iteritems():
+                # Get player information
+                player = position['player']
+                image_url = player['headshotImgUrl']
+                player_id = player['id']
+                image_file_name = save_image(image_url, player_id)
+                player_headshot = Image(file=image_file_name)
+                position_coordinates = team_spacing[sym]
 
-        class HeadshotImageView(View):
-            def draw(self, c, r):
-                dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
-
-                headshot_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
-                                 dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2))
+                headshot_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
+                                 dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border))
                 headshot_rect = player_headshot.bounds
                 headshot_dst_rect = Geometry.offset_rect(headshot_rect, headshot_pos)
 
                 player_headshot.draw(c, headshot_rect, headshot_dst_rect)
 
-        player_headshots.append(HeadshotImageView(size=win_team_bio.size))
+    player_headshots = HeadshotImageView(size=(int(field_x_offset+field_width), int(field_y_offset+field_length)))
 
     def display_headshots():
-        for headshot in player_headshots:
-            view.add(headshot)
+        view.add(player_headshots)
 
     # ========== Button Declarations ==========
     next_trait_btn = Button("Next Trait")

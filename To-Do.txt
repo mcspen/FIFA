@@ -7,6 +7,9 @@ Tweak strength eval function. (evaluates each player and the team on stats and s
 Add more options to TeamDB search
 Add team names?
 
+Had to limit the player headshots on the team bio page to just the field, or the buttons don't work.
+But it worked on the player bio page.
+
 Add option for manager and/or option for team not requiring manager
 
 # **********************************************
