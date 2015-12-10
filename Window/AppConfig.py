@@ -107,6 +107,7 @@ def quality_color(value):
 
     return color
 
+
 def quality_text_color(value):
     if value in ['rare_silver', 'rare_gold']:
         color = black
@@ -114,6 +115,7 @@ def quality_text_color(value):
         color = white
 
     return color
+
 
 # ========== Window ==========
 win_width = 800
@@ -160,6 +162,7 @@ file_btn_spacing = 3
 title_font = Font("Times", 3 * system_font.size, ['bold'])
 title_font_2 = Font("Times", 2.5 * system_font.size, ['bold'])
 title_font_3 = Font("Times", 2.3 * system_font.size, ['bold'])
+title_font_4 = Font("Times", 2.0 * system_font.size, ['bold'])
 title_tf_font = Font("Times", 1.6 * system_font.size, ['bold'])
 std_tf_font = Font("Times", 1.5 * system_font.size)
 std_tf_font_bold = Font("Times", 1.5 * system_font.size, ['bold'])

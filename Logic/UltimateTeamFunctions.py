@@ -30,8 +30,8 @@ def calculate_dependency_dict_list(dependent_positions, roster):
         # Need at least one chemistry
         if dependent_positions[0][1] <= 1:
             # Create position dict list of one trait for the player dependency search
-            return [{'nation': (roster[dependent_positions[0][0]]['nation']['name'], 'exact'),
-                    'league': (roster[dependent_positions[0][0]]['league']['name'], 'exact')}]
+            return [{'nation': (roster[dependent_positions[0][0]]['nation']['name'], 'exact')},
+                    {'league': (roster[dependent_positions[0][0]]['league']['name'], 'exact')}]
 
         # Need at least two chemistry
         elif dependent_positions[0][1] == 2:

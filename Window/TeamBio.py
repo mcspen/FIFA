@@ -234,7 +234,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
                 c.forecolor = quality_color(position['player']['color'])
                 c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
-                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+26,
                              dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2))
 
@@ -250,18 +250,28 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
     # Player ratings and position
     rating_width = 30
+    position_width = 60
     for sym, position in team['formation']['positions'].iteritems():
         # Get player information
         player = position['player']
         position_coordinates = team_spacing[sym]
-        rating_color = quality_text_color(position['player']['color'])
+        rating_color = white  # quality_text_color(position['player']['color'])
 
-        rating_label = Label(text=str(player['rating']), font=title_font_2,
+        rating_label = Label(text=str(player['rating']), font=title_font_3,
                              width=rating_width, height=title_height,
-                             x=int(dst_rect[0]+position_coordinates[0]*x_space-player_box_height/2+player_border),
-                             y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2),
+                             x=int(dst_rect[0]+position_coordinates[0]*x_space-player_box_height/2+2*player_border),
+                             y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)-1,
                              color=rating_color, just='left')
         player_headshots.append(rating_label)
+
+        colors = [red, orange, yellow, dark_green]
+        position_color = colors[Team.Team.position_chemistry(player['position'], position['symbol'])]
+        position_label = Label(text=str(player['position']), font=title_font_4,
+                             width=position_width, height=title_height,
+                             x=int(dst_rect[0]+position_coordinates[0]*x_space)-player_border,
+                             y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)+player_border,
+                             color=position_color, just='right')
+        player_headshots.append(position_label)
 
     def display_headshots():
         for item in player_headshots:
