@@ -2,7 +2,7 @@ from GUI import Button, Geometry, Image, Label, View, Window
 from AppConfig import *
 import json
 from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
-    save_image, get_file_prefix
+    save_image, save_small_image, get_file_prefix
 from Logic import PlayerDB
 from Logic import Team
 
@@ -226,24 +226,51 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             for sym, position in team['formation']['positions'].iteritems():
                 # Get player information
                 player = position['player']
-                image_url = player['headshotImgUrl']
-                player_id = player['id']
-                image_file_name = save_image(image_url, player_id)
-                player_headshot = Image(file=image_file_name)
                 position_coordinates = team_spacing[sym]
 
+                # Card color box to go on top of and hide part of darker box
                 c.forecolor = quality_color(position['player']['color'])
                 c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
-                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+26,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
                              dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
-                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2))
+                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-26))
 
-                headshot_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
+                # Headshot
+                image_url = player['headshotImgUrl']
+                ratio = 0.75
+                image_file_name = player['id'] + '_' + str(ratio)
+                image_file_name = save_small_image(image_url, image_file_name, ratio)
+                player_headshot = Image(file=image_file_name)
+                headshot_pos = ((dst_rect[0]+position_coordinates[0]*x_space +
+                                 player_box_width/2-player_headshot.size[0]-player_border,
                                  dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border))
                 headshot_rect = player_headshot.bounds
                 headshot_dst_rect = Geometry.offset_rect(headshot_rect, headshot_pos)
-
                 player_headshot.draw(c, headshot_rect, headshot_dst_rect)
+
+                # Club
+                image_url = player['club']['imageUrls']['normal']['large']
+                ratio = 0.75
+                image_file_name = 'club_' + str(player['club']['id']) + '_' + str(ratio)
+                image_file_name = save_small_image(image_url, image_file_name, ratio)
+                club_image = Image(file=image_file_name)
+                club_image_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
+                                   headshot_pos[1]+player_headshot.size[1]/4+5))
+                headshot_rect = club_image.bounds
+                headshot_dst_rect = Geometry.offset_rect(headshot_rect, club_image_pos)
+                club_image.draw(c, headshot_rect, headshot_dst_rect)
+
+                # Nation
+                image_url = player['nation']['imageUrls']['large']
+                ratio = 0.75
+                image_file_name = 'nation_' + str(player['nation']['id']) + '_' + str(ratio)
+                image_file_name = save_small_image(image_url, image_file_name, ratio)
+                nation_image = Image(file=image_file_name)
+                nation_image_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
+                                     club_image_pos[1]+club_image.size[1]+5))
+                headshot_rect = nation_image.bounds
+                headshot_dst_rect = Geometry.offset_rect(headshot_rect, nation_image_pos)
+                nation_image.draw(c, headshot_rect, headshot_dst_rect)
 
     player_headshots.append(HeadshotImageView(size=(int(field_x_offset+field_width+5),
                                                     int(field_y_offset+field_length+5))))
@@ -255,22 +282,33 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         # Get player information
         player = position['player']
         position_coordinates = team_spacing[sym]
-        rating_color = white  # quality_text_color(position['player']['color'])
+        info_color = black  # quality_text_color(position['player']['color'])
 
+        # Player rating
         rating_label = Label(text=str(player['rating']), font=title_font_3,
                              width=rating_width, height=title_height,
                              x=int(dst_rect[0]+position_coordinates[0]*x_space-player_box_height/2+2*player_border),
                              y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)-1,
-                             color=rating_color, just='left')
+                             color=info_color, just='left')
         player_headshots.append(rating_label)
 
+        # Player Position
+        position_label = Label(text=position['symbol'], font=title_tf_font,
+                               width=position_width, height=std_tf_height,
+                               x=int(dst_rect[0]+position_coordinates[0]*x_space-player_box_height/2+
+                                     2*player_border+rating_width),
+                               y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2),
+                               color=info_color, just='left')
+        player_headshots.append(position_label)
+
+        # Formation Position
         colors = [red, orange, yellow, dark_green]
         position_color = colors[Team.Team.position_chemistry(player['position'], position['symbol'])]
         position_label = Label(text=str(player['position']), font=title_font_4,
-                             width=position_width, height=title_height,
-                             x=int(dst_rect[0]+position_coordinates[0]*x_space)-player_border,
-                             y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)+player_border,
-                             color=position_color, just='right')
+                               width=position_width, height=title_height,
+                               x=int(dst_rect[0]+position_coordinates[0]*x_space)-player_border,
+                               y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)+player_border,
+                               color=position_color, just='right')
         player_headshots.append(position_label)
 
     def display_headshots():

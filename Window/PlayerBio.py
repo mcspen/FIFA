@@ -40,8 +40,8 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name, 
 
     # ========== Player Headshot ==========
     image_url = player['headshotImgUrl']
-    player_id = player['id']
-    image_file_name = save_image(image_url, player_id)
+    image_file_name = player['id'] + '_large'
+    image_file_name = save_image(image_url, image_file_name)
     player_headshot = Image(file=image_file_name)
 
     # ========== Button Declarations ==========

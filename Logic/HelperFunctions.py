@@ -366,6 +366,30 @@ def save_image(image_url, image_file_name):
     return image_file_name
 
 
+def save_small_image(image_url, image_file_name, ratio=0.75):
+    """
+    Saves a smaller image from the specified url and returns the file name.
+    """
+
+    try:
+        image_file_name = 'Images/temp/' + image_file_name + '.png'
+
+        if not os.path.isfile(image_file_name):
+            image_file = cStringIO.StringIO(urllib2.urlopen(image_url).read())
+            image_info = Image.open(image_file)
+            image_info = image_info.resize((int(image_info.size[0]*ratio),
+                                            int(image_info.size[1]*ratio)),
+                                           Image.ANTIALIAS)
+            image_info.save(image_file_name)
+            image_file.close()
+
+    # In case of no internet connection
+    except Exception:
+        image_file_name = 'Images/no_internet_small.png'
+
+    return image_file_name
+
+
 def delete_image(image_file_name):
     """
     Deletes the image with the specified file name.

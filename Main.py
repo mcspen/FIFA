@@ -43,6 +43,27 @@ if __name__ == '__main__':
     FifaApp.start_app(db_dict)
     # delete_all_temp_images()"""
 
+    """from Logic.HelperFunctions import save_image
+    players = PlayerDB()
+    players.load('FIFA 16 - Current', 'db')
+    player = players.db[2153]
+    save_image(player['headshotImgUrl'], 'headshotImgUrl')
+    save_image(player['headshot']['largeImgUrl'], 'player_largeImgUrl')
+    save_image(player['headshot']['medImgUrl'], 'player_medImgUrl')
+    save_image(player['headshot']['smallImgUrl'], 'player_smallImgUrl')
+    save_image(player['league']['imgUrl'], 'league_imgUrl')
+    save_image(player['nation']['imgUrl'], 'nation_imgUrl')
+    save_image(player['nation']['imageUrls']['small'], 'nation_small_imgUrl')
+    save_image(player['nation']['imageUrls']['medium'], 'nation_medium_imgUrl')
+    save_image(player['nation']['imageUrls']['large'], 'nation_large_imgUrl')
+    save_image(player['club']['imgUrl'], 'club_imgUrl')
+    save_image(player['club']['imageUrls']['dark']['small'], 'club_dark_small_imgUrl')
+    save_image(player['club']['imageUrls']['dark']['medium'], 'club_dark_medium_imgUrl')
+    save_image(player['club']['imageUrls']['dark']['large'], 'club_dark_large_imgUrl')
+    save_image(player['club']['imageUrls']['normal']['small'], 'club_normal_small_imgUrl')
+    save_image(player['club']['imageUrls']['normal']['small'], 'club_normal_medium_imgUrl')
+    save_image(player['club']['imageUrls']['normal']['large'], 'club_normal_large_imgUrl')"""
+
     # Print out strengths for first 100 teams
     """teams = TeamDB()
     teams.load('2015-11-30_shorter')
