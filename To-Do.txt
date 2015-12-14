@@ -1,5 +1,7 @@
 Move team creation function to TeamDB?
 
+Add more search/sort options for teams/formations. Ex: total skill of team
+
 Change Edit function for manage menu to have separate windows for players (already implemented), formations, and teams.
 
 Tweak strength eval function. (evaluates each player and the team on stats and strengths)

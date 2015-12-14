@@ -5,6 +5,7 @@ from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, 
     save_image, save_small_image, get_file_prefix
 from Logic import PlayerDB
 from Logic import Team
+from Window import PlayerBio
 
 
 def open_team_bio_window(window_x, window_y, team, win_previous, file_name, current_list):
@@ -207,16 +208,17 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
                              dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2))
-                c.forecolor = darker
+                """c.forecolor = darker
                 c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border,
                              dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2-player_border,
-                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-player_border))
+                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-player_border))"""
 
     view = StartWindowImageView(size=win_team_bio.size)
 
     # ========== Player Headshots ==========
     player_headshots = []
+    name_height = 25
 
     # Player headshots
     class HeadshotImageView(View):
@@ -228,22 +230,30 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                 player = position['player']
                 position_coordinates = team_spacing[sym]
 
-                # Card color box to go on top of and hide part of darker box
+                # Card color box
                 c.forecolor = quality_color(position['player']['color'])
                 c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
                              dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
-                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-26))
+                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-name_height))
+
+                # Darker box for positions
+                c.forecolor = darker
+                c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/5-2*player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border,
+                             dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2-player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+name_height-4))
 
                 # Headshot
                 image_url = player['headshotImgUrl']
-                ratio = 0.75
+                ratio = 0.65
                 image_file_name = player['id'] + '_' + str(ratio)
                 image_file_name = save_small_image(image_url, image_file_name, ratio)
                 player_headshot = Image(file=image_file_name)
                 headshot_pos = ((dst_rect[0]+position_coordinates[0]*x_space +
                                  player_box_width/2-player_headshot.size[0]-player_border,
-                                 dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border))
+                                 dst_rect[1]+position_coordinates[1]*y_space +
+                                 player_box_height/2-player_border-name_height-player_headshot.size[1]))
                 headshot_rect = player_headshot.bounds
                 headshot_dst_rect = Geometry.offset_rect(headshot_rect, headshot_pos)
                 player_headshot.draw(c, headshot_rect, headshot_dst_rect)
@@ -255,7 +265,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                 image_file_name = save_small_image(image_url, image_file_name, ratio)
                 club_image = Image(file=image_file_name)
                 club_image_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
-                                   headshot_pos[1]+player_headshot.size[1]/4+5))
+                                   headshot_pos[1]+player_headshot.size[1]/6))
                 headshot_rect = club_image.bounds
                 headshot_dst_rect = Geometry.offset_rect(headshot_rect, club_image_pos)
                 club_image.draw(c, headshot_rect, headshot_dst_rect)
@@ -275,9 +285,9 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     player_headshots.append(HeadshotImageView(size=(int(field_x_offset+field_width+5),
                                                     int(field_y_offset+field_length+5))))
 
-    # Player ratings and position
+    # Player ratings, position, team, nation, and name
     rating_width = 30
-    position_width = 60
+    position_width = 45
     for sym, position in team['formation']['positions'].iteritems():
         # Get player information
         player = position['player']
@@ -293,23 +303,47 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         player_headshots.append(rating_label)
 
         # Player Position
-        position_label = Label(text=position['symbol'], font=title_tf_font,
-                               width=position_width, height=std_tf_height,
-                               x=int(dst_rect[0]+position_coordinates[0]*x_space-player_box_height/2+
-                                     2*player_border+rating_width),
-                               y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2),
-                               color=info_color, just='left')
-        player_headshots.append(position_label)
-
-        # Formation Position
         colors = [red, orange, yellow, dark_green]
         position_color = colors[Team.Team.position_chemistry(player['position'], position['symbol'])]
-        position_label = Label(text=str(player['position']), font=title_font_4,
-                               width=position_width, height=title_height,
-                               x=int(dst_rect[0]+position_coordinates[0]*x_space)-player_border,
+        position_label = Label(text=position['symbol'], font=std_tf_font_bold,
+                               width=position_width, height=std_tf_height,
+                               x=int(dst_rect[0]+position_coordinates[0]*x_space+player_box_height/2-
+                                     2*player_border-2*position_width),
                                y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)+player_border,
                                color=position_color, just='right')
         player_headshots.append(position_label)
+
+        # Formation Position
+        position_color = white
+        position_label = Label(text='/'+player['position'], font=std_tf_font_bold,
+                               width=position_width, height=std_tf_height,
+                               x=int(dst_rect[0]+position_coordinates[0]*x_space+player_box_height/2-
+                                     2*player_border-position_width),
+                               y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)+player_border,
+                               color=position_color, just='left')
+        player_headshots.append(position_label)
+
+        # Player name button
+        def name_btn_func(current_player):
+            win_team_bio.hide()
+            PlayerBio.open_player_bio_window(win_team_bio.x, win_team_bio.y, current_player, win_team_bio)
+            win_team_bio.become_target()
+
+        name_color = darker
+        player_name = ascii_text(player['name'])
+        name_btn = Button(title=player_name, font=title_font_5,
+                           width=player_box_width-4*player_border, height=name_height,
+                           x=int(dst_rect[0]+position_coordinates[0]*x_space-player_box_height/2+2*player_border),
+                           y=int(dst_rect[1]+position_coordinates[1]*y_space +
+                                 player_box_height/2-player_border-name_height),
+                           color=name_color, just='center',
+                            action=(name_btn_func, player))
+        # Make font smaller for long names
+        if len(player_name) > 11:
+            name_btn.font = title_font_8
+        if len(player_name) > 14:
+            name_btn.font = title_font_9
+        player_headshots.append(name_btn)
 
     def display_headshots():
         for item in player_headshots:

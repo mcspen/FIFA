@@ -129,7 +129,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
 
     # Judging Teams Edit Button
     def judging_edit_btn_func():
-        win_ultimate_teams.hide()
+        do_nothing = 0
 
     judging_edit_btn_width = 40
     judging_edit_btn = Button("Edit",

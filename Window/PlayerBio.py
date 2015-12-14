@@ -6,7 +6,10 @@ from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, 
 from Logic import PlayerDB
 
 
-def open_player_bio_window(window_x, window_y, player, win_previous, file_name, current_list):
+def open_player_bio_window(window_x, window_y, player, win_previous, file_name=None, current_list=None):
+
+    if current_list is None:
+        current_list = PlayerDB.PlayerDB()
 
     # ========== Window ==========
     win_player_bio = Window()
@@ -90,6 +93,9 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name, 
     add_player_btn.action = add_player_btn_func
     add_player_btn.style = 'default'
     add_player_btn.color = small_button_color
+    # Disable button if no lists selected
+    if file_name is None:
+        add_player_btn.enabled = 0
 
     # Check if player is already on selected players list
     if player in current_list.db:

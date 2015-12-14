@@ -178,9 +178,9 @@ class Team:
                 player = position['player']
 
                 if (name in player['commonName'].upper()) or \
-                    (name in player['firstName'].upper()) or \
-                    (name in player['lastName'].upper()) or \
-                    (name in player['name'].upper()):
+                   (name in player['firstName'].upper()) or \
+                   (name in player['lastName'].upper()) or \
+                   (name in player['name'].upper()):
                     has_player = True
                     break
 

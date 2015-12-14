@@ -230,8 +230,8 @@ def team_info(team, attributes):
 
     # Add attributes from list
     for attribute in attributes:
-        if attribute in []:
-            team_info.append(str(team[attribute]))
+        if attribute in ['player']:
+            team_info.append("Player")
         else:
             team_info.append(str(team[attribute]))
 

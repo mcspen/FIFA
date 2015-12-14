@@ -173,7 +173,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             display_teams(search_results, attributes_list, (0, num_results))
             #search_results.print_db(num_results)
             from Logic.Team import Team
-            for team in search_results.db[:100]:
+            for team in search_results.db[:10]:
                 temp = Team(team)
                 temp.print_summary()
                 print
