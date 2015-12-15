@@ -385,14 +385,34 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         # Get player information
         player = position['player']
         position_coordinates = team_spacing[sym]
-        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-attribute_x_offset+3)
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
         label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)
 
+        # Player rating
+        rating_summary_width = 25
+        rating_summary_label = Label(text=str(player['rating']), font=title_font_5,
+                                     width=rating_summary_width, height=std_tf_height,
+                                     x=label_x, y=label_y, just='right')
+        rating_summary_label.color = attr_color(player['rating'])
+        summary_stats.append(rating_summary_label)
+
+        # Player name
+        label_x = rating_summary_label.right
+        name_summary_label = Label(text=ascii_text(player['name']), font=std_tf_font_bold,
+                                   width=player_box_width-rating_summary_width-2*player_border, height=std_tf_height,
+                                   x=label_x, y=label_y, color=white, just='center')
+        if len(ascii_text(player['name'])) > 10:
+            name_summary_label.font = title_font_9
+        summary_stats.append(name_summary_label)
+
         # Summary Stats
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-attribute_x_offset+3)
+        label_y = rating_summary_label.bottom + player_border
+
         for idx, attr in enumerate(player['attributes']):
             if idx == 3:
                 label_x += 2*attribute_x_offset
-                label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)
+                label_y = rating_summary_label.bottom
 
             stat_title_label = Label(font=small_tf_font, width=attr_title_label_width, height=std_tf_height,
                                      x=label_x-attr_title_label_width, y=label_y, color=title_color, just='right')
@@ -407,6 +427,27 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             summary_stats.append(stat_label)
 
             label_y += std_tf_height
+
+        # Weak foot label
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-std_tf_width) + 15
+        weak_foot_label = Label(text="Weak Foot: ", font=small_tf_font,
+                            width=std_tf_width, height=std_tf_height,
+                            x=label_x, y=label_y,
+                            color=title_color, just='right')
+        summary_stats.append(weak_foot_label)
+
+        # Weak foot stars label
+        colors = [red, dark_orange, yellow, light_green, dark_green]
+        star_color = colors[player['weakFoot']-1]
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space) + 15
+        weak_foot_stars_label = Label(font=small_tf_font,
+                                  width=std_tf_width, height=std_tf_height,
+                                  x=label_x, y=label_y,
+                                  color=star_color, just='left')
+        weak_foot_stars_label.text = '*'*player['weakFoot']
+        summary_stats.append(weak_foot_stars_label)
+
+        label_y += std_tf_height
 
         # Skill moves label
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space-std_tf_width) + 15
@@ -451,8 +492,8 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     # ========== Button Declarations ==========
     back_btn = Button("Back")
     headshot_trait_btn = Button("Picture")
-    strengths_trait_btn = Button("Strengths")
     summary_trait_btn = Button("Stat Summary")
+    strengths_trait_btn = Button("Strengths")
     chemistry_trait_btn = Button("Chemistry")
     links_trait_btn = Button("Links")
 
@@ -469,19 +510,19 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         display_headshots()
         win_team_bio.become_target()
 
-    def strengths_trait_btn_func():
-        # Hide all
-        hide_all()
-
-        # Display strengths
-        win_team_bio.become_target()
-
     def summary_trait_btn_func():
         # Hide all
         hide_all()
 
         # Display summary stats
         display_summary_stats()
+        win_team_bio.become_target()
+
+    def strengths_trait_btn_func():
+        # Hide all
+        hide_all()
+
+        # Display strengths
         win_team_bio.become_target()
 
     def chemistry_trait_btn_func():
@@ -521,18 +562,8 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     headshot_trait_btn.color = small_button_color
     labels_list.append(headshot_trait_btn)
 
-    strengths_trait_btn.x = back_btn.left
-    strengths_trait_btn.y = headshot_trait_btn.bottom
-    strengths_trait_btn.height = small_button_height
-    strengths_trait_btn.width = button_width
-    strengths_trait_btn.font = small_button_font
-    strengths_trait_btn.action = strengths_trait_btn_func
-    strengths_trait_btn.style = 'default'
-    strengths_trait_btn.color = small_button_color
-    labels_list.append(strengths_trait_btn)
-
     summary_trait_btn.x = back_btn.left
-    summary_trait_btn.y = strengths_trait_btn.bottom
+    summary_trait_btn.y = headshot_trait_btn.bottom
     summary_trait_btn.height = small_button_height
     summary_trait_btn.width = button_width
     summary_trait_btn.font = small_button_font
@@ -541,8 +572,18 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     summary_trait_btn.color = small_button_color
     labels_list.append(summary_trait_btn)
 
+    strengths_trait_btn.x = back_btn.left
+    strengths_trait_btn.y = summary_trait_btn.bottom
+    strengths_trait_btn.height = small_button_height
+    strengths_trait_btn.width = button_width
+    strengths_trait_btn.font = small_button_font
+    strengths_trait_btn.action = strengths_trait_btn_func
+    strengths_trait_btn.style = 'default'
+    strengths_trait_btn.color = small_button_color
+    labels_list.append(strengths_trait_btn)
+
     chemistry_trait_btn.x = back_btn.left
-    chemistry_trait_btn.y = summary_trait_btn.bottom
+    chemistry_trait_btn.y = strengths_trait_btn.bottom
     chemistry_trait_btn.height = small_button_height
     chemistry_trait_btn.width = button_width
     chemistry_trait_btn.font = small_button_font
