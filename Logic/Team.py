@@ -132,24 +132,6 @@ class Team:
 
         return True
 
-    '''@staticmethod
-    def generate_filename(team):
-        """
-        Create a filename for the team
-        Input: The team dict
-        Output: The filename
-        """
-
-        team_name = str(team['rating'])[:5]\
-            + '0' * (5 - len(str(team['rating'])))\
-            + '_' * (5 - len(str(team['total_ic'])))\
-            + 'chem_' + str(team['total_ic'])\
-            + '__form_' + str(team['formation']['name'])\
-            + '_' * (14 - len(str(team['formation']['name'])))\
-            + 'time_' + str(time.clock())[:10]
-
-        return team_name'''
-
     def has_player(self, player_name):
         """
         Checks if the player is on the team

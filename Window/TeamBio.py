@@ -478,6 +478,98 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             view.remove(stat)
         win_team_bio.become_target()
 
+    # ========== Player Strength Stats ==========
+    strength_stats = []
+
+    # Darker box to display stats on
+    class StrengthsBoxImageView(View):
+        def draw(self, c, r):
+            dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
+
+            for sym, position in team['formation']['positions'].iteritems():
+                # Get player coordinates
+                position_coordinates = team_spacing[sym]
+
+                # Darker box to display stats
+                c.forecolor = darker
+                c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border,
+                             dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2-player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-player_border))
+
+    strength_stats.append(StrengthsBoxImageView(size=(int(field_x_offset+field_width+5),
+                                                      int(field_y_offset+field_length+5))))
+
+    attr_title_label_width = 30
+    attr_label_width = 20
+    attribute_x_offset = 30
+
+    for sym, position in team['formation']['positions'].iteritems():
+        # Get player information
+        player = position['player']
+        position_coordinates = team_spacing[sym]
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
+        label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)
+
+        # Player rating
+        rating_summary_width = 25
+        rating_summary_label = Label(text=str(player['rating']), font=title_font_5,
+                                     width=rating_summary_width, height=std_tf_height,
+                                     x=label_x, y=label_y, just='right')
+        rating_summary_label.color = attr_color(player['rating'])
+        strength_stats.append(rating_summary_label)
+
+        # Player name
+        label_x = rating_summary_label.right
+        name_summary_label = Label(text=ascii_text(player['name']), font=std_tf_font_bold,
+                                   width=player_box_width-rating_summary_width-2*player_border, height=std_tf_height,
+                                   x=label_x, y=label_y, color=white, just='center')
+        if len(ascii_text(player['name'])) > 10:
+            name_summary_label.font = title_font_9
+        strength_stats.append(name_summary_label)
+
+        # Strength Label
+        strength_label_width = 2*player_box_width/3-5
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-strength_label_width+20)
+        label_y = rating_summary_label.bottom + player_border
+        if len(position['strengths']) > 1:
+            strength_labels = Label(font=small_tf_font,
+                                    width=strength_label_width,
+                                    height=std_tf_height*len(position['strengths'])-1,
+                                    x=label_x, y=label_y, color=white, just='right')
+
+            strength_text = ''
+            for strength in position['strengths'][1:]:
+                strength_text += strength[0] + ':\n'
+
+            strength_labels.text = strength_text[:-1]
+            strength_stats.append(strength_labels)
+
+            # Strength Stat Label
+            label_x = strength_labels.right + 3
+
+            strength_stat_labels = Label(font=smaller_tf_font,
+                                         width=player_box_width-strength_label_width-2*player_border,
+                                         height=std_tf_height*len(position['strengths'])-1,
+                                         x=label_x, y=label_y, color=white, just='left')
+
+            strength_stat_text = ''
+            for strength in position['strengths'][1:]:
+                strength_stat_text += str(strength[1]) + '\n'
+
+            strength_stat_labels.text = strength_stat_text[:-1]
+            strength_stats.append(strength_stat_labels)
+
+    def display_strength_stats():
+        for stat in strength_stats:
+            view.add(stat)
+        win_team_bio.become_target()
+
+    def hide_strength_stats():
+        for stat in strength_stats:
+            view.remove(stat)
+        win_team_bio.become_target()
+
 
 
 
@@ -488,6 +580,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         # Hide all displayed items
         hide_headshots()
         hide_summary_stats()
+        hide_strength_stats()
 
     # ========== Button Declarations ==========
     back_btn = Button("Back")
@@ -523,6 +616,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         hide_all()
 
         # Display strengths
+        display_strength_stats()
         win_team_bio.become_target()
 
     def chemistry_trait_btn_func():
@@ -553,7 +647,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     labels_list.append(back_btn)
 
     headshot_trait_btn.x = back_btn.left
-    headshot_trait_btn.y = back_btn.bottom + title_border
+    headshot_trait_btn.y = back_btn.bottom + top_border
     headshot_trait_btn.height = small_button_height
     headshot_trait_btn.width = button_width
     headshot_trait_btn.font = small_button_font
@@ -614,7 +708,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     info_title = Label(text="Team Info", font=title_font_2,
                        width=title_width, height=title_height,
                        x=headshot_trait_btn.right - button_width/2 - title_width/2,
-                       y=links_trait_btn.bottom + top_border*3,
+                       y=links_trait_btn.bottom + top_border,
                        color=title_color, just='center')
     labels_list.append(info_title)
 
