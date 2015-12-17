@@ -1288,7 +1288,7 @@ class Team:
                 if position['index'] == index:
 
                     player = position['player']
-                    strengths = position['strengths']
+                    strengths = sorted(position['strengths'], key=lambda k: k[1], reverse=True)
 
                     # Get player's common name, if it exists, or the full name
                     name = ascii_text(player['firstName']) + " " + ascii_text(player['lastName'])
