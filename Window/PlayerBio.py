@@ -397,8 +397,12 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         for trait in player['traits'][index:]:
             traits_list_2 += trait + ', '
     else:
-        traits_list = 'No traits..'
-    traits_list_label.text = traits_list[:-2]
+        traits_list = 'No traits.'
+
+    if len(traits_list_2) > 0:
+        traits_list_label.text = traits_list[:-1]
+    else:
+        traits_list_label.text = traits_list[:-2]
     traits_list_label_2.text = traits_list_2[:-2]
 
     # Player's specialities
@@ -416,8 +420,12 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         for speciality in player['specialities'][index:]:
             specialities_list_2 += speciality + ', '
     else:
-        specialities_list = 'No specialities..'
-    specialities_list_label.text = specialities_list[:-2]
+        specialities_list = 'No specialities.'
+
+    if len(specialities_list_2) > 0:
+        specialities_list_label.text = specialities_list[:-1]
+    else:
+        specialities_list_label.text = specialities_list[:-2]
     specialities_list_label_2.text = specialities_list_2[:-2]
 
     # ========== Add buttons to window ==========

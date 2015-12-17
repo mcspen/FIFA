@@ -1178,7 +1178,7 @@ class Team:
         amazing_strength = 3
 
         # Get traits
-        traits = player['traits']
+        traits = copy.deepcopy(player['traits'])
 
         if traits is not None:
             # Remove bad traits or ones that don't affect ability
@@ -1233,6 +1233,9 @@ class Team:
                 if stat >= good_stat_value:
                     strengths.append((format_attr_name(attribute), stat))
                     rating += good_strength
+
+        # Sort strengths by value
+        strengths = sorted(strengths, key=lambda k: k[1], reverse=True)
 
         return rating, strengths
 

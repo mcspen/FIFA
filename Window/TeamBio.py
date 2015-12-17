@@ -1,6 +1,7 @@
 from GUI import Button, Geometry, Image, Label, View, Window
 from AppConfig import *
 import json
+import operator
 from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
     save_image, save_small_image, get_file_prefix
 from Logic import PlayerDB
@@ -208,11 +209,6 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
                              dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2))
-                """c.forecolor = darker
-                c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
-                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border,
-                             dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2-player_border,
-                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-player_border))"""
 
     view = StartWindowImageView(size=win_team_bio.size)
 
@@ -339,10 +335,12 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                            color=name_color, just='center',
                             action=(name_btn_func, player))
         # Make font smaller for long names
-        if len(player_name) > 11:
+        if len(player_name) > 10:
             name_btn.font = title_font_8
-        if len(player_name) > 14:
+        if len(player_name) > 13:
             name_btn.font = title_font_9
+        if len(player_name) > 15:
+            name_btn.font = title_font_10
         player_headshots.append(name_btn)
 
     def display_headshots():
@@ -403,6 +401,13 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                                    x=label_x, y=label_y, color=white, just='center')
         if len(ascii_text(player['name'])) > 10:
             name_summary_label.font = title_font_9
+            name_summary_label.y += 2
+        if len(ascii_text(player['name'])) > 13:
+            name_summary_label.font = title_font_10
+            name_summary_label.y += 2
+        if len(ascii_text(player['name'])) > 15:
+            name_summary_label.font = title_font_13
+            name_summary_label.y += 2
         summary_stats.append(name_summary_label)
 
         # Summary Stats
@@ -480,6 +485,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
     # ========== Player Strength Stats ==========
     strength_stats = []
+    num_strengths = 6
 
     # Darker box to display stats on
     class StrengthsBoxImageView(View):
@@ -499,10 +505,6 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
     strength_stats.append(StrengthsBoxImageView(size=(int(field_x_offset+field_width+5),
                                                       int(field_y_offset+field_length+5))))
-
-    attr_title_label_width = 30
-    attr_label_width = 20
-    attribute_x_offset = 30
 
     for sym, position in team['formation']['positions'].iteritems():
         # Get player information
@@ -526,39 +528,63 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                                    x=label_x, y=label_y, color=white, just='center')
         if len(ascii_text(player['name'])) > 10:
             name_summary_label.font = title_font_9
+            name_summary_label.y += 2
+        if len(ascii_text(player['name'])) > 13:
+            name_summary_label.font = title_font_10
+            name_summary_label.y += 2
+        if len(ascii_text(player['name'])) > 15:
+            name_summary_label.font = title_font_13
+            name_summary_label.y += 2
         strength_stats.append(name_summary_label)
 
         # Strength Label
         strength_label_width = 2*player_box_width/3-5
-        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-strength_label_width+20)
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-strength_label_width+25)
         label_y = rating_summary_label.bottom + player_border
-        if len(position['strengths']) > 1:
-            strength_labels = Label(font=small_tf_font,
-                                    width=strength_label_width,
-                                    height=std_tf_height*len(position['strengths'])-1,
-                                    x=label_x, y=label_y, color=white, just='right')
 
-            strength_text = ''
-            for strength in position['strengths'][1:]:
-                strength_text += strength[0] + ':\n'
+        strength_labels = Label(font=smallest_tf_font,
+                                width=strength_label_width,
+                                height=std_tf_height*num_strengths,
+                                x=label_x, y=label_y, color=white, just='right')
 
-            strength_labels.text = strength_text[:-1]
-            strength_stats.append(strength_labels)
+        skip_list = ['itemType', 'color', 'playerType', 'headshotImgUrl', 'quality', 'commonName', 'name', 'firstName',
+                     'positionFull', 'foot', 'position', 'atkWorkRate', 'defWorkRate', 'modelName', 'lastName',
+                     'playStyle', 'birthdate', 'id', 'specialities', 'traits', 'attributes', 'club', 'nation', 'league',
+                     'headshot', 'baseId', 'height', 'skillMoves', 'weakFoot', 'isSpecialType', 'isGK', 'weight',
+                     'rating', 'potential']
+        sorted_attributes = sorted(player.items(), key=operator.itemgetter(1), reverse=True)
 
-            # Strength Stat Label
-            label_x = strength_labels.right + 3
+        strength_text = ''
+        index = 0
+        for strength in sorted_attributes:
+            if strength[0] not in skip_list:
+                strength_text += format_attr_name(strength[0]) + ':\n'
+                index += 1
+                if index == num_strengths:
+                    break
 
-            strength_stat_labels = Label(font=smaller_tf_font,
-                                         width=player_box_width-strength_label_width-2*player_border,
-                                         height=std_tf_height*len(position['strengths'])-1,
-                                         x=label_x, y=label_y, color=white, just='left')
+        strength_labels.text = strength_text[:-1]
+        strength_stats.append(strength_labels)
 
-            strength_stat_text = ''
-            for strength in position['strengths'][1:]:
+        # Strength Stat Label
+        label_x = strength_labels.right + 3
+
+        strength_stat_labels = Label(font=smallest_tf_font,
+                                     width=player_box_width-strength_label_width-2*player_border,
+                                     height=std_tf_height*num_strengths,
+                                     x=label_x, y=label_y, color=white, just='left')
+
+        strength_stat_text = ''
+        index = 0
+        for strength in sorted_attributes:
+            if strength[0] not in skip_list:
                 strength_stat_text += str(strength[1]) + '\n'
+                index += 1
+                if index == num_strengths:
+                    break
 
-            strength_stat_labels.text = strength_stat_text[:-1]
-            strength_stats.append(strength_stat_labels)
+        strength_stat_labels.text = strength_stat_text[:-1]
+        strength_stats.append(strength_stat_labels)
 
     def display_strength_stats():
         for stat in strength_stats:
@@ -567,6 +593,198 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
     def hide_strength_stats():
         for stat in strength_stats:
+            view.remove(stat)
+        win_team_bio.become_target()
+
+    # ========== Player Traits ==========
+    traits_list = []
+
+    # Darker box to display stats on
+    class TraitsBoxImageView(View):
+        def draw(self, c, r):
+            dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
+
+            for sym, position in team['formation']['positions'].iteritems():
+                # Get player coordinates
+                position_coordinates = team_spacing[sym]
+
+                # Darker box to display stats
+                c.forecolor = darker
+                c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border,
+                             dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2-player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-player_border))
+
+    traits_list.append(TraitsBoxImageView(size=(int(field_x_offset+field_width+5),
+                                                int(field_y_offset+field_length+5))))
+
+    for sym, position in team['formation']['positions'].iteritems():
+        # Get player information
+        player = position['player']
+        position_coordinates = team_spacing[sym]
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
+        label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)
+
+        # Player rating
+        rating_summary_width = 25
+        rating_summary_label = Label(text=str(player['rating']), font=title_font_5,
+                                     width=rating_summary_width, height=std_tf_height,
+                                     x=label_x, y=label_y, just='right')
+        rating_summary_label.color = attr_color(player['rating'])
+        traits_list.append(rating_summary_label)
+
+        # Player name
+        label_x = rating_summary_label.right
+        name_summary_label = Label(text=ascii_text(player['name']), font=std_tf_font_bold,
+                                   width=player_box_width-rating_summary_width-2*player_border, height=std_tf_height,
+                                   x=label_x, y=label_y, color=white, just='center')
+        if len(ascii_text(player['name'])) > 10:
+            name_summary_label.font = title_font_9
+            name_summary_label.y += 2
+        if len(ascii_text(player['name'])) > 13:
+            name_summary_label.font = title_font_10
+            name_summary_label.y += 2
+        if len(ascii_text(player['name'])) > 15:
+            name_summary_label.font = title_font_13
+            name_summary_label.y += 2
+        traits_list.append(name_summary_label)
+
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
+        label_y = rating_summary_label.bottom + player_border
+
+        # Traits Label
+        traits_label = Label(font=smallest_tf_font,
+                             width=player_box_width-4*player_border,
+                             x=label_x, y=label_y, just='center')
+
+        if player['traits'] is not None:
+            traits_stat_text = ''
+            for trait in player['traits']:
+                if trait == 'Avoids Using Weaker Foot':
+                    trait_text = 'Avoids Weaker Foot'
+                elif trait == 'Tries To Beat Defensive Line':
+                    trait_text = 'Tries To Beat Def. Line'
+                elif trait == 'Takes Powerful Driven Free Kicks':
+                    trait_text = 'Pwrful Driven Free Kicks'
+                elif '-' in trait:
+                    hyphen_index = trait.index('-')
+                    trait_text = trait[hyphen_index+2:]
+                else:
+                    trait_text = trait
+                traits_stat_text += trait_text + '\n'
+
+            traits_label.text = traits_stat_text[:-1]
+            traits_label.color = dark_green
+            traits_label.height = std_tf_height*len(player['traits'])
+
+        else:
+            traits_label.text = 'No Traits'
+            traits_label.color = red
+            traits_label.height = std_tf_height
+
+        traits_list.append(traits_label)
+
+    def display_traits():
+        for stat in traits_list:
+            view.add(stat)
+        win_team_bio.become_target()
+
+    def hide_traits():
+        for stat in traits_list:
+            view.remove(stat)
+        win_team_bio.become_target()
+
+    # ========== Player Specialities ==========
+    specialities_list = []
+
+    # Darker box to display stats on
+    class SpecialitiesBoxImageView(View):
+        def draw(self, c, r):
+            dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
+
+            for sym, position in team['formation']['positions'].iteritems():
+                # Get player coordinates
+                position_coordinates = team_spacing[sym]
+
+                # Darker box to display stats
+                c.forecolor = darker
+                c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border,
+                             dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2-player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-player_border))
+
+    specialities_list.append(SpecialitiesBoxImageView(size=(int(field_x_offset+field_width+5),
+                                                            int(field_y_offset+field_length+5))))
+
+    for sym, position in team['formation']['positions'].iteritems():
+        # Get player information
+        player = position['player']
+        position_coordinates = team_spacing[sym]
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
+        label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)
+
+        # Player rating
+        rating_summary_width = 25
+        rating_summary_label = Label(text=str(player['rating']), font=title_font_5,
+                                     width=rating_summary_width, height=std_tf_height,
+                                     x=label_x, y=label_y, just='right')
+        rating_summary_label.color = attr_color(player['rating'])
+        specialities_list.append(rating_summary_label)
+
+        # Player name
+        label_x = rating_summary_label.right
+        name_summary_label = Label(text=ascii_text(player['name']), font=std_tf_font_bold,
+                                   width=player_box_width-rating_summary_width-2*player_border, height=std_tf_height,
+                                   x=label_x, y=label_y, color=white, just='center')
+        if len(ascii_text(player['name'])) > 10:
+            name_summary_label.font = title_font_9
+            name_summary_label.y += 2
+        if len(ascii_text(player['name'])) > 13:
+            name_summary_label.font = title_font_10
+            name_summary_label.y += 2
+        if len(ascii_text(player['name'])) > 15:
+            name_summary_label.font = title_font_13
+            name_summary_label.y += 2
+        specialities_list.append(name_summary_label)
+
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
+        label_y = rating_summary_label.bottom + player_border
+
+        # Specialities Label
+        specialities_label = Label(font=smallest_tf_font,
+                                   width=player_box_width-4*player_border,
+                                   x=label_x, y=label_y, color=white, just='center')
+
+        if player['specialities'] is not None:
+            specialities_text = ''
+            for speciality in player['specialities']:
+                if speciality == 'Avoids Using Weaker Foot':
+                    speciality_text = 'Avoids Weaker Foot'
+                elif '-' in speciality:
+                    hyphen_index = speciality.index('-')
+                    speciality_text = speciality[hyphen_index+2:]
+                else:
+                    speciality_text = speciality
+                specialities_text += speciality_text + '\n'
+
+            specialities_label.text = specialities_text[:-1]
+            specialities_label.color = dark_green
+            specialities_label.height = std_tf_height*len(player['specialities'])
+
+        else:
+            specialities_label.text = 'No Specialities'
+            specialities_label.color = red
+            specialities_label.height = std_tf_height
+
+        specialities_list.append(specialities_label)
+
+    def display_specialities():
+        for stat in specialities_list:
+            view.add(stat)
+        win_team_bio.become_target()
+
+    def hide_specialities():
+        for stat in specialities_list:
             view.remove(stat)
         win_team_bio.become_target()
 
@@ -581,12 +799,16 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         hide_headshots()
         hide_summary_stats()
         hide_strength_stats()
+        hide_traits()
+        hide_specialities()
 
     # ========== Button Declarations ==========
     back_btn = Button("Back")
     headshot_trait_btn = Button("Picture")
     summary_trait_btn = Button("Stat Summary")
     strengths_trait_btn = Button("Strengths")
+    traits_btn = Button("Traits")
+    specialities_btn = Button("Specialities")
     chemistry_trait_btn = Button("Chemistry")
     links_trait_btn = Button("Links")
 
@@ -617,6 +839,22 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
         # Display strengths
         display_strength_stats()
+        win_team_bio.become_target()
+
+    def traits_btn_func():
+        # Hide all
+        hide_all()
+
+        # Display traits and specialities
+        display_traits()
+        win_team_bio.become_target()
+
+    def specialities_btn_func():
+        # Hide all
+        hide_all()
+
+        # Display traits and specialities
+        display_specialities()
         win_team_bio.become_target()
 
     def chemistry_trait_btn_func():
@@ -676,8 +914,28 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     strengths_trait_btn.color = small_button_color
     labels_list.append(strengths_trait_btn)
 
+    traits_btn.x = back_btn.left
+    traits_btn.y = strengths_trait_btn.bottom
+    traits_btn.height = small_button_height
+    traits_btn.width = button_width
+    traits_btn.font = small_button_font
+    traits_btn.action = traits_btn_func
+    traits_btn.style = 'default'
+    traits_btn.color = small_button_color
+    labels_list.append(traits_btn)
+
+    specialities_btn.x = back_btn.left
+    specialities_btn.y = traits_btn.bottom
+    specialities_btn.height = small_button_height
+    specialities_btn.width = button_width
+    specialities_btn.font = small_button_font
+    specialities_btn.action = specialities_btn_func
+    specialities_btn.style = 'default'
+    specialities_btn.color = small_button_color
+    labels_list.append(specialities_btn)
+
     chemistry_trait_btn.x = back_btn.left
-    chemistry_trait_btn.y = strengths_trait_btn.bottom
+    chemistry_trait_btn.y = specialities_btn.bottom
     chemistry_trait_btn.height = small_button_height
     chemistry_trait_btn.width = button_width
     chemistry_trait_btn.font = small_button_font
