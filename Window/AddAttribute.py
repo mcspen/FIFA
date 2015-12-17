@@ -275,11 +275,31 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
         win_attribute.hide()
 
+    def attr_btn_func(attr_to_remove):
+        # Remove from attribute dict
+        if attr_type[-6:] == 'search':
+            attr_dict.pop(attr_to_remove, None)
+            show_attributes(attribute_display_list)
+
+            if len(attr_dict) < 1:
+                erase_btn.enabled = 0
+
+        # Remove from attribute list
+        elif attr_type[-4:] == 'sort':
+            if attr_to_remove in attr_list:
+                attr_list.remove(attr_to_remove)
+                show_attributes(attribute_display_list)
+
+            if len(attr_list) < 1:
+                erase_btn.enabled = 0
+
     # ========== Buttons ==========
-    erase_btn.x = (win_width - button_width) / 2
+    custom_button_width = 100
+
+    erase_btn.x = (win_width - custom_button_width) / 2
     erase_btn.y = win_attribute.height - 70
     erase_btn.height = button_height
-    erase_btn.width = button_width
+    erase_btn.width = custom_button_width
     erase_btn.font = button_font
     erase_btn.action = erase_btn_func
     erase_btn.style = 'default'
@@ -289,10 +309,10 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
        (attr_type[-6:] == 'search' and len(attr_dict) == 0):
         erase_btn.enabled = 0
 
-    enter_btn.x = erase_btn.left - button_spacing - button_width
+    enter_btn.x = erase_btn.left - button_spacing - custom_button_width
     enter_btn.y = erase_btn.top
     enter_btn.height = button_height
-    enter_btn.width = button_width
+    enter_btn.width = custom_button_width
     enter_btn.font = button_font
     enter_btn.action = enter_btn_func
     enter_btn.style = 'default'
@@ -303,7 +323,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     back_btn.x = erase_btn.right + button_spacing
     back_btn.y = erase_btn.top
     back_btn.height = button_height
-    back_btn.width = button_width
+    back_btn.width = custom_button_width
     back_btn.font = button_font
     back_btn.action = back_btn_func
     back_btn.style = 'default'
@@ -342,7 +362,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
     def show_attributes(display_list):
 
-        # Remove old attribute labels from screen
+        # Remove old attribute buttons from screen
         for message in display_list:
             view.remove(message)
 
@@ -374,10 +394,11 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                 else:
                     msg_text += '"' + str(search_value[0]) + '"'
 
-                attr_label = Label(text=msg_text, font=std_tf_font, width=std_tf_width,
-                                   height=std_tf_height, x=message_x, y=message_y, color=title_color)
-                message_y += std_tf_height
-                display_list.append(attr_label)
+                attr_btn = Button(title=msg_text, font=std_tf_font, width=std_tf_width,
+                                  height=std_tf_height, x=message_x, y=message_y, color=title_color,
+                                  action=(attr_btn_func, key))
+                message_y += std_tf_height + 1
+                display_list.append(attr_btn)
                 index += 1
 
         # Display new sort attributes on screen
@@ -391,10 +412,11 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                     message_x = back_btn.right + 10
                     message_y = win_attribute.height - 150
 
-                attr_label = Label(text=(format_attr_name(sort_value)), font=std_tf_font, width=std_tf_width,
-                                   height=std_tf_height, x=message_x, y=message_y, color=title_color)
-                message_y += std_tf_height
-                display_list.append(attr_label)
+                attr_btn = Button(title=(format_attr_name(sort_value)), font=std_tf_font, width=std_tf_width,
+                                  height=std_tf_height, x=message_x, y=message_y, color=title_color,
+                                  action=(attr_btn_func, sort_value))
+                message_y += std_tf_height + 1
+                display_list.append(attr_btn)
 
         for attribute_label in display_list:
             view.add(attribute_label)
