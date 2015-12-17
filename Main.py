@@ -107,43 +107,6 @@ if __name__ == '__main__':
         Team(team).print_team_strengths()
         print"""
 
-    # Print Germany Team Strengths
-    """team = Team()
-    team.load('Germany2014WorldCupFinal')
-    team.print_team_strengths()"""
-
-    # Create ultimate teams and save
-    """my_players = PlayerDB()
-    #my_players.load('my_players_16', 'list')
-    my_players.load('courtois', 'list')
-
-    formation_db = FormationDB()
-    formation_db.load('All Formations', 'db')
-
-    ultimate_team = Team()
-    teams = TeamDB(ultimate_team.create_team_ultimate(my_players, formation_db))
-    teams.save('2015-11-20_2')
-    #teams.save('Courtois Teams')"""
-
-    # Create ultimate teams of silver players
-    """silver_players = PlayerDB(my_players.search({'quality': ('silver', 'exact')}))
-
-    ultimate_team = Team()
-    teams = TeamDB(ultimate_team.create_team_ultimate(silver_players, formation_db, 'multi'))
-    teams.save('silver_teams')"""
-
-    # Create ultimate teams of gold players
-    """my_players = PlayerDB()
-    my_players.load('my_players_16', 'list')
-    gold_players = PlayerDB(my_players.search({'quality': ('gold', 'exact')}))
-
-    formation_db = FormationDB()
-    formation_db.load('All Formations', 'db')
-
-    ultimate_team = Team()
-    teams = TeamDB(ultimate_team.create_team_ultimate(gold_players, formation_db))
-    teams.save('2015-11-19')"""
-
     # Create teams of American players
     """americans = PlayerDB(player_db.search({'nation': ('United States',)}))
 
@@ -152,30 +115,10 @@ if __name__ == '__main__':
     ultimate_team = Team(Team.find_team_nation(americans, formation_db))
     ultimate_team.create_team_ultimate(americans, formation_db, 'both')"""
 
-    # Search players by attribute and create new list and print comparison info
-    """attr = 'skillMoves'
-    attr_players = my_players.search({attr: 4}, 'higher')
-    attr_players = PlayerDB(attr_players)
-    attr_players.sort([attr])
-    attr_players.print_compare_info()"""
-
     # Add players to player list using console search
     """my_players.console_search(player_db)
     my_players.sort(['rating'])
     my_players.save('my_players_16', 'list')"""
-
-    # Create ultimate teams
-    """my_team = Team()
-    my_formations = FormationDB(formation_db.search({'num_defenders': 4}, 'lower'))
-    # team_list = my_team.create_team_ultimate(my_players, my_formations, 'multi', 50)
-    team_list = my_team.create_team_ultimate(my_players, formation_db, 'single', 50)
-    # team_list = my_team.create_team_ultimate(player_db, formation_db, 'single', 50)"""
-
-    # Save ultimate teams
-    """my_teams = TeamDB()
-
-    my_teams.__init__(team_list)
-    my_teams.save('2015-09-23')"""
 
     # Create team based on individual stats
     """my_players = PlayerDB()
@@ -192,17 +135,6 @@ if __name__ == '__main__':
     print
     team.print_team_strengths()"""
 
-    # Load teams and print out different info for first 20 teams
-    """my_teams.load('2015-09-11')
-    my_teams.print_db(20)
-
-    for team in my_teams.db:
-        temp = Team()
-        temp.__init__(team)
-        print '\n'
-        temp.print_summary()
-        temp.print_chemistry_stats()"""
-
     # Go through all players and get all traits
     """traits = []
     for player in player_db.db:
@@ -210,23 +142,3 @@ if __name__ == '__main__':
             traits += player['traits']
     traits = list(set(traits))
     print traits"""
-
-    # Load team and print chemistry stats for all of them
-    """team = TeamDB()
-    team.load('2015-10-07')
-    team.print_db()
-    for t in team.db:
-        Team(t).print_chemistry_stats()"""
-
-    # Create and save team list from all individual team files in a folder
-    """from os import listdir
-    files = listdir('Teams/2015-09-02/')
-    team_list = []
-    for filename in files:
-        temp_team = Team()
-        temp_team.load('2015-09-02/' + filename[:-5])
-        team_list.append(temp_team)
-
-    my_teams.add_teams(team_list)
-
-    my_teams.save('2015-09-02')"""
