@@ -412,4 +412,5 @@ def delete_all_temp_images():
 
     file_names = os.listdir("Images/temp/")
     for file_name in file_names:
-        delete_image("Images/temp/" + file_name)
+        if file_name[-4:] in [".png"]:
+            delete_image("Images/temp/" + file_name)
