@@ -272,7 +272,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                 image_file_name = 'nation_' + str(player['nation']['id']) + '_' + str(ratio)
                 image_file_name = save_small_image(image_url, image_file_name, ratio)
                 nation_image = Image(file=image_file_name)
-                nation_image_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
+                nation_image_pos = ((club_image_pos[0],
                                      club_image_pos[1]+club_image.size[1]+5))
                 headshot_rect = nation_image.bounds
                 headshot_dst_rect = Geometry.offset_rect(headshot_rect, nation_image_pos)
@@ -403,7 +403,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             name_summary_label.font = title_font_9
             name_summary_label.y += 2
         if len(ascii_text(player['name'])) > 13:
-            name_summary_label.font = title_font_10
+            name_summary_label.font = title_font_11
             name_summary_label.y += 2
         if len(ascii_text(player['name'])) > 15:
             name_summary_label.font = title_font_13
@@ -530,7 +530,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             name_summary_label.font = title_font_9
             name_summary_label.y += 2
         if len(ascii_text(player['name'])) > 13:
-            name_summary_label.font = title_font_10
+            name_summary_label.font = title_font_11
             name_summary_label.y += 2
         if len(ascii_text(player['name'])) > 15:
             name_summary_label.font = title_font_13
@@ -642,7 +642,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             name_summary_label.font = title_font_9
             name_summary_label.y += 2
         if len(ascii_text(player['name'])) > 13:
-            name_summary_label.font = title_font_10
+            name_summary_label.font = title_font_11
             name_summary_label.y += 2
         if len(ascii_text(player['name'])) > 15:
             name_summary_label.font = title_font_13
@@ -743,7 +743,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             name_summary_label.font = title_font_9
             name_summary_label.y += 2
         if len(ascii_text(player['name'])) > 13:
-            name_summary_label.font = title_font_10
+            name_summary_label.font = title_font_11
             name_summary_label.y += 2
         if len(ascii_text(player['name'])) > 15:
             name_summary_label.font = title_font_13
@@ -794,6 +794,126 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             view.remove(stat)
         win_team_bio.become_target()
 
+    # ========== Player Chemistry ==========
+    chemistry_list = []
+
+    # Darker box to display stats on
+    class ChemistryBoxImageView(View):
+        def draw(self, c, r):
+            dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
+
+            for sym, position in team['formation']['positions'].iteritems():
+                # Get player information
+                player = position['player']
+                position_coordinates = team_spacing[sym]
+
+                # Darker box to display stats
+                c.forecolor = darker
+                c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+player_border,
+                             dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2-player_border,
+                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-player_border))
+
+                # Club
+                image_url = player['club']['imageUrls']['normal']['large']
+                ratio = 0.75
+                image_file_name = 'club_' + str(player['club']['id']) + '_' + str(ratio)
+                image_file_name = save_small_image(image_url, image_file_name, ratio)
+                club_image = Image(file=image_file_name)
+                club_image_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border,
+                                   dst_rect[1]+position_coordinates[1]*y_space-player_box_height/4))
+                headshot_rect = club_image.bounds
+                headshot_dst_rect = Geometry.offset_rect(headshot_rect, club_image_pos)
+                club_image.draw(c, headshot_rect, headshot_dst_rect)
+
+                # Nation
+                image_url = player['nation']['imageUrls']['large']
+                ratio = 0.75
+                image_file_name = 'nation_' + str(player['nation']['id']) + '_' + str(ratio)
+                image_file_name = save_small_image(image_url, image_file_name, ratio)
+                nation_image = Image(file=image_file_name)
+                nation_image_pos = ((club_image_pos[0],
+                                     club_image_pos[1]+club_image.size[1]+25))
+                headshot_rect = nation_image.bounds
+                headshot_dst_rect = Geometry.offset_rect(headshot_rect, nation_image_pos)
+                nation_image.draw(c, headshot_rect, headshot_dst_rect)
+
+    chemistry_list.append(ChemistryBoxImageView(size=(int(field_x_offset+field_width+5),
+                                                      int(field_y_offset+field_length+5))))
+
+    for sym, position in team['formation']['positions'].iteritems():
+        # Get player information
+        player = position['player']
+        position_coordinates = team_spacing[sym]
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
+        label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)
+
+        # Player rating
+        rating_summary_width = 25
+        rating_summary_label = Label(text=str(player['rating']), font=title_font_5,
+                                     width=rating_summary_width, height=std_tf_height,
+                                     x=label_x, y=label_y, just='right')
+        rating_summary_label.color = attr_color(player['rating'])
+        chemistry_list.append(rating_summary_label)
+
+        # Player name
+        label_x = rating_summary_label.right
+        name_summary_label = Label(text=ascii_text(player['name']), font=std_tf_font_bold,
+                                   width=player_box_width-rating_summary_width-2*player_border, height=std_tf_height,
+                                   x=label_x, y=label_y, color=white, just='center')
+        if len(ascii_text(player['name'])) > 10:
+            name_summary_label.font = title_font_9
+            name_summary_label.y += 2
+        if len(ascii_text(player['name'])) > 13:
+            name_summary_label.font = title_font_11
+            name_summary_label.y += 2
+        if len(ascii_text(player['name'])) > 15:
+            name_summary_label.font = title_font_13
+            name_summary_label.y += 2
+        chemistry_list.append(name_summary_label)
+
+        image_width = 35
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border+image_width)
+        label_y = rating_summary_label.bottom + 13
+
+        # Club Label
+        club_label = Label(text=ascii_text(player['club']['name']), font=std_tf_font_bold,
+                           width=player_box_width-4*player_border-image_width, height=std_tf_height,
+                           x=label_x, y=label_y, color=white, just='center')
+
+
+
+
+        # SPLIT TEXT BETTER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        if len(ascii_text(player['club']['name'])) > 9:
+            club_label.font = title_font_9
+            club_label.y += 1
+        if len(ascii_text(player['club']['name'])) > 12:
+            club_text = ascii_text(player['club']['name'])
+            space_index = club_text.index(' ')
+            club_text = club_text[:space_index] + '\n' + club_text[space_index+1:]
+            club_label.text = club_text
+            club_label.height = 2*std_tf_height
+            club_label.y -= 5
+            if len(club_text[:space_index]) > 11 or len(club_text[space_index+1:]) > 11:
+                club_label.font = title_font_11
+            """club_label.font = title_font_11
+            club_label.y += 1
+        if len(ascii_text(player['club']['name'])) > 15:
+            club_label.font = title_font_13
+            club_label.y += 1"""
+        chemistry_list.append(club_label)
+
+    def display_chemistry():
+        for stat in chemistry_list:
+            view.add(stat)
+        win_team_bio.become_target()
+
+    def hide_chemistry():
+        for stat in chemistry_list:
+            view.remove(stat)
+        win_team_bio.become_target()
 
 
 
@@ -807,6 +927,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         hide_strength_stats()
         hide_traits()
         hide_specialities()
+        hide_chemistry()
 
     # ========== Button Declarations ==========
     back_btn = Button("Back")
@@ -868,6 +989,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         hide_all()
 
         # Display chemistry
+        display_chemistry()
         win_team_bio.become_target()
 
     def links_trait_btn_func():
