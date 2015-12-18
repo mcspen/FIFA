@@ -673,6 +673,9 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                     trait_text = trait
                 traits_stat_text += trait_text + '\n'
 
+            if len(player['traits']) > 5:
+                traits_stat_text += str(len(player['traits'])-5) + ' More Not Shown' + '\n'
+
             traits_label.text = traits_stat_text[:-1]
             traits_label.color = dark_green
             traits_label.height = std_tf_height*len(player['traits'])
@@ -757,7 +760,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
         if player['specialities'] is not None:
             specialities_text = ''
-            for speciality in player['specialities']:
+            for speciality in player['specialities'][:5]:
                 if speciality == 'Avoids Using Weaker Foot':
                     speciality_text = 'Avoids Weaker Foot'
                 elif '-' in speciality:
@@ -766,6 +769,9 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                 else:
                     speciality_text = speciality
                 specialities_text += speciality_text + '\n'
+
+            if len(player['specialities']) > 5:
+                specialities_text += str(len(player['specialities'])-5) + ' More Not Shown' + '\n'
 
             specialities_label.text = specialities_text[:-1]
             specialities_label.color = dark_green
