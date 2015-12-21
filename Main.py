@@ -127,8 +127,9 @@ if __name__ == '__main__':
     formation_db.load('All Formations', 'db')
     team = Team()
     #team.__init__(team.find_team(my_players, formation_db))#, ['skillMoves']))
-    #team.__init__(team.find_team(my_players, formation_db, ['skillMoves']))
-    team.__init__(team.find_team(my_players, formation_db, ['volleys']))
+    team.__init__(team.find_team(my_players, formation_db, ['skillMoves']))
+    #team.__init__(team.find_team(my_players, formation_db, ['volleys']))
+    #team.__init__(team.find_team(my_players, formation_db, ['sprintspeed']))
     team.print_summary()
     print
     team.print_chemistry_stats()
