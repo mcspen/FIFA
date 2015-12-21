@@ -15,6 +15,53 @@ def ascii_text(input_text):
     return unicodedata.normalize('NFKD', input_text).encode('ascii', 'ignore')
 
 
+def text_add_new_lines(text, max_length):
+    """
+    Adds new line characters to text
+    Input: The text to add new lines to and the max length of the line
+    Output: The text with new line characters added and the number of lines
+    """
+
+    num_lines = 1
+    longest_line = 0
+
+    # See if there are any spaces or if the text is too long
+    if (' ' in text) and len(text) > max_length:
+
+        # Split text by whitespace
+        text_list = text.split()
+        count = len(text_list[0])
+
+        # Merge parts of text if less than max length, or add new line character
+        while len(text_list) > 1:
+            if count + len(text_list[1]) + 1 > max_length:
+                text_list[0] = text_list[0] + '\n' + text_list[1]
+                if count > longest_line:
+                    longest_line = count
+                count = len(text_list[1])
+                num_lines += 1
+
+                # Check if that was the last word and check for length
+                if len(text_list) == 2:
+                    if len(text_list[1]) > longest_line:
+                        longest_line = text_list[1]
+                del text_list[1]
+
+            else:
+                text_list[0] = text_list[0] + ' ' + text_list[1]
+                count += len(text_list[1])
+                del text_list[1]
+
+        return_text = text_list[0]
+
+    else:
+        return_text = text
+        longest_line = len(text)
+
+    # Return the text, the number of lines, and the number of characters of the longest line
+    return return_text, num_lines, longest_line
+
+
 def player_info_labels(attributes):
     """
     Gets the labels of the players info to be displayed

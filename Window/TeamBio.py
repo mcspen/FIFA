@@ -3,7 +3,7 @@ from AppConfig import *
 import json
 import operator
 from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
-    save_image, save_small_image, get_file_prefix
+    save_image, save_small_image, get_file_prefix, text_add_new_lines
 from Logic import PlayerDB
 from Logic import Team
 from Window import PlayerBio
@@ -833,7 +833,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                 image_file_name = save_small_image(image_url, image_file_name, ratio)
                 nation_image = Image(file=image_file_name)
                 nation_image_pos = ((club_image_pos[0],
-                                     club_image_pos[1]+club_image.size[1]+25))
+                                     club_image_pos[1]+club_image.size[1]+30))
                 headshot_rect = nation_image.bounds
                 headshot_dst_rect = Geometry.offset_rect(headshot_rect, nation_image_pos)
                 nation_image.draw(c, headshot_rect, headshot_dst_rect)
@@ -872,38 +872,66 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             name_summary_label.y += 2
         chemistry_list.append(name_summary_label)
 
+        # League Title Label
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+3*player_border)
+        label_y = rating_summary_label.bottom + 45
+        league_title_width = 45
+        league_title_label = Label(text="League:", font=title_font_11,
+                                   width=league_title_width, height=std_tf_height,
+                                   x=label_x, y=label_y, color=white, just='left')
+        chemistry_list.append(league_title_label)
+
         image_width = 35
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border+image_width)
         label_y = rating_summary_label.bottom + 13
 
         # Club Label
-        club_label = Label(text=ascii_text(player['club']['name']), font=std_tf_font_bold,
+        club_label = Label(font=std_tf_font_bold,
                            width=player_box_width-4*player_border-image_width, height=std_tf_height,
                            x=label_x, y=label_y, color=white, just='center')
 
+        club_text, num_lines, longest_line = text_add_new_lines(ascii_text(player['club']['abbrName']), 11)
+        club_label.text = club_text
+        club_label.height = num_lines*std_tf_height
 
-
-
-        # SPLIT TEXT BETTER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        if len(ascii_text(player['club']['name'])) > 9:
+        if num_lines > 1:
+            club_label.y -= 6
             club_label.font = title_font_9
-            club_label.y += 1
-        if len(ascii_text(player['club']['name'])) > 12:
-            club_text = ascii_text(player['club']['name'])
-            space_index = club_text.index(' ')
-            club_text = club_text[:space_index] + '\n' + club_text[space_index+1:]
-            club_label.text = club_text
-            club_label.height = 2*std_tf_height
-            club_label.y -= 5
-            if len(club_text[:space_index]) > 11 or len(club_text[space_index+1:]) > 11:
-                club_label.font = title_font_11
-            """club_label.font = title_font_11
-            club_label.y += 1
-        if len(ascii_text(player['club']['name'])) > 15:
-            club_label.font = title_font_13
-            club_label.y += 1"""
+
+        if longest_line > 9:
+            club_label.font = title_font_9
+        if longest_line > 12:
+            club_label.font = title_font_11
         chemistry_list.append(club_label)
+
+        label_y = rating_summary_label.bottom + 43
+
+        # League Label
+        league_label = Label(text=ascii_text(player['league']['abbrName']), font=std_tf_font_bold,
+                             width=player_box_width-4*player_border-image_width, height=std_tf_height,
+                             x=label_x, y=label_y, color=white, just='center')
+        chemistry_list.append(league_label)
+
+        label_y = rating_summary_label.bottom + 72
+
+        # Nation Label
+        nation_label = Label(font=std_tf_font_bold,
+                           width=player_box_width-4*player_border-image_width, height=std_tf_height,
+                           x=label_x, y=label_y, color=white, just='center')
+
+        nation_text, num_lines, longest_line = text_add_new_lines(ascii_text(player['nation']['abbrName']), 11)
+        nation_label.text = nation_text
+        nation_label.height = num_lines*std_tf_height
+
+        if num_lines > 1:
+            nation_label.y -= 6
+            nation_label.font = title_font_9
+
+        if longest_line > 9:
+            nation_label.font = title_font_9
+        if longest_line > 12:
+            nation_label.font = title_font_11
+        chemistry_list.append(nation_label)
 
     def display_chemistry():
         for stat in chemistry_list:
@@ -936,7 +964,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     strengths_trait_btn = Button("Strengths")
     traits_btn = Button("Traits")
     specialities_btn = Button("Specialities")
-    chemistry_trait_btn = Button("Chemistry")
+    chemistry_trait_btn = Button("Team/League/Nation")
     links_trait_btn = Button("Links")
 
     # ========== Button Functions ==========
