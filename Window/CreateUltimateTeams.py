@@ -108,11 +108,38 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
 
     process_type_radio_group.value = settings['process_type']
 
+    # ========== Chemistry Matters Label ==========
+    chemistry_matters_label = Label(text="Chemistry Matters: ", font=std_tf_font_bold,
+                                    width=std_tf_width, height=std_tf_height,
+                                    x=settings_indent - std_tf_width,
+                                    y=process_type_label.bottom + title_border,
+                                    color=title_color, just='right')
+    display_items.append(chemistry_matters_label)
+
+    def get_chemistry_matters_rg():
+        settings['chemistry_matters'] = chemistry_matters_radio_group.value
+        win_ultimate_teams.become_target()
+
+    chemistry_matters_radio_group = RadioGroup(action=get_chemistry_matters_rg)
+
+    # Process Type Radio Buttons
+    multi_process_radio_btn = RadioButton('Yes', width=radio_btn_width,
+                                          x=chemistry_matters_label.right + radio_btn_space,
+                                          y=chemistry_matters_label.top, group=chemistry_matters_radio_group, value=True)
+    display_items.append(multi_process_radio_btn)
+
+    single_process_radio_btn = RadioButton('No', width=radio_btn_width,
+                                           x=multi_process_radio_btn.right + radio_btn_space,
+                                           y=chemistry_matters_label.top, group=chemistry_matters_radio_group, value=False)
+    display_items.append(single_process_radio_btn)
+
+    chemistry_matters_radio_group.value = settings['chemistry_matters']
+
     # ========== Judging Teams Label ==========
     judging_teams_label = Label(text="How to Judge Teams: ", font=std_tf_font_bold,
                                        width=std_tf_width, height=std_tf_height,
                                        x=settings_indent - std_tf_width,
-                                       y=process_type_label.bottom + title_border,
+                                       y=chemistry_matters_label.bottom + title_border,
                                        color=title_color, just='right')
     display_items.append(judging_teams_label)
 
@@ -122,31 +149,64 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
                                        y=judging_teams_label.top,
                                        color=title_color, just='left')
     judging_teams_attributes_text = ''
-    for attr in settings['sort_attributes']:
+    for attr in settings['team_sort_attributes']:
         judging_teams_attributes_text += attr + ', '
     judging_teams_attributes.text = judging_teams_attributes_text[:-2]
     display_items.append(judging_teams_attributes)
 
     # Judging Teams Edit Button
-    def judging_edit_btn_func():
+    def judging_teams_edit_btn_func():
         do_nothing = 0
 
     judging_edit_btn_width = 40
-    judging_edit_btn = Button("Edit",
-                              #x=teams_to_return_tf.right - judging_edit_btn_width,
-                              x=judging_teams_attributes.right,
-                              y=judging_teams_label.top,
-                              height=small_button_height-7, width=judging_edit_btn_width,
-                              font=small_button_font, action=judging_edit_btn_func, style = 'default',
-                              color=button_color, just='right')
-    display_items.append(judging_edit_btn)
+    judging_teams_edit_btn = Button("Edit",
+                                    #x=teams_to_return_tf.right - judging_edit_btn_width,
+                                    x=judging_teams_attributes.right,
+                                    y=judging_teams_label.top,
+                                    height=small_button_height-7, width=judging_edit_btn_width,
+                                    font=small_button_font, action=judging_teams_edit_btn_func, style = 'default',
+                                    color=button_color, just='right')
+    display_items.append(judging_teams_edit_btn)
+
+    # ========== Judging Players Label ==========
+    judging_players_label = Label(text="How to Judge Players: ", font=std_tf_font_bold,
+                                  width=std_tf_width, height=std_tf_height,
+                                  x=settings_indent - std_tf_width,
+                                  y=judging_teams_label.bottom + title_border,
+                                  color=title_color, just='right')
+    display_items.append(judging_players_label)
+
+    judging_players_attributes = Label(font=std_tf_font,
+                                       width=std_tf_width, height=std_tf_height,
+                                       x=judging_players_label.right + radio_btn_space,
+                                       y=judging_players_label.top,
+                                       color=title_color, just='left')
+    judging_players_attributes_text = ''
+    for attr in settings['player_sort_attributes']:
+        judging_players_attributes_text += attr + ', '
+    judging_players_attributes.text = judging_players_attributes_text[:-2]
+    display_items.append(judging_players_attributes)
+
+    # Judging Teams Edit Button
+    def judging_players_edit_btn_func():
+        do_nothing = 0
+
+    judging_edit_btn_width = 40
+    judging_players_edit_btn = Button("Edit",
+                                      #x=teams_to_return_tf.right - judging_edit_btn_width,
+                                      x=judging_players_attributes.right,
+                                      y=judging_players_label.top,
+                                      height=small_button_height-7, width=judging_edit_btn_width,
+                                      font=small_button_font, action=judging_players_edit_btn_func, style = 'default',
+                                      color=button_color, just='right')
+    display_items.append(judging_players_edit_btn)
 
     # ========== Limits Label ==========
     limits_label = Label(text="Limitations", font=title_font_3,
-                                       width=std_tf_width, height=title_height-25,
-                                       x=(win_ultimate_teams.width - std_tf_width)/2,
-                                       y=judging_teams_label.bottom + title_border*5,
-                                       color=title_color, just='center')
+                         width=std_tf_width, height=title_height-25,
+                         x=(win_ultimate_teams.width - std_tf_width)/2,
+                         y=judging_players_label.bottom + title_border*5,
+                         color=title_color, just='center')
     display_items.append(limits_label)
 
     # ========== Players per Position Label ==========
