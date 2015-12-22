@@ -247,8 +247,11 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
             kilograms = player[personal]
             pounds = convert_weight(kilograms)
             stat_label.text = '%.1f lb (%d kg)' % (pounds, kilograms)
-        elif personal in ['club', 'league', 'nation']:
+        elif personal in ['club', 'nation']:
             stat_label.text = ascii_text(player[personal]['name'])
+        elif personal in ['league']:
+            stat_label.text = '%s (%s)' % (ascii_text(player[personal]['name']),
+                                           ascii_text(player[personal]['abbrName']))
         elif personal == 'birthdate':
             b_day = format_birthday(player['birthdate'])
             stat_label.text = b_day
@@ -397,7 +400,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         for trait in player['traits'][index:]:
             traits_list_2 += trait + ', '
     else:
-        traits_list = 'No traits.'
+        traits_list = 'No traits..'
 
     if len(traits_list_2) > 0:
         traits_list_label.text = traits_list[:-1]
@@ -420,7 +423,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         for speciality in player['specialities'][index:]:
             specialities_list_2 += speciality + ', '
     else:
-        specialities_list = 'No specialities.'
+        specialities_list = 'No specialities..'
 
     if len(specialities_list_2) > 0:
         specialities_list_label.text = specialities_list[:-1]
