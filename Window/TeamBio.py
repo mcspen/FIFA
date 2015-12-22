@@ -301,7 +301,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         # Player Position
         colors = [red, dark_orange, yellow, dark_green]
         position_color = colors[Team.Team.position_chemistry(player['position'], position['symbol'])]
-        position_label = Label(text=position['symbol'], font=std_tf_font_bold,
+        position_label = Label(text=player['position'], font=std_tf_font_bold,
                                width=position_width, height=std_tf_height,
                                x=int(dst_rect[0]+position_coordinates[0]*x_space+player_box_height/2 -
                                      2*player_border-2*position_width),
@@ -311,7 +311,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
         # Formation Position
         position_color = white
-        position_label = Label(text='/'+player['position'], font=std_tf_font_bold,
+        position_label = Label(text='/'+position['symbol'], font=std_tf_font_bold,
                                width=position_width, height=std_tf_height,
                                x=int(dst_rect[0]+position_coordinates[0]*x_space+player_box_height/2 -
                                      2*player_border-position_width),
