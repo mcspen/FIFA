@@ -48,9 +48,5 @@ Change how create club/league/nation functions return/assign the teams.
 Change nation/league/club name comparisons to id comparisons? (avoid mix ups by clubs with same name)
 
 Can't find:
-75   ST   JOSELU   Spain   Stoke City   Barclays PL   66 75 60 73 26 69
 75   LM   LUCAS PIAZON   Brazil   Reading   FL Championship   74 73 73 78 25 61
-75   CAM   KONE   Greece   Udinese   Serie A TIM   76 72 74 77 57 73
-75   CB   POCOGNOLI   Belgium   West Brom   Barclays PL   77 59 68 73 73 76
 75   CB   VIZCARRONDO   Venezuela   FC Nantes   Ligue 1   23 48 46 38 77 78
-75   CB   BASSONG   Cameroon   Norwich   Barclays PL   69 35 49 44 76 81
