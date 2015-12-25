@@ -50,3 +50,4 @@ Change nation/league/club name comparisons to id comparisons? (avoid mix ups by 
 Can't find:
 75   LM   LUCAS PIAZON   Brazil   Reading   FL Championship   74 73 73 78 25 61
 75   CB   VIZCARRONDO   Venezuela   FC Nantes   Ligue 1   23 48 46 38 77 78
+80   CB   JONES   England   Manchester Utd   Barclays PL   66 56 65 61 82 80
