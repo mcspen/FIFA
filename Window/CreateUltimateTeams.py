@@ -2,6 +2,7 @@ from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
 
 from AppConfig import *
 import TeamsMenu
+import StatusWindow
 from Logic import Team
 from Logic import TeamDB
 import json
@@ -498,14 +499,21 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
             config_file.close()
 
     def start_btn_func():
-        win_ultimate_teams.become_target()
         save_settings()
 
+        # Open status page
+        """StatusWindow.open_status_window(win_ultimate_teams.x, win_ultimate_teams.y,
+                                        db_dict, team_list_name_tf.value, win_ultimate_teams)
+        win_ultimate_teams.hide()"""
+
+        # Run team creation here
         team = Team.Team()
         teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], db_dict['formation_list'][1]))
+
         if len(teams.db) > 0:
             teams.save(team_list_name_tf.value)
-        win_ultimate_teams.become_target()
+        else:
+            print 'Not saved because no teams created.'
 
     def back_btn_func():
         save_settings()

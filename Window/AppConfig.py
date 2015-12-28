@@ -21,6 +21,7 @@ edit_title = 'Edit'
 create_list_title = 'Create New List'
 pick_position_title = 'Pick New Position'
 create_ultimate_teams_title = 'Create Ultimate Teams'
+status_window_title = "Status"
 
 # Titles on the window bar at the top
 start_win_title = 'FIFA Squad Builder'
@@ -39,6 +40,7 @@ edit_win_title = start_win_title + ' - ' + edit_title
 create_list_win_title = start_win_title + ' - ' + create_list_title
 pick_position_win_title = start_win_title + ' - ' + pick_position_title
 create_ultimate_teams_win_title = start_win_title + ' - ' + create_ultimate_teams_title
+status_window_win_title = start_win_title + ' - ' + status_window_title
 
 # ========== Colors ==========
 black = GUI.StdColors.black
