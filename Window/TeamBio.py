@@ -1098,7 +1098,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
         # === Link Average ====
         # Link Average Label
-        link_avg_title_text = 'Link average is %s' % (str(link_total/len(position['links']))[:5])
+        link_avg_title_text = 'Link average is %s' % (str(float(link_total)/len(position['links']))[:5])
         link_avg_title_label = Label(text=link_avg_title_text, font=title_font_13,
                                      width=player_box_width - 2*player_border, height=std_tf_height,
                                      x=label_x, y=label_y, color=white, just='center')
