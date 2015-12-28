@@ -434,9 +434,11 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             label_y += std_tf_height
 
         # Weak foot label
-        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-std_tf_width) + 15
+        star_label_width = 70
+        star_width = 35
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-star_label_width) + 15
         weak_foot_label = Label(text="Weak Foot: ", font=small_tf_font,
-                            width=std_tf_width, height=std_tf_height,
+                            width=star_label_width, height=std_tf_height,
                             x=label_x, y=label_y,
                             color=title_color, just='right')
         summary_stats.append(weak_foot_label)
@@ -446,7 +448,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         star_color = colors[player['weakFoot']-1]
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space) + 15
         weak_foot_stars_label = Label(font=small_tf_font,
-                                  width=std_tf_width, height=std_tf_height,
+                                  width=star_width, height=std_tf_height,
                                   x=label_x, y=label_y,
                                   color=star_color, just='left')
         weak_foot_stars_label.text = '*'*player['weakFoot']
@@ -455,9 +457,9 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         label_y += std_tf_height
 
         # Skill moves label
-        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-std_tf_width) + 15
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-star_label_width) + 15
         skill_label = Label(text="Skill Moves: ", font=small_tf_font,
-                            width=std_tf_width, height=std_tf_height,
+                            width=star_label_width, height=std_tf_height,
                             x=label_x, y=label_y,
                             color=title_color, just='right')
         summary_stats.append(skill_label)
@@ -467,7 +469,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         star_color = colors[player['skillMoves']-1]
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space) + 15
         skill_stars_label = Label(font=small_tf_font,
-                                  width=std_tf_width, height=std_tf_height,
+                                  width=star_width, height=std_tf_height,
                                   x=label_x, y=label_y,
                                   color=star_color, just='left')
         skill_stars_label.text = '*'*player['skillMoves']
