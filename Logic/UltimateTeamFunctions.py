@@ -300,6 +300,18 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
             position = dict(pos)
             break
 
+    # TESTING HAVING STARTING PLAYERS ON ROSTER ========================================================================
+    if custom_symbol in roster:
+        # Call recursive function
+        results = recursive_create(players, formation, chemistry_matters, time_limit, players_per_position,
+                                   teams_per_formation, team_sort_attributes, player_sort_attributes,
+                                   num_teams, next_index, roster, base_ids, team_list, team_count)
+        team_list = results[0]
+        team_count = results[1]
+
+        return [team_list, team_count]
+    # TESTING HAVING STARTING PLAYERS ON ROSTER ========================================================================
+
     dependent_pos = []
     pos_list = []
 

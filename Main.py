@@ -9,6 +9,7 @@ from Logic.PlayerDB import PlayerDB
 from Logic.TeamDB import TeamDB
 from Logic.Team import Team
 from Logic.HelperFunctions import delete_all_temp_images
+from Logic import UltimateTeamFunctions
 
 if __name__ == '__main__':
     multiprocessing.freeze_support()
@@ -63,6 +64,48 @@ if __name__ == '__main__':
     save_image(player['club']['imageUrls']['normal']['small'], 'club_normal_small_imgUrl')
     save_image(player['club']['imageUrls']['normal']['small'], 'club_normal_medium_imgUrl')
     save_image(player['club']['imageUrls']['normal']['large'], 'club_normal_large_imgUrl')"""
+
+    # Creating Ultimate teams with some players specified
+    """players = PlayerDB()
+    #players.load('my_players_16', 'list')
+    players.load('FIFA 16 - Current', 'db')
+    formations = FormationDB()
+    formations.load('4-4-2', 'list')
+    formation = formations.db[0]
+    chemistry_matters = True
+    time_limit = time.time() + 600
+    players_per_position = 20
+    teams_per_formation = 100
+    team_sort_attributes = ['rating']
+    player_sort_attributes = ['rating']
+    num_teams = 100
+
+    player0 = players.search({'name_custom': ('Courtois',)})[0]
+    player1 = players.search({'name_custom': ('Reus',)})[0]
+    player2 = players.search({'name_custom': ('Thiago Silva',)})[0]
+    player3 = players.search({'name_custom': ('Maxwell',)})[0]
+    player4 = players.search({'name_custom': ('Kompany',)})[0]
+    player5 = players.search({'name_custom': ('Zabaleta',)})[0]
+    player6 = players.search({'name_custom': ('Gotze',)})[0]
+    player7 = players.search({'name_custom': ('Luiz Gustavo',)})[0]
+    player8 = players.search({'name_custom': ('Kruse',)})[0]
+    player9 = players.search({'name_custom': ('Huntelaar',)})[0]
+
+    roster = {'GK': player0, 'LM': player1, 'LCB': player2, 'LB': player3, 'RCB': player4, 'RB': player5,
+              'RCM': player6, 'LCM': player7, 'LST': player8, 'RST': player9}
+
+    base_ids = [player0['baseId'], player1['baseId'], player2['baseId'], player3['baseId'], player4['baseId'],
+                player5['baseId'], player6['baseId'], player7['baseId'], player8['baseId'], player9['baseId']]
+
+    test = UltimateTeamFunctions.recursive_create(
+            players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
+            team_sort_attributes, player_sort_attributes, num_teams, roster=roster, base_ids=base_ids)
+
+    if len(test[0]) > 0:
+        teams = TeamDB(test[0])
+        teams.save('test test test test test', True)
+        print 'Got some teams!'
+    # """
 
     # Print out strengths for first 100 teams
     """teams = TeamDB()
