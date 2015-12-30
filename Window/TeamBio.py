@@ -1075,12 +1075,12 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         # === Link Chemistry ====
         link_total = 0
 
-        link_label_width = 55
+        link_label_width = 30
         link_point_width = 40
 
         for link in position['links']:
             # Link Label
-            link_title_label = Label(text=link.upper() + " Link:", font=title_font_13,
+            link_title_label = Label(text=link.upper(), font=title_font_13,
                                          width=link_label_width, height=std_tf_height,
                                          x=label_x, y=label_y, color=white, just='right')
             chemistry_list.append(link_title_label)
@@ -1097,29 +1097,157 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             label_y = link_title_label.bottom - 9
 
         # === Link Average ====
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space + 13 + 5)
+        label_y = position_title_label.bottom - 3
+        avg_title_width = 20
         # Link Average Label
-        link_avg_title_text = 'Link average is %s' % (str(float(link_total)/len(position['links']))[:5])
-        link_avg_title_label = Label(text=link_avg_title_text, font=title_font_13,
-                                     width=player_box_width - 2*player_border, height=std_tf_height,
-                                     x=label_x, y=label_y, color=white, just='center')
+        link_avg_title_label = Label(text='Avg:', font=title_font_13,
+                                     width=avg_title_width, height=std_tf_height,
+                                     x=label_x, y=label_y, color=white, just='right')
         chemistry_list.append(link_avg_title_label)
 
-        # Position Stat
-        colors = [red, dark_orange, yellow, dark_green]
-        position_chem_number = Team.Team.position_chemistry(player['position'], position['symbol'])
-        position_color = colors[position_chem_number]
-        position_label = Label(text=player['position'] + '\n/' + position['symbol'], font=title_font_13,
-                               width=chemistry_info_width, height=std_tf_height*2,
-                               x=position_title_label.right + 5, y=label_y-7, color=position_color, just='center')
-        #chemistry_list.append(position_label)
+        # Link Average Stat
+        avg_width = 20
+        link_avg = float(link_total)/len(position['links'])
+        if link_avg < 0.3:
+            link_point_color = red
+        elif link_avg < 1:
+            link_point_color = dark_orange
+        elif link_avg <= 1.6:
+            link_point_color = yellow
+        else:
+            link_point_color = dark_green
+        link_avg_label = Label(text=str(link_avg)[:4], font=title_font_13,
+                               width=avg_width, height=std_tf_height,
+                               x=link_avg_title_label.right + 2, y=label_y,
+                               color=link_point_color, just='left')
+        chemistry_list.append(link_avg_label)
 
-        # Position Score
-        position_tiers = ['Bad', 'Okay', 'Good', 'Perfect']
-        position_tier = position_tiers[position_chem_number]
-        position_point = Label(text=position_tier, font=title_font_13,
-                               width=chemistry_point_width, height=std_tf_height,
-                               x=position_label.right + 5, y=label_y, color=position_color, just='center')
-        #chemistry_list.append(position_point)
+        # === Position Links Chem Points ====
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space + 13 + 4)
+        label_y = link_avg_title_label.bottom - 9
+        pl_chem_title_width = 30
+        # Position Links Chem Points Label
+        pl_chem_title_label = Label(text='Chem:', font=title_font_13,
+                                     width=pl_chem_title_width, height=std_tf_height,
+                                     x=label_x, y=label_y, color=white, just='right')
+        chemistry_list.append(pl_chem_title_label)
+
+        # Position Links Chem Points Stat
+        pl_chem_width = 20
+        # Calculate Position Links Chemistry
+        bad_points = [0, 1, 2, 3]
+        okay_points = [1, 3, 5, 6]
+        good_points = [2, 5, 8, 9]
+        perfect_points = [2, 5, 9, 10]
+
+        if link_avg < 0.3:
+            pl_chem_points = bad_points[position_chem_number]
+        elif link_avg < 1:
+            pl_chem_points = okay_points[position_chem_number]
+        elif link_avg <= 1.6:
+            pl_chem_points = good_points[position_chem_number]
+        else:
+            pl_chem_points = perfect_points[position_chem_number]
+
+        # Assign Position Links Chemistry Color
+        if pl_chem_points < 4:
+            pl_chem_color = red
+        elif pl_chem_points < 7:
+            pl_chem_color = dark_orange
+        elif pl_chem_points <= 8:
+            pl_chem_color = yellow
+        else:
+            pl_chem_color = dark_green
+        pl_chem_label = Label(text=str(pl_chem_points), font=title_font_13,
+                              width=pl_chem_width, height=std_tf_height,
+                              x=pl_chem_title_label.right + 2, y=label_y,
+                              color=pl_chem_color, just='left')
+        chemistry_list.append(pl_chem_label)
+
+        # === Manager Chemistry Points ====
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space + 13 + 3)
+        label_y = pl_chem_title_label.bottom - 9
+        manager_chem_title_width = 25
+
+        # Manager Chemistry Points Label
+        manager_chem_title_label = Label(text='Mgr:', font=title_font_13,
+                                         width=manager_chem_title_width, height=std_tf_height,
+                                         x=label_x, y=label_y, color=white, just='right')
+        chemistry_list.append(manager_chem_title_label)
+
+        # Manager Chemistry Points Stat
+        manager_chem_width = 20
+        if ((team['manager']['league'] == player['league']['name']) or
+                (team['manager']['nation'] == player['nation']['name'])):
+            manager_points = 1
+            manager_points_color = dark_green
+        else:
+            manager_points = 0
+            manager_points_color = red
+
+        manager_chem_label = Label(text=str(manager_points), font=title_font_13,
+                                   width=manager_chem_width, height=std_tf_height,
+                                   x=manager_chem_title_label.right + 2, y=label_y,
+                                   color=manager_points_color, just='left')
+        chemistry_list.append(manager_chem_label)
+
+        # === Loyalty Chemistry Points ====
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space + 13 + 4)
+        label_y = manager_chem_title_label.bottom - 9
+        loyalty_chem_title_width = 30
+
+        # Loyalty Chemistry Points Label
+        loyalty_chem_title_label = Label(text='Loyal:', font=title_font_13,
+                                         width=loyalty_chem_title_width, height=std_tf_height,
+                                         x=label_x, y=label_y, color=white, just='right')
+        chemistry_list.append(loyalty_chem_title_label)
+
+        # Loyalty Chemistry Points Stat
+        loyalty_chem_width = 20
+        loyalty_points = 1
+        if loyalty_points == 1:
+            loyalty_points_color = dark_green
+        else:
+            loyalty_points_color = red
+
+        loyalty_chem_label = Label(text=str(loyalty_points), font=title_font_13,
+                                   width=loyalty_chem_width, height=std_tf_height,
+                                   x=loyalty_chem_title_label.right + 2, y=label_y,
+                                   color=loyalty_points_color, just='left')
+        chemistry_list.append(loyalty_chem_label)
+
+        # === Total Chemistry Points ====
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border + 7)
+        label_y = int(dst_rect[1]+position_coordinates[1]*y_space + player_box_height/2 - player_border - 18)
+        total_chem_title_width = 90
+
+        # Total Chemistry Points Label
+        total_chem_title_label = Label(text='Total Chemistry:', font=title_font_11,
+                                       width=total_chem_title_width, height=std_tf_height,
+                                       x=label_x, y=label_y, color=white, just='right')
+        chemistry_list.append(total_chem_title_label)
+
+        # Total Chemistry Points Stat
+        total_chem_width = 30
+        total_chem_points = pl_chem_points + manager_points + loyalty_points
+        if total_chem_points > 10:
+            total_chem_points = 10
+
+        if total_chem_points < 4:
+            total_chem_color = red
+        elif total_chem_points < 7:
+            total_chem_color = dark_orange
+        elif total_chem_points < 10:
+            total_chem_color = yellow
+        else:
+            total_chem_color = dark_green
+
+        total_chem_label = Label(text=str(total_chem_points), font=title_font_11,
+                                 width=total_chem_width, height=std_tf_height,
+                                 x=total_chem_title_label.right + 2, y=label_y,
+                                 color=total_chem_color, just='left')
+        chemistry_list.append(total_chem_label)
 
     def display_chemistry():
         for stat in chemistry_list:
