@@ -222,6 +222,13 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                     if -1 < return_value < 111:
                         valid = True
 
+            elif radio_group.value in ["total_skillMoves"]:
+                # Value should be an integer between 10 and 56
+                if value_tf.value.isdigit():
+                    return_value = int(value_tf.value)
+                    if 10 < return_value < 56:
+                        valid = True
+
             elif radio_group.value in ["strength"]:
                 # Value should be an integer
                 if value_tf.value.isdigit():

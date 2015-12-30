@@ -488,7 +488,11 @@ def find_teams_ultimate(players, formations):
 
     process = configs['process_type']
     team_sort_attributes = configs['team_sort_attributes']
+    if len(team_sort_attributes) < 1:
+        team_sort_attributes.append('rating')
     player_sort_attributes = configs['player_sort_attributes']
+    if len(player_sort_attributes) < 1:
+        player_sort_attributes.append('rating')
     chemistry_matters = configs['chemistry_matters']
 
     if configs['players_per_position'][0]:
