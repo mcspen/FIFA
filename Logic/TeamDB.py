@@ -115,6 +115,13 @@ class TeamDB:
 
                 if attr in current_team:
                     attribute_tuple += (current_team[attr],)
+                elif attr in ['total_skillMoves']:
+                    # Calculate total
+                    total = 0
+                    for position in current_team['formation']['positions'].itervalues():
+                        player = position['player']
+                        total += player[attr[6:]]
+                    attribute_tuple += (total,)
                 else:
                     print "Invalid Attribute: %s" % attr
 
@@ -193,6 +200,21 @@ class TeamDB:
                             match = False
                     elif compare == 'lower':
                         if not team[attribute] <= value:
+                            match = False
+                elif attribute in ['total_skillMoves']:
+                    # Calculate total
+                    total = 0
+                    for position in team['formation']['positions'].itervalues():
+                        player = position['player']
+                        total += player[attribute[6:]]
+                    if compare == 'higher':
+                        if not total >= value:
+                            match = False
+                    elif compare == 'exact':
+                        if not total == value:
+                            match = False
+                    elif compare == 'lower':
+                        if not total <= value:
                             match = False
                 elif attribute in ['style']:
                     string_value = value.upper()

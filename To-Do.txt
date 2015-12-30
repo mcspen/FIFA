@@ -1,10 +1,6 @@
 Add the different team creation types to the Team Window
 Create an option for creating by picking each player.
 
-Add option to ignore chemistry?
-Add option for how to judge players
-Implement edit button
-
 Change how teams work so that you can have two lists of teams and move teams back and forth.
 
 Move team creation function to TeamDB?
