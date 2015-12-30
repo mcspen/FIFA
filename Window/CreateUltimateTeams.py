@@ -2,13 +2,13 @@ from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
 
 from AppConfig import *
 import TeamsMenu
-import StatusWindow
+import AddAttribute
 from Logic import Team
 from Logic import TeamDB
 import json
 
 
-def open_create_ultimate_teams_window(window_x, window_y, db_dict):
+def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_list=None, team_judge_list=None):
 
     display_items = []
 
@@ -16,6 +16,13 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
     with open('configs.json', 'r') as f:
         settings = json.load(f)['ultimate_team_configs']
         f.close()
+
+    # Set the attributes lists
+    if player_judge_list is not None:
+        settings['player_sort_attributes'] = player_judge_list
+
+    if team_judge_list is not None:
+        settings['team_sort_attributes'] = team_judge_list
 
     # ========== Window ==========
     win_ultimate_teams = Window()
@@ -157,7 +164,14 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
 
     # Judging Teams Edit Button
     def judging_teams_edit_btn_func():
-        do_nothing = 0
+        attr_dict = {}
+        attr_list = settings['team_sort_attributes']
+        attr_type = 'team_sort'
+        attribute_settings = {'window': 'ultimate_team_judging'}
+        AddAttribute.open_attribute_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, attr_dict,
+                                           attr_list, attr_type, attribute_settings)
+
+        win_ultimate_teams.hide()
 
     judging_edit_btn_width = 40
     judging_teams_edit_btn = Button("Edit",
@@ -190,7 +204,14 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
 
     # Judging Teams Edit Button
     def judging_players_edit_btn_func():
-        do_nothing = 0
+        attr_dict = {}
+        attr_list = settings['player_sort_attributes']
+        attr_type = 'player_sort'
+        attribute_settings = {'window': 'ultimate_player_judging'}
+        AddAttribute.open_attribute_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, attr_dict,
+                                           attr_list, attr_type, attribute_settings)
+
+        win_ultimate_teams.hide()
 
     judging_edit_btn_width = 40
     judging_players_edit_btn = Button("Edit",
@@ -519,6 +540,13 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict):
         save_settings()
         TeamsMenu.open_teams_menu(win_ultimate_teams.x, win_ultimate_teams.y, db_dict)
         win_ultimate_teams.hide()
+
+    # Save the attribute lists if they were changed
+    if player_judge_list is not None:
+        save_settings()
+
+    if team_judge_list is not None:
+        save_settings()
 
     # ========== Buttons ==========
     start_btn.x = (win_width - 2*button_width - button_spacing) / 2
