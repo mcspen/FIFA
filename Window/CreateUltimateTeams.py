@@ -8,7 +8,8 @@ from Logic import TeamDB
 import json
 
 
-def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_list=None, team_judge_list=None):
+def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_list=None, team_judge_list=None,
+                                      file_name=None):
 
     display_items = []
 
@@ -69,11 +70,10 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
 
     settings_indent = 3*win_width/7
 
-    # ========== Team name ==========
+    # ========== Team Name ==========
     tf_width = 235
     team_name_label_width = 130
     disabled_msg = "Disabled"
-
 
     team_list_name_label = Label(text="Team List Name: ", font=std_tf_font_bold,
                                  width=team_name_label_width, height=std_tf_height,
@@ -85,6 +85,9 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
     team_list_name_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height + 5,
                                   x=team_list_name_label.right + small_button_spacing, y=team_list_name_label.top)
     display_items.append(team_list_name_tf)
+
+    if file_name is not None:
+        team_list_name_tf.value = file_name
 
     radio_btn_width = 75
     radio_btn_space = 5
@@ -164,10 +167,11 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
 
     # Judging Teams Edit Button
     def judging_teams_edit_btn_func():
+        save_settings()
         attr_dict = {}
         attr_list = settings['team_sort_attributes']
         attr_type = 'team_sort'
-        attribute_settings = {'window': 'ultimate_team_judging'}
+        attribute_settings = {'window': 'ultimate_team_judging', 'file_name': team_list_name_tf.value}
         AddAttribute.open_attribute_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, attr_dict,
                                            attr_list, attr_type, attribute_settings)
 
@@ -204,10 +208,11 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
 
     # Judging Teams Edit Button
     def judging_players_edit_btn_func():
+        save_settings()
         attr_dict = {}
         attr_list = settings['player_sort_attributes']
         attr_type = 'player_sort'
-        attribute_settings = {'window': 'ultimate_player_judging'}
+        attribute_settings = {'window': 'ultimate_player_judging', 'file_name': team_list_name_tf.value}
         AddAttribute.open_attribute_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, attr_dict,
                                            attr_list, attr_type, attribute_settings)
 
@@ -530,6 +535,9 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
         # Run team creation here
         team = Team.Team()
         teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], db_dict['formation_list'][1]))
+
+        # Erase file name
+        team_list_name_tf.value = ''
 
         if len(teams.db) > 0:
             teams.save(team_list_name_tf.value)
