@@ -262,9 +262,9 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                 club_image = Image(file=image_file_name)
                 club_image_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border,
                                    headshot_pos[1]+player_headshot.size[1]/6))
-                headshot_rect = club_image.bounds
-                headshot_dst_rect = Geometry.offset_rect(headshot_rect, club_image_pos)
-                club_image.draw(c, headshot_rect, headshot_dst_rect)
+                club_rect = club_image.bounds
+                club_dst_rect = Geometry.offset_rect(club_rect, club_image_pos)
+                club_image.draw(c, club_rect, club_dst_rect)
 
                 # Nation
                 image_url = player['nation']['imageUrls']['large']
@@ -272,11 +272,10 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                 image_file_name = 'nation_' + str(player['nation']['id']) + '_' + str(ratio)
                 image_file_name = save_small_image(image_url, image_file_name, ratio)
                 nation_image = Image(file=image_file_name)
-                nation_image_pos = ((club_image_pos[0],
-                                     club_image_pos[1]+club_image.size[1]+5))
-                headshot_rect = nation_image.bounds
-                headshot_dst_rect = Geometry.offset_rect(headshot_rect, nation_image_pos)
-                nation_image.draw(c, headshot_rect, headshot_dst_rect)
+                nation_image_pos = (club_image_pos[0], club_image_pos[1]+club_image.size[1]+5)
+                nation_rect = nation_image.bounds
+                nation_dst_rect = Geometry.offset_rect(nation_rect, nation_image_pos)
+                nation_image.draw(c, nation_rect, nation_dst_rect)
 
     player_headshots.append(HeadshotImageView(size=(int(field_x_offset+field_width+5),
                                                     int(field_y_offset+field_length+5))))

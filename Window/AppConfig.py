@@ -52,6 +52,7 @@ red = GUI.StdColors.red
 orange = GUI.StdColors.rgb(1, 0.5, 0)
 dark_orange = GUI.StdColors.rgb(1, 0.55, 0)
 yellow = GUI.StdColors.yellow
+dark_yellow = GUI.StdColors.rgb(0.75, 0.75, 0)
 green = GUI.StdColors.green
 dark_green = GUI.StdColors.rgb(0, 0.55, 0)
 light_green = GUI.StdColors.rgb(0, 0.7, 0)
@@ -64,9 +65,10 @@ gold = GUI.StdColors.rgb(1, 0.84, 0)
 light_gold = GUI.StdColors.rgb(0.83, 0.69, 0.22)
 silver = GUI.StdColors.rgb(0.75, 0.75, 0.75)
 dark_silver = GUI.StdColors.rgb(0.52, 0.52, 0.52)
-bronze = GUI.StdColors.rgb(0.8, 0.5, 0.2)
-dark_bronze = GUI.StdColors.rgb(0.59, 0.29, 0)
+light_bronze = GUI.StdColors.rgb(0.8, 0.5, 0.2)
+bronze = GUI.StdColors.rgb(0.66, 0.53, 0.46)
 darker = GUI.StdColors.rgb(0, 0, 0, 0.75)
+barely_darker = GUI.StdColors.rgb(0, 0, 0, 0.25)
 lighter = GUI.StdColors.rgb(1, 1, 1, 0.85)
 
 
@@ -87,9 +89,9 @@ def attr_color(value):
 
 def quality_color(value):
     if value == 'bronze':
-        color = dark_bronze
-    elif value == 'rare_bronze':
         color = bronze
+    elif value == 'rare_bronze':
+        color = light_bronze
     elif value == 'silver':
         color = dark_silver
     elif value == 'rare_silver':

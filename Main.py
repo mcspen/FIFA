@@ -65,6 +65,17 @@ if __name__ == '__main__':
     save_image(player['club']['imageUrls']['normal']['small'], 'club_normal_medium_imgUrl')
     save_image(player['club']['imageUrls']['normal']['large'], 'club_normal_large_imgUrl')"""
 
+    """import Image
+    image_file_name = 'legend'
+    ratio = 0.85
+    image_file = 'Images/background originals/' + image_file_name + '.png'
+    image_info = Image.open(image_file)
+    image_info = image_info.resize((int(image_info.size[0]*ratio),
+                                    int(image_info.size[1]*ratio)),
+                                   Image.ANTIALIAS)
+    new_image_file_name = 'Images/' + image_file_name + '.png'
+    image_info.save(new_image_file_name)"""
+
     # Creating Ultimate teams with some players specified
     """players = PlayerDB()
     #players.load('my_players_16', 'list')

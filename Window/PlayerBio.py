@@ -2,7 +2,7 @@ from GUI import Button, Geometry, Image, Label, View, Window
 from AppConfig import *
 import json
 from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
-    save_image, get_file_prefix
+    save_image, get_file_prefix, save_small_image
 from Logic import PlayerDB
 
 
@@ -27,25 +27,59 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
             c.backcolor = view_backcolor
             c.erase_rect(r)
 
-            image_pos = ((player_name_label.left - player_headshot.width)/2,
-                         player_name_label.top)
-            src_rect = player_headshot.bounds
+            # Background image
+            image_pos = ((player_name_label.left - player_background.width)/2, 0)
+            src_rect = player_background.bounds
             dst_rect = Geometry.offset_rect(src_rect, image_pos)
+            player_background.draw(c, src_rect, dst_rect)
 
-            c.forecolor = quality_color(player['color'])
-            c.fill_rect((dst_rect[0]-2, dst_rect[1]-2, dst_rect[2]+2, dst_rect[3]+3*std_tf_height+2))
-            c.forecolor = darker
-            c.fill_rect((dst_rect[0], dst_rect[3]+5, dst_rect[2], dst_rect[3]+3*std_tf_height))
+            # Lines between summary stats
+            c.forecolor = barely_darker
+            c.fill_rect((dst_rect[0]+22, dst_rect[1]+174, dst_rect[2]-22, dst_rect[1]+175))
+            c.fill_rect((dst_rect[0]+22, dst_rect[1]+195, dst_rect[2]-22, dst_rect[1]+196))
 
-            player_headshot.draw(c, src_rect, dst_rect)
+            # Headshot
+            image_pos = (image_pos[0]+player_background.width-player_headshot.width-10, 10)
+            src_rect = player_headshot.bounds
+            headshot_dst_rect = Geometry.offset_rect(src_rect, image_pos)
+            player_headshot.draw(c, src_rect, headshot_dst_rect)
+
+            # Club
+            image_url = player['club']['imageUrls']['normal']['large']
+            ratio = 0.75
+            image_file_name = 'club_' + str(player['club']['id']) + '_' + str(ratio)
+            image_file_name = save_small_image(image_url, image_file_name, ratio)
+            club_image = Image(file=image_file_name)
+            club_image_pos = (dst_rect[0] + 18, dst_rect[1] + 75)
+            club_rect = club_image.bounds
+            club_dst_rect = Geometry.offset_rect(club_rect, club_image_pos)
+            club_image.draw(c, club_rect, club_dst_rect)
+
+            # Nation
+            image_url = player['nation']['imageUrls']['large']
+            ratio = 0.75
+            image_file_name = 'nation_' + str(player['nation']['id']) + '_' + str(ratio)
+            image_file_name = save_small_image(image_url, image_file_name, ratio)
+            nation_image = Image(file=image_file_name)
+            nation_image_pos = (club_image_pos[0], club_image_pos[1]+club_image.size[1])
+            nation_rect = nation_image.bounds
+            nation_dst_rect = Geometry.offset_rect(nation_rect, nation_image_pos)
+            nation_image.draw(c, nation_rect, nation_dst_rect)
 
     view = StartWindowImageView(size=win_player_bio.size)
 
     # ========== Player Headshot ==========
     image_url = player['headshotImgUrl']
-    image_file_name = player['id'] + '_large'
+    image_file_name = player['id'] + '_full'
     image_file_name = save_image(image_url, image_file_name)
     player_headshot = Image(file=image_file_name)
+
+    # ========== Player Background ==========
+    if player['color'] in ['bronze', 'rare_bronze', 'silver', 'rare_silver', 'gold', 'rare_gold', 'legend']:
+        background_file = 'Images/' + player['color'] + '.png'
+    else:
+        background_file = 'Images/legend.png'
+    player_background = Image(file=background_file)
 
     # ========== Button Declarations ==========
     add_player_btn = Button()
@@ -129,7 +163,9 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
 
     section_label_width = 115
 
-    # ========== Name and Rating ==========
+    card_text_color = black
+
+    # ========== Name ==========
     player_name_label = Label(font=title_font, width=name_width, height=title_height, x=(win_width - name_width)/2,
                               y=top_border, color=title_color, just='center')
     labels_list.append(player_name_label)
@@ -137,12 +173,21 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
                                    x=(win_width - name_width)/2, y=player_name_label.bottom - title_border,
                                    color=title_color, just='center')
     labels_list.append(player_full_name_label)
-    rating_big_label = Label(font=title_font, width=rating_big_width, height=title_height,
-                             x=player_full_name_label.left - rating_big_width + 12,
-                             y=player_full_name_label.top - title_border, color=title_color, just='center')
+
+    # ========== Name on Card ==========
+    name_on_card_label = Label(font=std_tf_font_bold, width=player_background.width, height=std_tf_height,
+                               x=(player_name_label.left - player_background.width)/2,
+                               y=player_full_name_label.bottom + 43, color=card_text_color, just='center')
+    labels_list.append(name_on_card_label)
+
+    # ========== Rating and Position ==========
+    rating_big_label = Label(font=title_font_3, width=rating_big_width, height=title_height,
+                             x=player_full_name_label.left - player_background.width - rating_big_width + 30,
+                             y=player_name_label.top, color=card_text_color, just='center')
     labels_list.append(rating_big_label)
-    position_big_label = Label(font=title_font_2, width=rating_big_width, height=title_height,
-                               x=rating_big_label.left, y=rating_big_label.bottom-15, color=title_color, just='center')
+    position_big_label = Label(font=title_font_6, width=rating_big_width, height=title_height,
+                               x=rating_big_label.left, y=rating_big_label.bottom-27,
+                               color=card_text_color, just='center')
     labels_list.append(position_big_label)
 
     # ========== Traits and Specialities ==========
@@ -172,40 +217,81 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     labels_list.append(specialities_list_label_2)
 
     # ========== Attributes Under Picture Section ==========
-    attr_title_label_width = 30
+    attr_title_label_width = 35
     attr_label_width = 20
     attribute_x_offset = 30
-    label_x = (player_name_label.left - player_headshot.width)/2 + player_headshot.width/2 - attribute_x_offset+3
+    label_x = (player_name_label.left - player_background.width)/2 + player_background.width/2 - attribute_x_offset - 10
     label_y = player_name_label.top + player_headshot.height + 5
 
     for idx, attr in enumerate(player['attributes']):
         if idx == 3:
-            label_x += 2*attribute_x_offset
+            label_x += 2*attribute_x_offset + 10
             label_y = player_name_label.top + player_headshot.height + 5
 
-        stat_title_label = Label(font=small_tf_font, width=attr_title_label_width, height=std_tf_height,
-                                 x=label_x-attr_title_label_width, y=label_y, color=title_color, just='right')
-        stat_title_label.text = format_attr_name(attr['name'][-3:]) + ':'
+        color = attr_color(attr['value'])
+        if color == yellow:
+            color = dark_yellow
+
+        stat_label = Label(font=std_tf_font_bold, width=attr_label_width, height=std_tf_height,
+                           x=label_x-attr_label_width-2, y=label_y, color=color, just='right')
+        stat_label.text = str(attr['value'])
+        labels_list.append(stat_label)
+
+        stat_title_label = Label(font=std_tf_font, width=attr_title_label_width, height=std_tf_height,
+                                 x=label_x+1, y=label_y, color=card_text_color, just='left')
+        stat_title_label.text = format_attr_name(attr['name'][-3:])
         labels_list.append(stat_title_label)
 
-        color = attr_color(attr['value'])
+        label_y += std_tf_height + 1
 
-        stat_label = Label(font=small_tf_font, width=attr_label_width, height=std_tf_height,
-                           x=label_x, y=label_y, color=color, just='right')
-        stat_label.text = str(attr['value'])
+    # ========== Database Info Section ==========
+    db_info_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
+                          x=win_player_bio.width * 5 / 50,
+                          y=specialities_list_label_2.bottom + int(7.5*title_border), color=title_color, just='center')
+    db_info_label.text = "Database Info"
+    labels_list.append(db_info_label)
+
+    db_info_title_label_width = 80
+    db_info_label_width = 55
+    attribute_x_offset = 40
+    label_x = db_info_label.left + section_label_width/2 - attribute_x_offset
+    label_y = db_info_label.bottom
+
+    for idx, db_info in enumerate(attribute_lists['db']):
+        if idx == 5:
+            attribute_x_offset = 85
+            db_info_title_label_width = 60
+            db_info_label_width = 50
+            label_x = db_info_label.left + section_label_width/2 + attribute_x_offset
+            label_y = db_info_label.bottom
+
+        if db_info == 'modelName':
+                db_info_label_width = 95
+
+        stat_title_label = Label(font=small_tf_font, width=db_info_title_label_width, height=std_tf_height,
+                                 x=label_x-db_info_title_label_width, y=label_y, color=title_color, just='right')
+        stat_title_label.text = format_attr_name(db_info) + ':'
+        labels_list.append(stat_title_label)
+
+        stat_label = Label(font=small_tf_font, width=db_info_label_width, height=std_tf_height,
+                           x=label_x, y=label_y, color=title_color, just='right')
+        if db_info in ['clubId', 'leagueId', 'nationId']:
+            stat_label.text = str(player[db_info[:-2]]['id'])
+        else:
+            stat_label.text = str(player[db_info])
         labels_list.append(stat_label)
 
         label_y += std_tf_height
 
     # ========== Personal Section ==========
     personal_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
-                           x=3*(win_width - 9*section_label_width)/10 + 2*section_label_width,
+                           x=win_player_bio.width * 29 / 50,
                            y=specialities_list_label_2.bottom + top_border, color=title_color, just='center')
     personal_label.text = "Personal"
     labels_list.append(personal_label)
 
     personal_title_stat_width = 100
-    personal_stat_width = 60
+    personal_stat_width = 65
     personal_stat_just = 'right'
     personal_x_offset = personal_stat_width + 60
     label_x = personal_label.left + section_label_width/2 - personal_x_offset
@@ -259,45 +345,6 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
             stat_label.text = '%s (%s)' % (player['positionFull'], player[personal])
         else:
             stat_label.text = str(player[personal])
-        labels_list.append(stat_label)
-
-        label_y += std_tf_height
-
-    # ========== Database Info Section ==========
-    db_info_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
-                          x=7*(win_width - 9*section_label_width)/10 + 6*section_label_width,
-                          y=personal_label.top, color=title_color, just='center')
-    db_info_label.text = "Database Info"
-    labels_list.append(db_info_label)
-
-    db_info_title_label_width = 80
-    db_info_label_width = 55
-    attribute_x_offset = 40
-    label_x = db_info_label.left + section_label_width/2 - attribute_x_offset
-    label_y = db_info_label.bottom
-
-    for idx, db_info in enumerate(attribute_lists['db']):
-        if idx == 5:
-            attribute_x_offset = 85
-            db_info_title_label_width = 60
-            db_info_label_width = 50
-            label_x = db_info_label.left + section_label_width/2 + attribute_x_offset
-            label_y = db_info_label.bottom
-
-        if db_info == 'modelName':
-                db_info_label_width = 95
-
-        stat_title_label = Label(font=small_tf_font, width=db_info_title_label_width, height=std_tf_height,
-                                 x=label_x-db_info_title_label_width, y=label_y, color=title_color, just='right')
-        stat_title_label.text = format_attr_name(db_info) + ':'
-        labels_list.append(stat_title_label)
-
-        stat_label = Label(font=small_tf_font, width=db_info_label_width, height=std_tf_height,
-                           x=label_x, y=label_y, color=title_color, just='right')
-        if db_info in ['clubId', 'leagueId', 'nationId']:
-            stat_label.text = str(player[db_info[:-2]]['id'])
-        else:
-            stat_label.text = str(player[db_info])
         labels_list.append(stat_label)
 
         label_y += std_tf_height
@@ -370,20 +417,17 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     # Player's normal name
     player_name = ascii_text(player['name'])
     player_name_label.text = player_name
+    name_on_card_label.text = player_name
 
     # Player's name
     player_full_name = ascii_text(player['firstName']) + ' ' + ascii_text(player['lastName'])
     player_full_name_label.text = player_full_name
 
     # Player's rating
-    color = attr_color(player['rating'])
     rating_big_label.text = str(player['rating'])
-    rating_big_label.color = color
 
     # Player's position
-    color = attr_color(player['rating'])
     position_big_label.text = player['position']
-    position_big_label.color = color
 
     # Player's traits
     traits_label.text = 'Traits:'
