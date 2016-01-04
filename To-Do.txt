@@ -5,7 +5,7 @@ Change how teams work so that you can have two lists of teams and move teams bac
 
 Move team creation function to TeamDB?
 
-Add more search/sort options for teams/formations. Ex: total skill of team
+Add more search/sort options for teams/formations. Ex: total speed of team
 
 Change Edit function for manage menu to have separate windows for players (already implemented), formations, and teams.
 

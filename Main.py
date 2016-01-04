@@ -44,6 +44,26 @@ if __name__ == '__main__':
     FifaApp.start_app(db_dict)
     # delete_all_temp_images()"""
 
+    # -------------------------PLAYER DB EXAMPLES---------------------------
+    # Initialize DB
+    # player_db = PlayerDB()
+
+    # Download Database from Website
+    # temp_time = time.time()
+    # player_db.download()
+    # print "Time to create DB: %f" % (time.time()-temp_time)
+
+    # Save Database to File
+    # temp_time = time.time()
+    # player_db.save('FIFA 16 - 5', 'db')
+    # print "Time to save DB: %f" % (time.time()-temp_time)
+
+    # Load Player Database from File
+    # temp_time = time.time()
+    # player_db.load('FIFA 16 - Current', 'db')
+    # print "Time to load DB: %f" % (time.time()-temp_time)
+
+    # Save all of a player's images
     """from Logic.HelperFunctions import save_image
     players = PlayerDB()
     players.load('FIFA 16 - Current', 'db')
@@ -65,6 +85,7 @@ if __name__ == '__main__':
     save_image(player['club']['imageUrls']['normal']['small'], 'club_normal_medium_imgUrl')
     save_image(player['club']['imageUrls']['normal']['large'], 'club_normal_large_imgUrl')"""
 
+    # Resize player background images
     """import Image
     image_file_name = 'legend'
     ratio = 0.85
@@ -133,25 +154,6 @@ if __name__ == '__main__':
         temp.print_team_strengths()
         print('\n')
     # """
-
-    # -------------------------PLAYER DB EXAMPLES---------------------------
-    # Initialize DB
-    # player_db = PlayerDB()
-
-    # Download Database from Website
-    # temp_time = time.time()
-    # player_db.download()
-    # print "Time to create DB: %f" % (time.time()-temp_time)
-
-    # Save Database to File
-    # temp_time = time.time()
-    # player_db.save('FIFA 16 - 5', 'db')
-    # print "Time to save DB: %f" % (time.time()-temp_time)
-
-    # Load Player Database from File
-    # temp_time = time.time()
-    # player_db.load('FIFA 16 - Current', 'db')
-    # print "Time to load DB: %f" % (time.time()-temp_time)
 
     # Print strengths of a list of teams
     """teams = TeamDB()

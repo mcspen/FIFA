@@ -229,8 +229,6 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
             label_y = player_name_label.top + player_headshot.height + 5
 
         color = attr_color(attr['value'])
-        if color == yellow:
-            color = dark_yellow
 
         stat_label = Label(font=std_tf_font_bold, width=attr_label_width, height=std_tf_height,
                            x=label_x-attr_label_width-2, y=label_y, color=color, just='right')
@@ -247,7 +245,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     # ========== Database Info Section ==========
     db_info_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
                           x=win_player_bio.width * 5 / 50,
-                          y=specialities_list_label_2.bottom + int(7.5*title_border), color=title_color, just='center')
+                          y=specialities_list_label_2.bottom + int(7.3*title_border), color=title_color, just='center')
     db_info_label.text = "Database Info"
     labels_list.append(db_info_label)
 
@@ -355,7 +353,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
 
     group_spacing = (win_player_bio.width - 4*section_label_width)/5
     group_x = group_spacing
-    group_y = personal_label.bottom + 150
+    group_y = personal_label.bottom + 175
 
     for idx, group in enumerate(attribute_group_list):
 
