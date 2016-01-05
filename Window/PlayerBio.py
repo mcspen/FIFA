@@ -35,11 +35,13 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
 
             # Lines between summary stats
             c.forecolor = barely_darker
-            c.fill_rect((dst_rect[0]+22, dst_rect[1]+174, dst_rect[2]-22, dst_rect[1]+175))
-            c.fill_rect((dst_rect[0]+22, dst_rect[1]+195, dst_rect[2]-22, dst_rect[1]+196))
+            c.fill_rect((dst_rect[0]+22, dst_rect[1]+stat_line_y,
+                         dst_rect[2]-22, dst_rect[1]+stat_line_y+1))
+            c.fill_rect((dst_rect[0]+22, dst_rect[1]+stat_line_y+stat_line_spacing,
+                         dst_rect[2]-22, dst_rect[1]+stat_line_y+stat_line_spacing+1))
 
             # Headshot
-            image_pos = (image_pos[0]+player_background.width-player_headshot.width-10, 10)
+            image_pos = (image_pos[0]+player_headshot_pos[0], player_headshot_pos[1])
             src_rect = player_headshot.bounds
             headshot_dst_rect = Geometry.offset_rect(src_rect, image_pos)
             player_headshot.draw(c, src_rect, headshot_dst_rect)
@@ -50,7 +52,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
             image_file_name = 'club_' + str(player['club']['id']) + '_' + str(ratio)
             image_file_name = save_small_image(image_url, image_file_name, ratio)
             club_image = Image(file=image_file_name)
-            club_image_pos = (dst_rect[0] + 18, dst_rect[1] + 75)
+            club_image_pos = club_pos
             club_rect = club_image.bounds
             club_dst_rect = Geometry.offset_rect(club_rect, club_image_pos)
             club_image.draw(c, club_rect, club_dst_rect)
@@ -61,7 +63,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
             image_file_name = 'nation_' + str(player['nation']['id']) + '_' + str(ratio)
             image_file_name = save_small_image(image_url, image_file_name, ratio)
             nation_image = Image(file=image_file_name)
-            nation_image_pos = (club_image_pos[0], club_image_pos[1]+club_image.size[1])
+            nation_image_pos = (club_image_pos[0], club_image_pos[1]+club_image.size[1]+nation_spacing)
             nation_rect = nation_image.bounds
             nation_dst_rect = Geometry.offset_rect(nation_rect, nation_image_pos)
             nation_image.draw(c, nation_rect, nation_dst_rect)
@@ -75,10 +77,83 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     player_headshot = Image(file=image_file_name)
 
     # ========== Player Background ==========
-    if player['color'] in ['bronze', 'rare_bronze', 'silver', 'rare_silver', 'gold', 'rare_gold', 'legend']:
+    if player['color'] in ['legend']:
         background_file = 'Images/' + player['color'] + '.png'
+        player_headshot_pos = (41, 10)
+        club_pos = (57, 75)
+        nation_spacing = 0
+        stat_line_y = 176
+        stat_line_spacing = 21
+        name_y = 135
+        rating_pos = (39, 30)
+        stats_y = 157
+
+    elif player['color'] in ['rare_gold', 'rare_silver']:
+        background_file = 'Images/' + player['color'] + '.png'
+        player_headshot_pos = (41, 10)
+        club_pos = (51, 71)
+        nation_spacing = 3
+        stat_line_y = 174
+        stat_line_spacing = 21
+        name_y = 133
+        rating_pos = (33, 25)
+        stats_y = 155
+
+    elif player['color'] in ['gold']:
+        background_file = 'Images/' + player['color'] + '.png'
+        player_headshot_pos = (41, 10)
+        club_pos = (56, 67)
+        nation_spacing = 3
+        stat_line_y = 174
+        stat_line_spacing = 21
+        name_y = 131
+        rating_pos = (37, 22)
+        stats_y = 155
+
+    elif player['color'] in ['silver']:
+        background_file = 'Images/' + player['color'] + '.png'
+        player_headshot_pos = (41, 3)
+        club_pos = (56, 62)
+        nation_spacing = 3
+        stat_line_y = 167
+        stat_line_spacing = 21
+        name_y = 126
+        rating_pos = (37, 17)
+        stats_y = 148
+
+    elif player['color'] in ['rare_bronze']:
+        background_file = 'Images/' + player['color'] + '.png'
+        player_headshot_pos = (41, 10)
+        club_pos = (57, 75)
+        nation_spacing = 0
+        stat_line_y = 174
+        stat_line_spacing = 21
+        name_y = 132
+        rating_pos = (39, 30)
+        stats_y = 155
+
+    elif player['color'] in ['bronze']:
+        background_file = 'Images/' + player['color'] + '.png'
+        player_headshot_pos = (41, 11)
+        club_pos = (56, 68)
+        nation_spacing = 3
+        stat_line_y = 175
+        stat_line_spacing = 21
+        name_y = 133
+        rating_pos = (37, 23)
+        stats_y = 156
+
     else:
         background_file = 'Images/legend.png'
+        player_headshot_pos = (41, 10)
+        club_pos = (57, 75)
+        nation_spacing = 0
+        stat_line_y = 176
+        stat_line_spacing = 21
+        name_y = 135
+        rating_pos = (39, 30)
+        stats_y = 157
+
     player_background = Image(file=background_file)
 
     # ========== Button Declarations ==========
@@ -177,13 +252,13 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     # ========== Name on Card ==========
     name_on_card_label = Label(font=std_tf_font_bold, width=player_background.width, height=std_tf_height,
                                x=(player_name_label.left - player_background.width)/2,
-                               y=player_full_name_label.bottom + 43, color=card_text_color, just='center')
+                               y=name_y, color=card_text_color, just='center')
     labels_list.append(name_on_card_label)
 
     # ========== Rating and Position ==========
     rating_big_label = Label(font=title_font_3, width=rating_big_width, height=title_height,
-                             x=player_full_name_label.left - player_background.width - rating_big_width + 30,
-                             y=player_name_label.top, color=card_text_color, just='center')
+                             x=rating_pos[0], y=rating_pos[1],
+                             color=card_text_color, just='center')
     labels_list.append(rating_big_label)
     position_big_label = Label(font=title_font_6, width=rating_big_width, height=title_height,
                                x=rating_big_label.left, y=rating_big_label.bottom-27,
@@ -221,12 +296,12 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     attr_label_width = 20
     attribute_x_offset = 30
     label_x = (player_name_label.left - player_background.width)/2 + player_background.width/2 - attribute_x_offset - 10
-    label_y = player_name_label.top + player_headshot.height + 5
+    label_y = stats_y
 
     for idx, attr in enumerate(player['attributes']):
         if idx == 3:
             label_x += 2*attribute_x_offset + 10
-            label_y = player_name_label.top + player_headshot.height + 5
+            label_y = stats_y
 
         color = attr_color(attr['value'])
 
