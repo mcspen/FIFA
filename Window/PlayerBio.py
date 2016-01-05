@@ -373,7 +373,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     for idx, personal in enumerate(attribute_lists['personal']):
         if idx == 7:
             personal_title_stat_width = 75
-            personal_stat_width = 200
+            personal_stat_width = 250
             personal_stat_just = 'left'
             personal_x_offset = personal_title_stat_width - 55
             label_x = personal_label.left + section_label_width/2 + personal_x_offset

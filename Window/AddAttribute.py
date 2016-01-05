@@ -150,10 +150,44 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                     if 0 < return_value < 100:
                         valid = True
 
-            elif radio_group.value in ["age", "baseId", "clubId", "height", "id", "leagueId", "nationId", "weight"]:
+            elif radio_group.value in ["age", "baseId", "clubId", "id", "leagueId", "nationId"]:
                 # Value should be an integer
                 if value_tf.value.isdigit():
                     return_value = int(value_tf.value)
+                    valid = True
+
+            elif radio_group.value in ["height"]:
+                # Check if value is a decimal
+                decimal_value = 0.0
+                if '.' in value_tf.value:
+                    try:
+                        decimal_value = float(value_tf.value)
+                        # If value is less than 10, assume unit is feet. Else, assume unit is centimeters.
+                        if decimal_value < 10:
+                            return_value = int(decimal_value * 30.48)
+                        else:
+                            return_value = decimal_value
+                        valid = True
+
+                    except Exception:
+                        print "Invalid attribute value."
+
+                elif value_tf.value.isdigit():
+                    # If value is less than 10, assume unit is feet. Else, assume unit is centimeters.
+                    if int(value_tf.value) < 10:
+                        return_value = int(int(value_tf.value) * 30.48)
+                    else:
+                        return_value = int(value_tf.value)
+                    valid = True
+
+            elif radio_group.value in ["weight"]:
+                # Value should be an integer
+                if value_tf.value.isdigit():
+                    # If value is greater than 110, assume unit is pounds. Else, assume unit is kilograms.
+                    if int(value_tf.value) > 110:
+                        return_value = int(int(value_tf.value) * 0.453592)
+                    else:
+                        return_value = int(value_tf.value)
                     valid = True
 
             elif radio_group.value in ["atkWorkRate", "birthdate", "club", "color", "commonName", "defWorkRate",
