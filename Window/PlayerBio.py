@@ -2,7 +2,7 @@ from GUI import Button, Geometry, Image, Label, View, Window
 from AppConfig import *
 import json
 from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
-    save_image, get_file_prefix, save_small_image
+    save_image, save_small_image
 from Logic import PlayerDB
 
 
@@ -77,8 +77,18 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     player_headshot = Image(file=image_file_name)
 
     # ========== Player Background ==========
+    # Assign player background card
+    if player['color'] in ['bronze', 'easports', 'gold', 'green', 'legend', 'motm', 'pink', 'purple',
+                           'rare_bronze', 'rare_gold', 'rare_silver', 'silver', 'teal', 'tots_bronze', 'tots_gold',
+                           'tots_silver', 'totw_bronze', 'totw_gold', 'totw_silver', 'toty']:
+        background_file = 'Images/Cards/' + player['color'] + '.png'
+    else:
+        background_file = 'Images/Cards/idk.png'
+
+    player_background = Image(file=background_file)
+
+    # Assign positioning for player card based on type
     if player['color'] in ['legend']:
-        background_file = 'Images/' + player['color'] + '.png'
         player_headshot_pos = (41, 10)
         club_pos = (57, 75)
         nation_spacing = 0
@@ -88,8 +98,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         rating_pos = (39, 30)
         stats_y = 157
 
-    elif player['color'] in ['rare_gold', 'rare_silver']:
-        background_file = 'Images/' + player['color'] + '.png'
+    elif player['color'] in ['green', 'motm', 'pink', 'purple', 'teal']:
         player_headshot_pos = (41, 10)
         club_pos = (51, 71)
         nation_spacing = 3
@@ -99,8 +108,37 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         rating_pos = (33, 25)
         stats_y = 155
 
-    elif player['color'] in ['gold']:
-        background_file = 'Images/' + player['color'] + '.png'
+    elif player['color'] in ['easports', 'tots_gold', 'tots_silver', 'tots_bronze']:
+        player_headshot_pos = (41, 10)
+        club_pos = (51, 71)
+        nation_spacing = 3
+        stat_line_y = 174
+        stat_line_spacing = 21
+        name_y = 133
+        rating_pos = (33, 25)
+        stats_y = 155
+
+    elif player['color'] in ['toty', 'totw_gold', 'totw_silver', 'totw_bronze']:
+        player_headshot_pos = (41, 10)
+        club_pos = (51, 71)
+        nation_spacing = 3
+        stat_line_y = 174
+        stat_line_spacing = 21
+        name_y = 133
+        rating_pos = (33, 25)
+        stats_y = 155
+
+    elif player['color'] in ['rare_gold', 'rare_silver', 'rare_bronze']:
+        player_headshot_pos = (41, 10)
+        club_pos = (51, 71)
+        nation_spacing = 3
+        stat_line_y = 174
+        stat_line_spacing = 21
+        name_y = 133
+        rating_pos = (33, 25)
+        stats_y = 155
+
+    elif player['color'] in ['gold', 'silver', 'bronze']:
         player_headshot_pos = (41, 10)
         club_pos = (56, 67)
         nation_spacing = 3
@@ -110,41 +148,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         rating_pos = (37, 22)
         stats_y = 155
 
-    elif player['color'] in ['silver']:
-        background_file = 'Images/' + player['color'] + '.png'
-        player_headshot_pos = (41, 3)
-        club_pos = (56, 62)
-        nation_spacing = 3
-        stat_line_y = 167
-        stat_line_spacing = 21
-        name_y = 126
-        rating_pos = (37, 17)
-        stats_y = 148
-
-    elif player['color'] in ['rare_bronze']:
-        background_file = 'Images/' + player['color'] + '.png'
-        player_headshot_pos = (41, 10)
-        club_pos = (57, 75)
-        nation_spacing = 0
-        stat_line_y = 174
-        stat_line_spacing = 21
-        name_y = 132
-        rating_pos = (39, 30)
-        stats_y = 155
-
-    elif player['color'] in ['bronze']:
-        background_file = 'Images/' + player['color'] + '.png'
-        player_headshot_pos = (41, 11)
-        club_pos = (56, 68)
-        nation_spacing = 3
-        stat_line_y = 175
-        stat_line_spacing = 21
-        name_y = 133
-        rating_pos = (37, 23)
-        stats_y = 156
-
     else:
-        background_file = 'Images/legend.png'
         player_headshot_pos = (41, 10)
         club_pos = (57, 75)
         nation_spacing = 0
@@ -153,8 +157,6 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         name_y = 135
         rating_pos = (39, 30)
         stats_y = 157
-
-    player_background = Image(file=background_file)
 
     # ========== Button Declarations ==========
     add_player_btn = Button()

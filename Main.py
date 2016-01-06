@@ -86,16 +86,19 @@ if __name__ == '__main__':
     save_image(player['club']['imageUrls']['normal']['large'], 'club_normal_large_imgUrl')"""
 
     # Resize player background images
-    """import Image
-    image_file_name = 'legend'
-    ratio = 0.85
-    image_file = 'Images/background originals/' + image_file_name + '.png'
-    image_info = Image.open(image_file)
-    image_info = image_info.resize((int(image_info.size[0]*ratio),
-                                    int(image_info.size[1]*ratio)),
-                                   Image.ANTIALIAS)
-    new_image_file_name = 'Images/' + image_file_name + '.png'
-    image_info.save(new_image_file_name)"""
+    """image_file_names = ['bronze', 'easports', 'gold', 'green', 'idk', 'legend', 'motm', 'pink', 'purple',
+                        'rare_bronze', 'rare_gold', 'rare_silver', 'silver', 'teal', 'tots_bronze', 'tots_gold',
+                        'tots_silver', 'totw_bronze', 'totw_gold', 'totw_silver', 'toty']
+    import Image
+    for image_file_name in image_file_names:
+        ratio = 0.85
+        image_file = 'Images/Card Originals/' + image_file_name + '.png'
+        image_info = Image.open(image_file)
+        image_info = image_info.resize((int(image_info.size[0]*ratio),
+                                        int(image_info.size[1]*ratio)),
+                                       Image.ANTIALIAS)
+        new_image_file_name = 'Images/Cards/' + image_file_name + '.png'
+        image_info.save(new_image_file_name)"""
 
     # Creating Ultimate teams with some players specified
     """players = PlayerDB()
