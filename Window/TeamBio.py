@@ -203,12 +203,15 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
             # Player Markers
             for sym, pos in team['formation']['positions'].iteritems():
-                c.forecolor = quality_color(pos['player']['color'])
                 position_coordinates = team_spacing[sym]
-                c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
-                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
-                             dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
-                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2))
+                player = pos['player']
+                box_file_name = 'Images/Cards/' + player['color'] + '_box.png'
+                box_image = Image(file=box_file_name)
+                box_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
+                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2))
+                box_rect = box_image.bounds
+                box_dst_rect = Geometry.offset_rect(box_rect, box_pos)
+                box_image.draw(c, box_rect, box_dst_rect)
 
     view = StartWindowImageView(size=win_team_bio.size)
 
@@ -225,13 +228,6 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                 # Get player information
                 player = position['player']
                 position_coordinates = team_spacing[sym]
-
-                # Card color box
-                c.forecolor = quality_color(position['player']['color'])
-                c.fill_rect((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
-                             dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2,
-                             dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2,
-                             dst_rect[1]+position_coordinates[1]*y_space+player_box_height/2-name_height))
 
                 # Darker box for positions
                 c.forecolor = darker

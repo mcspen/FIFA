@@ -61,8 +61,8 @@ cyan = GUI.StdColors.cyan
 magenta = GUI.StdColors.magenta
 purple = GUI.StdColors.rgb(0.5, 0, 0.5)
 clear = GUI.StdColors.clear
-gold = GUI.StdColors.rgb(1, 0.84, 0)
-light_gold = GUI.StdColors.rgb(0.83, 0.69, 0.22)
+gold = GUI.StdColors.rgb(0.83, 0.69, 0.22)
+light_gold = GUI.StdColors.rgb(1, 0.84, 0)
 silver = GUI.StdColors.rgb(0.75, 0.75, 0.75)
 dark_silver = GUI.StdColors.rgb(0.52, 0.52, 0.52)
 light_bronze = GUI.StdColors.rgb(0.8, 0.5, 0.2)
@@ -98,9 +98,9 @@ def quality_color(value):
     elif value == 'rare_silver':
         color = silver
     elif value == 'gold':
-        color = light_gold
-    elif value == 'rare_gold':
         color = gold
+    elif value == 'rare_gold':
+        color = light_gold
     elif value == 'standard':
         color = white
     elif value == 'rare':
