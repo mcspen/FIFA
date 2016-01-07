@@ -70,6 +70,7 @@ bronze = GUI.StdColors.rgb(0.66, 0.53, 0.46)
 darker = GUI.StdColors.rgb(0, 0, 0, 0.75)
 barely_darker = GUI.StdColors.rgb(0, 0, 0, 0.25)
 lighter = GUI.StdColors.rgb(1, 1, 1, 0.85)
+barely_lighter = GUI.StdColors.rgb(1, 1, 1, 0.25)
 
 
 def attr_color(value):

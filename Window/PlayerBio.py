@@ -34,7 +34,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
             player_background.draw(c, src_rect, dst_rect)
 
             # Lines between summary stats
-            c.forecolor = barely_darker
+            c.forecolor = stat_line_color
             c.fill_rect((dst_rect[0]+22, dst_rect[1]+stat_line_y,
                          dst_rect[2]-22, dst_rect[1]+stat_line_y+1))
             c.fill_rect((dst_rect[0]+22, dst_rect[1]+stat_line_y+stat_line_spacing,
@@ -89,74 +89,102 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
 
     # Assign positioning for player card based on type
     if player['color'] in ['legend']:
-        player_headshot_pos = (41, 10)
-        club_pos = (57, 75)
-        nation_spacing = 0
+        player_headshot_pos = (41, 13)
+        club_pos = (51, 75)
+        nation_spacing = 2
         stat_line_y = 176
         stat_line_spacing = 21
         name_y = 135
-        rating_pos = (39, 30)
+        rating_pos = (33, 34)
         stats_y = 157
+        card_rating_pos_color = black
+        card_name_color = black
+        card_stat_color = black
+        stat_line_color = barely_darker
 
     elif player['color'] in ['green', 'motm', 'pink', 'purple', 'teal']:
-        player_headshot_pos = (41, 10)
-        club_pos = (51, 71)
-        nation_spacing = 3
-        stat_line_y = 174
-        stat_line_spacing = 21
-        name_y = 133
-        rating_pos = (33, 25)
-        stats_y = 155
-
-    elif player['color'] in ['easports', 'tots_gold', 'tots_silver', 'tots_bronze']:
-        player_headshot_pos = (41, 10)
-        club_pos = (51, 71)
-        nation_spacing = 3
-        stat_line_y = 174
-        stat_line_spacing = 21
-        name_y = 133
-        rating_pos = (33, 25)
-        stats_y = 155
-
-    elif player['color'] in ['toty', 'totw_gold', 'totw_silver', 'totw_bronze']:
-        player_headshot_pos = (41, 10)
-        club_pos = (51, 71)
-        nation_spacing = 3
-        stat_line_y = 174
-        stat_line_spacing = 21
-        name_y = 133
-        rating_pos = (33, 25)
-        stats_y = 155
-
-    elif player['color'] in ['rare_gold', 'rare_silver', 'rare_bronze']:
-        player_headshot_pos = (41, 10)
-        club_pos = (51, 71)
-        nation_spacing = 3
-        stat_line_y = 174
-        stat_line_spacing = 21
-        name_y = 133
-        rating_pos = (33, 25)
-        stats_y = 155
-
-    elif player['color'] in ['gold', 'silver', 'bronze']:
-        player_headshot_pos = (41, 10)
-        club_pos = (56, 67)
-        nation_spacing = 3
-        stat_line_y = 174
-        stat_line_spacing = 21
-        name_y = 131
-        rating_pos = (37, 22)
-        stats_y = 155
-
-    else:
-        player_headshot_pos = (41, 10)
-        club_pos = (57, 75)
-        nation_spacing = 0
+        player_headshot_pos = (41, 13)
+        club_pos = (51, 74)
+        nation_spacing = 1
         stat_line_y = 176
         stat_line_spacing = 21
         name_y = 135
-        rating_pos = (39, 30)
+        rating_pos = (33, 30)
         stats_y = 157
+        card_rating_pos_color = black
+        card_name_color = black
+        card_stat_color = black
+        stat_line_color = barely_darker
+
+    elif player['color'] in ['easports', 'tots_gold', 'tots_silver', 'tots_bronze']:
+        player_headshot_pos = (41, 13)
+        club_pos = (51, 74)
+        nation_spacing = 1
+        stat_line_y = 176
+        stat_line_spacing = 21
+        name_y = 135
+        rating_pos = (33, 30)
+        stats_y = 157
+        card_rating_pos_color = black
+        card_name_color = black
+        card_stat_color = black
+        stat_line_color = barely_darker
+
+    elif player['color'] in ['toty', 'totw_gold', 'totw_silver', 'totw_bronze']:
+        player_headshot_pos = (41, 13)
+        club_pos = (51, 74)
+        nation_spacing = 1
+        stat_line_y = 176
+        stat_line_spacing = 21
+        name_y = 135
+        rating_pos = (33, 30)
+        stats_y = 157
+        card_rating_pos_color = black
+        card_name_color = white
+        card_stat_color = white
+        stat_line_color = barely_lighter
+
+    elif player['color'] in ['rare_gold', 'rare_silver', 'rare_bronze']:
+        player_headshot_pos = (41, 13)
+        club_pos = (51, 74)
+        nation_spacing = 1
+        stat_line_y = 176
+        stat_line_spacing = 21
+        name_y = 135
+        rating_pos = (33, 30)
+        stats_y = 157
+        card_rating_pos_color = black
+        card_name_color = black
+        card_stat_color = black
+        stat_line_color = barely_darker
+
+    elif player['color'] in ['gold', 'silver', 'bronze']:
+        player_headshot_pos = (41, 13)
+        club_pos = (51, 71)
+        nation_spacing = 3
+        stat_line_y = 176
+        stat_line_spacing = 21
+        name_y = 135
+        rating_pos = (33, 25)
+        stats_y = 157
+        card_rating_pos_color = black
+        card_name_color = black
+        card_stat_color = black
+        stat_line_color = barely_darker
+
+    else:
+        player_headshot_pos = (41, 13)
+        club_pos = (51, 74)
+        nation_spacing = 1
+        stat_line_y = 176
+        stat_line_spacing = 21
+        name_y = 135
+        rating_pos = (33, 30)
+        stats_y = 157
+        card_rating_pos_color = black
+        card_name_color = black
+        card_stat_color = black
+        stat_line_color = barely_darker
 
     # ========== Button Declarations ==========
     add_player_btn = Button()
@@ -240,8 +268,6 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
 
     section_label_width = 115
 
-    card_text_color = black
-
     # ========== Name ==========
     player_name_label = Label(font=title_font, width=name_width, height=title_height, x=(win_width - name_width)/2,
                               y=top_border, color=title_color, just='center')
@@ -254,17 +280,17 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     # ========== Name on Card ==========
     name_on_card_label = Label(font=std_tf_font_bold, width=player_background.width, height=std_tf_height,
                                x=(player_name_label.left - player_background.width)/2,
-                               y=name_y, color=card_text_color, just='center')
+                               y=name_y, color=card_name_color, just='center')
     labels_list.append(name_on_card_label)
 
     # ========== Rating and Position ==========
     rating_big_label = Label(font=title_font_3, width=rating_big_width, height=title_height,
                              x=rating_pos[0], y=rating_pos[1],
-                             color=card_text_color, just='center')
+                             color=card_rating_pos_color, just='center')
     labels_list.append(rating_big_label)
     position_big_label = Label(font=title_font_6, width=rating_big_width, height=title_height,
                                x=rating_big_label.left, y=rating_big_label.bottom-27,
-                               color=card_text_color, just='center')
+                               color=card_rating_pos_color, just='center')
     labels_list.append(position_big_label)
 
     # ========== Traits and Specialities ==========
@@ -313,7 +339,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         labels_list.append(stat_label)
 
         stat_title_label = Label(font=std_tf_font, width=attr_title_label_width, height=std_tf_height,
-                                 x=label_x+1, y=label_y, color=card_text_color, just='left')
+                                 x=label_x+1, y=label_y, color=card_stat_color, just='left')
         stat_title_label.text = format_attr_name(attr['name'][-3:])
         labels_list.append(stat_title_label)
 
