@@ -331,10 +331,8 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
             label_x += 2*attribute_x_offset + 10
             label_y = stats_y
 
-        color = attr_color(attr['value'])
-
         stat_label = Label(font=std_tf_font_bold, width=attr_label_width, height=std_tf_height,
-                           x=label_x-attr_label_width-2, y=label_y, color=color, just='right')
+                           x=label_x-attr_label_width-2, y=label_y, color=card_stat_color, just='right')
         stat_label.text = str(attr['value'])
         labels_list.append(stat_label)
 
