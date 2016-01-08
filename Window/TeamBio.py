@@ -201,7 +201,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                                      (int(dst_rect[0]+link_coordinates[0]*x_space),
                                       int(dst_rect[1]+link_coordinates[1]*y_space)-link_size/2)])
 
-            # Player Markers
+            # Player Card Box Backgrounds
             for sym, pos in team['formation']['positions'].iteritems():
                 position_coordinates = team_spacing[sym]
                 player = pos['player']
@@ -1161,7 +1161,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         chemistry_list.append(pl_chem_label)
 
         # === Manager Chemistry Points ====
-        label_x = int(dst_rect[0]+position_coordinates[0]*x_space + 13 + 3)
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space + 13 + 9)
         label_y = pl_chem_title_label.bottom - 9
         manager_chem_title_width = 25
 
