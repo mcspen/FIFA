@@ -115,6 +115,18 @@ class TeamDB:
 
                 if attr in current_team:
                     attribute_tuple += (current_team[attr],)
+                elif attr in ['style']:
+                    attribute_tuple += (current_team['formation'][attr],)
+                elif attr in ['manager_league', 'manager_nation']:
+                    attribute_tuple += (current_team['manager'][attr[8:]],)
+                elif attr in ['player']:
+                    # Get list of player names
+                    player_names = []
+                    for position in current_team['formation']['positions'].itervalues():
+                        player = position['player']
+                        player_names.append(player['name'] + player['commonName'] +
+                                            player['firstName'] + player['lastName'])
+                    attribute_tuple += (player_names,)
                 elif attr in ['total_skillMoves']:
                     # Calculate total
                     total = 0

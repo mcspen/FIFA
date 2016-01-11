@@ -833,12 +833,17 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         # Print out labels
         labels = player_info_labels(attributes)
         stat_index = 0
+        # Spacing values for each of the stats
         spacing_list = [125, 40, 40, 65, 115, 115, 115, 40]
-        left_border = (win_width - sum(spacing_list[:-1]) - (len(labels) - len(spacing_list) + 1) * spacing_list[-1])/2
+        # Calculate the maximum number of stat fields that will fit on screen
+        max_player_fields = len(spacing_list[:-1]) + (win_search.width - sum(spacing_list[:-1]))/spacing_list[-1]
+        # Calculate the left border of the stats based on the number and width of the stats
+        left_border = (win_width - sum(spacing_list[:-1]) -
+                       (len(labels[:max_player_fields]) - len(spacing_list) + 1) * spacing_list[-1])/2
         msg_x = left_border
         msg_y = add_to_list_btn.bottom + 5
 
-        for info_label in labels:
+        for info_label in labels[:max_player_fields]:
             player_label = Label(text=info_label, font=std_tf_font_bold, width=spacing_list[stat_index]-5,
                                  height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
             settings['messages']['results'].append(player_label)
@@ -866,7 +871,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             msg_x += spacing_list[stat_index]
             stat_index += 1
 
-            for player_stat in player_stats[1:]:
+            for player_stat in player_stats[1:max_player_fields]:
                 player_label = Label(text=player_stat, font=small_button_font, width=spacing_list[stat_index]-5,
                                      height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
 
@@ -925,7 +930,9 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         # Print out labels
         labels = formation_info_labels()
         stat_index = 0
+        # Spacing values for each of the stats
         spacing_list = [100, 100, 55, 55, 55, 55, 140, 160]
+        # Calculate the left border of the stats based on the number and width of the stats
         left_border = (win_width - sum(spacing_list))/2
         msg_x = left_border
         msg_y = add_to_list_btn.bottom + 5
@@ -1014,12 +1021,17 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         # Print out labels
         labels = team_info_labels(attributes)
         stat_index = 0
+        # Spacing values for each of the stats
         spacing_list = [60, 40, 55, 90, 100, 115, 115, 40]
-        left_border = (win_width - sum(spacing_list))/2
+        # Calculate the maximum number of stat fields that will fit on screen
+        max_team_fields = len(spacing_list[:-1]) + (win_search.width - sum(spacing_list[:-1]))/spacing_list[-1]
+        # Calculate the left border of the stats based on the number and width of the stats
+        left_border = (win_width - sum(spacing_list[:-1]) -
+                       (len(labels[:max_team_fields]) - len(spacing_list) + 1) * spacing_list[-1])/2
         msg_x = left_border
         msg_y = add_to_list_btn.bottom + 5
 
-        for info_label in labels:
+        for info_label in labels[:max_team_fields]:
             team_label = Label(text=info_label, font=std_tf_font_bold, width=spacing_list[stat_index]-5,
                                     height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
             settings['messages']['results'].append(team_label)
@@ -1042,7 +1054,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
             msg_x += spacing_list[stat_index]
             stat_index += 1
 
-            for team_stat in team_stats[1:]:
+            for team_stat in team_stats[1:max_team_fields]:
                 team_label = Label(text=team_stat, font=small_button_font, width=spacing_list[stat_index]-5,
                                    height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
 
