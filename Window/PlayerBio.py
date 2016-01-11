@@ -116,7 +116,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         card_stat_color = black
         stat_line_color = barely_darker
 
-    elif player['color'] in ['easports', 'tots_gold', 'tots_silver', 'tots_bronze']:
+    elif player['color'] in ['toty', 'easports', 'tots_gold', 'tots_silver', 'tots_bronze']:
         player_headshot_pos = (41, 13)
         club_pos = (51, 74)
         nation_spacing = 1
@@ -125,12 +125,12 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         name_y = 135
         rating_pos = (33, 30)
         stats_y = 157
-        card_rating_pos_color = black
-        card_name_color = black
-        card_stat_color = black
-        stat_line_color = barely_darker
+        card_rating_pos_color = white
+        card_name_color = white
+        card_stat_color = white
+        stat_line_color = barely_lighter
 
-    elif player['color'] in ['toty', 'totw_gold', 'totw_silver', 'totw_bronze']:
+    elif player['color'] in ['totw_gold', 'totw_silver', 'totw_bronze']:
         player_headshot_pos = (41, 13)
         club_pos = (51, 74)
         nation_spacing = 1
