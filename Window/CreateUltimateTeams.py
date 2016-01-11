@@ -3,8 +3,10 @@ from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
 from AppConfig import *
 import TeamsMenu
 import AddAttribute
+import PickFile
 from Logic import Team
 from Logic import TeamDB
+from Logic.HelperFunctions import format_attr_name
 import json
 
 
@@ -55,18 +57,51 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
 
     # ========== Settings ==========
     # ========== Current player list and formation list ==========
-    file_name_width = 400
-    player_list_label = Label(text="Player List: " + db_dict['player_list'][0], font=std_tf_font_bold,
+    file_name_width = 125
+    file_button_width = 200
+
+    # Functions for picking files
+    def player_list_current_btn_func():
+        settings['file_type'] = 'current_player_list'
+        settings['file_changes'] = False
+        settings['prev_window'] = 'team_creation'
+        settings['file_name'] = team_list_name_tf.value
+        PickFile.open_pick_file_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, settings)
+        win_ultimate_teams.hide()
+
+    def formation_list_current_btn_func():
+        settings['file_type'] = 'current_formation_list'
+        settings['file_changes'] = False
+        settings['prev_window'] = 'team_creation'
+        settings['file_name'] = team_list_name_tf.value
+        PickFile.open_pick_file_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, settings)
+        win_ultimate_teams.hide()
+
+    player_list_label = Label(text="Player List:", font=std_tf_font_bold,
                               width=file_name_width, height=std_tf_height,
-                              x=(win_width - file_name_width)/2, y=title.bottom + title_border*3,
-                              color=title_color, just='center')
+                              x=(win_width-file_name_width-file_button_width-5)/2, y=title.bottom + title_border*3,
+                              color=title_color, just='right')
     display_items.append(player_list_label)
 
-    formation_list_label = Label(text="Formation List: " + db_dict['formation_list'][0], font=std_tf_font_bold,
+    player_list_button = Button(title=db_dict['player_list'][0], font=small_tf_font,
+                                width=file_button_width, height=std_tf_height,
+                                x=player_list_label.right + 5, y=player_list_label.top,
+                                color=title_color, just='center',
+                                action=player_list_current_btn_func)
+    display_items.append(player_list_button)
+
+    formation_list_label = Label(text="Formation List:", font=std_tf_font_bold,
                                  width=file_name_width, height=std_tf_height,
-                                 x=(win_width - file_name_width)/2, y=player_list_label.bottom + title_border,
-                                 color=title_color, just='center')
+                                 x=player_list_label.left, y=player_list_label.bottom + title_border,
+                                 color=title_color, just='right')
     display_items.append(formation_list_label)
+
+    formation_list_button = Button(title=db_dict['formation_list'][0], font=small_tf_font,
+                                   width=file_button_width, height=std_tf_height,
+                                   x=formation_list_label.right + 5, y=formation_list_label.top,
+                                   color=title_color, just='center',
+                                   action=formation_list_current_btn_func)
+    display_items.append(formation_list_button)
 
     settings_indent = 3*win_width/7
 
@@ -161,8 +196,13 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
                                        color=title_color, just='left')
     judging_teams_attributes_text = ''
     for attr in settings['team_sort_attributes']:
-        judging_teams_attributes_text += attr + ', '
-    judging_teams_attributes.text = judging_teams_attributes_text[:-2]
+        judging_teams_attributes_text += format_attr_name(attr) + ', '
+    # Remove extra comma and space
+    judging_teams_attributes_text = judging_teams_attributes_text[:-2]
+    # Truncate if too long
+    if len(judging_teams_attributes_text) > 26:
+        judging_teams_attributes_text = judging_teams_attributes_text[:26] + '...'
+    judging_teams_attributes.text = judging_teams_attributes_text
     display_items.append(judging_teams_attributes)
 
     # Judging Teams Edit Button
@@ -202,8 +242,13 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
                                        color=title_color, just='left')
     judging_players_attributes_text = ''
     for attr in settings['player_sort_attributes']:
-        judging_players_attributes_text += attr + ', '
-    judging_players_attributes.text = judging_players_attributes_text[:-2]
+        judging_players_attributes_text += format_attr_name(attr) + ', '
+    # Remove extra comma and space
+    judging_players_attributes_text = judging_players_attributes_text[:-2]
+    # Truncate if too long
+    if len(judging_players_attributes_text) > 26:
+        judging_players_attributes_text = judging_players_attributes_text[:26] + '...'
+    judging_players_attributes.text = judging_players_attributes_text
     display_items.append(judging_players_attributes)
 
     # Judging Teams Edit Button

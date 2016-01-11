@@ -152,16 +152,19 @@ def open_files_menu(window_x, window_y, db_dict, settings=None):
         win_files.hide()
 
     def player_list_current_btn_func():
+        settings['prev_window'] = 'files_menu'
         settings['file_type'] = 'current_player_list'
         PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
         win_files.hide()
 
     def formation_list_current_btn_func():
+        settings['prev_window'] = 'files_menu'
         settings['file_type'] = 'current_formation_list'
         PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
         win_files.hide()
 
     def team_list_current_btn_func():
+        settings['prev_window'] = 'files_menu'
         settings['file_type'] = 'current_team_list'
         PickFile.open_pick_file_window(win_files.x, win_files.y, db_dict, settings)
         win_files.hide()

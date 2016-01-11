@@ -4,6 +4,7 @@ import FilesMenu
 import EnterText
 import EditMenu
 import ConfirmPrompt
+import CreateUltimateTeams
 from Logic.PlayerDB import PlayerDB
 from Logic.FormationDB import FormationDB
 from Logic.TeamDB import TeamDB
@@ -143,7 +144,11 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
             # Enable back button
             settings['file_changes'] = False
             settings['file_index'] = 0
-            FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
+            if settings['prev_window'] == 'team_creation':
+                CreateUltimateTeams.open_create_ultimate_teams_window(win_pick_file.x, win_pick_file.y, db_dict,
+                                                                      file_name=settings['file_name'])
+            else:
+                FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
             win_pick_file.hide()
 
         def rename_file_func(file_name):
@@ -284,7 +289,12 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
 
     def back_btn_func():
         settings['file_index'] = 0
-        FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
+
+        if settings['prev_window'] == 'team_creation':
+            CreateUltimateTeams.open_create_ultimate_teams_window(win_pick_file.x, win_pick_file.y, db_dict,
+                                                                  file_name=settings['file_name'])
+        else:
+            FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
         win_pick_file.hide()
 
     # ========== Back Button ==========
