@@ -36,12 +36,17 @@ def open_teams_menu(window_x, window_y, db_dict):
 
     # ========== Button Declarations ==========
     create_ultimate_teams_btn = Button("Create Ultimate Teams")
+    manually_create_teams_btn = Button("Manually Create Teams")
     back_btn = Button("Back")
 
     # ========== Button Functions ==========
     def create_ultimate_teams_btn_func():
         CreateUltimateTeams.open_create_ultimate_teams_window(win_teams.x, win_teams.y, db_dict)
         win_teams.hide()
+
+    def manually_create_teams_btn_func():
+        # win_teams.hide()
+        stuff = 0
 
     def back_btn_func():
         StartMenu.open_start_menu(win_teams.x, win_teams.y, db_dict)
@@ -58,8 +63,18 @@ def open_teams_menu(window_x, window_y, db_dict):
     create_ultimate_teams_btn.color = button_color
     create_ultimate_teams_btn.just = 'right'
 
+    manually_create_teams_btn.x = (win_width - file_btn_width) / 2
+    manually_create_teams_btn.y = create_ultimate_teams_btn.bottom + top_border
+    manually_create_teams_btn.height = button_height
+    manually_create_teams_btn.width = file_btn_width
+    manually_create_teams_btn.font = button_font
+    manually_create_teams_btn.action = manually_create_teams_btn_func
+    manually_create_teams_btn.style = 'default'
+    manually_create_teams_btn.color = button_color
+    manually_create_teams_btn.just = 'right'
+
     back_btn.x = (win_width - button_width) / 2
-    back_btn.y = create_ultimate_teams_btn.bottom + top_border*2
+    back_btn.y = manually_create_teams_btn.bottom + top_border*2
     back_btn.height = button_height
     back_btn.width = button_width
     back_btn.font = button_font
@@ -71,6 +86,7 @@ def open_teams_menu(window_x, window_y, db_dict):
     # ========== Add components to view and add view to window ==========
     view.add(title)
     view.add(create_ultimate_teams_btn)
+    view.add(manually_create_teams_btn)
     view.add(back_btn)
 
     win_teams.add(view)
