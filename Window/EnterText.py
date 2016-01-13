@@ -2,6 +2,7 @@ from GUI import Button, Label, TextField, View, Window
 from AppConfig import *
 import PickFile
 import FilesMenu
+import StatusWindow
 from Logic.PlayerDB import PlayerDB
 from os import rename
 from os.path import isfile
@@ -41,7 +42,7 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
     win_enter_text.position = (window_x+100, window_y+100)
     win_enter_text.size = (win_width-200, win_height-400)
     win_enter_text.resizable = 0
-    win_enter_text.name = title + " Window"
+    win_enter_text.name = enter_text_title + " Window"
     win_enter_text.show()
 
     # ========== Window Image View ==========
@@ -153,9 +154,12 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
                 if valid_name:
 
                     # Start download and saving of the player database, and return to manage menu
-                    multiprocessing.Process(target=download_and_save, args=(new_player_db_name,)).start()
+                    #multiprocessing.Process(target=download_and_save, args=(new_player_db_name,)).start()
 
-                    FilesMenu.open_files_menu(window_x, window_y, db_dict, settings)
+                    StatusWindow.open_status_window(win_enter_text.x, win_enter_text.y, db_dict,
+                                                    file_name=new_player_db_name, settings=settings,
+                                                    win_previous=win_enter_text, win_next='FilesMenu')
+                    #FilesMenu.open_files_menu(window_x, window_y, db_dict, settings)
                     win_enter_text.hide()
 
             else:

@@ -4,43 +4,44 @@ import GUI.StdColors
 
 # ========== Strings ==========
 # Titles on top of windows
-start_title = 'FIFA Squad Builder'
-start_message_text = 'Select a Tab to Get Started!'
-search_title = 'Search'
-players_title = 'Players'
-formations_title = 'Formations'
-teams_title = 'Teams'
-files_title = 'Manage Files'
 attribute_title = 'Attributes Menu'
-player_bio_title = 'Player Bio'
-formation_bio_title = 'Formation Bio'
-team_bio_title = 'Team Bio'
-pick_file_title = 'File Menu'
 confirm_prompt_title = 'Are you sure?'
-edit_title = 'Edit'
 create_list_title = 'Create New List'
-pick_position_title = 'Pick New Position'
 create_ultimate_teams_title = 'Create Ultimate Teams'
+edit_title = 'Edit'
+enter_text_title = 'Enter Text'
+files_title = 'Manage Files'
+formation_bio_title = 'Formation Bio'
+formations_title = 'Formations'
+pick_file_title = 'File Menu'
+pick_position_title = 'Pick New Position'
+player_bio_title = 'Player Bio'
+players_title = 'Players'
+search_title = 'Search'
+start_title = 'FIFA Squad Builder'
 status_window_title = "Status"
+team_bio_title = 'Team Bio'
+teams_title = 'Teams'
 
 # Titles on the window bar at the top
 start_win_title = 'FIFA Squad Builder'
-search_win_title = start_win_title + ' - ' + search_title
-players_win_title = start_win_title + ' - ' + players_title
-formations_win_title = start_win_title + ' - ' + formations_title
-teams_win_title = start_win_title + ' - ' + teams_title
-files_win_title = start_win_title + ' - ' + files_title
+
 attribute_win_title = start_win_title + ' - ' + attribute_title
-player_bio_win_title = start_win_title + ' - ' + player_bio_title
-formation_bio_win_title = start_win_title + ' - ' + formation_bio_title
-team_bio_win_title = start_win_title + ' - ' + team_bio_title
-pick_file_win_title = start_win_title + ' - ' + pick_file_title
 confirm_prompt_win_title = start_win_title + ' - ' + confirm_prompt_title
-edit_win_title = start_win_title + ' - ' + edit_title
 create_list_win_title = start_win_title + ' - ' + create_list_title
-pick_position_win_title = start_win_title + ' - ' + pick_position_title
 create_ultimate_teams_win_title = start_win_title + ' - ' + create_ultimate_teams_title
+edit_win_title = start_win_title + ' - ' + edit_title
+files_win_title = start_win_title + ' - ' + files_title
+formation_bio_win_title = start_win_title + ' - ' + formation_bio_title
+formations_win_title = start_win_title + ' - ' + formations_title
+pick_file_win_title = start_win_title + ' - ' + pick_file_title
+pick_position_win_title = start_win_title + ' - ' + pick_position_title
+player_bio_win_title = start_win_title + ' - ' + player_bio_title
+players_win_title = start_win_title + ' - ' + players_title
+search_win_title = start_win_title + ' - ' + search_title
 status_window_win_title = start_win_title + ' - ' + status_window_title
+team_bio_win_title = start_win_title + ' - ' + team_bio_title
+teams_win_title = start_win_title + ' - ' + teams_title
 
 # ========== Colors ==========
 black = GUI.StdColors.black

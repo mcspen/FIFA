@@ -25,7 +25,7 @@ class PlayerDB:
             db_input = [db_input]
         self.db = copy.deepcopy(db_input)
 
-    def download(self):
+    def download(self, queue=None):
         """
         Download the database from the EA FIFA website
         Input: None
@@ -45,6 +45,8 @@ class PlayerDB:
 
         # Iterate through all pages
         for page_num in range(1, total_pages+1):
+            if queue is not None:
+                queue.put((page_num, total_pages))
             print "%d of %d pages" % (page_num, total_pages)
 
             while True:
