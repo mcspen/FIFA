@@ -813,7 +813,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
         total_num_results_label.text = str(len(results_list.db)) + " Players"
         pages_label.text = "Page %d of %d" % (int(index_range[1]/num_results),
-                                              math.ceil(len(results_list.db)/num_results) + 1)
+                                              math.ceil(len(results_list.db)/float(num_results)))
 
         if index_range[0] > 0:
             previous_btn.enabled = 1
@@ -910,7 +910,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
         total_num_results_label.text = str(len(results_list.db)) + " Formations"
         pages_label.text = "Page %d of %d" % (int(index_range[1]/num_results),
-                                              math.ceil(len(results_list.db)/num_results) + 1)
+                                              math.ceil(len(results_list.db)/float(num_results)))
 
         if index_range[0] > 0:
             previous_btn.enabled = 1
@@ -1001,7 +1001,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
         total_num_results_label.text = str(len(results_list.db)) + " Teams"
         pages_label.text = "Page %d of %d" % (int(index_range[1]/num_results),
-                                              math.ceil(len(results_list.db)/num_results) + 1)
+                                              math.ceil(len(results_list.db)/float(num_results)))
 
         if index_range[0] > 0:
             previous_btn.enabled = 1

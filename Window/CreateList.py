@@ -1,7 +1,8 @@
 from GUI import Button, Label, TextField, View, Window
 from AppConfig import *
 import FilesMenu
-from Logic.HelperFunctions import ascii_text, get_file_prefix, player_info_labels, player_info
+from Logic.HelperFunctions import ascii_text, get_file_prefix, player_info_labels, player_info,\
+    formation_info_labels, formation_info
 from Logic.PlayerDB import PlayerDB
 from Logic.FormationDB import FormationDB
 from Logic.TeamDB import TeamDB
@@ -86,7 +87,7 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
 
                     elif create_list_settings['list_type'] == 'formation':
                         new_list = FormationDB()
-                        message.text = "Enter formation stuff."
+                        message.text = "Enter part or full formation name, or nothing for full list."
                         create_list_settings['process_step'] = 'get formation'
 
                     elif create_list_settings['list_type'] == 'team':
@@ -113,7 +114,7 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
 
         # Get player to add to list
         elif create_list_settings['process_step'] == 'get player':
-            # Get file name and file prefix
+            # Get input
             player_input = value_tf.value
 
             # Remove result messages off page
@@ -157,15 +158,39 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
                         message.text = "Multiple players found. Pick correct one."
                         display_players(results, [], (0, num_results))
 
-                value_tf.become_target()
-
             else:
-                message.text = "Invalid. Ex: '99 Superman'  or 'Superman'."
-                value_tf.become_target()
+                message.text = "Invalid. Ex: '99 Superman' or 'Superman'."
 
         # Get formation to add to list
         elif create_list_settings['process_step'] == 'get formation':
-            stuff = 0
+            # Get input
+            formation_input = value_tf.value
+
+            # Remove result messages off page
+            for result_message in create_list_settings['results']:
+                view.remove(result_message)
+
+            search_dict = {'name': (formation_input, 'exact')}
+
+            # Search for formations
+            results = FormationDB(db_dict['formation_db'][1].search(search_dict))
+            # Remove formations already on list
+            for formation in create_list_settings['list'].db:
+                if formation in results.db:
+                    results.db.remove(formation)
+            results.sort(['name'])
+
+            # No matching formations found
+            if len(results.db) == 0:
+                message.text = "Unable to find formation. Try again."
+
+            # If only one formation in results, add formation.
+            elif len(results.db) == 1:
+                add_formation_btn_func(results.db[0])
+
+            else:
+                message.text = "Multiple formations found. Pick correct one."
+                display_formations(results, [], (0, num_results))
 
         # Get team to add to list
         elif create_list_settings['process_step'] == 'get team':
@@ -175,27 +200,43 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
         else:
             print "Create file process step is invalid."
 
+        value_tf.become_target()
+
     def undo_btn_func():
         # Remove last player added and save
-        if len(create_list_settings['list'].db) > 0:
-            player = create_list_settings['list'].db.pop(-1)
-            create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
+        if create_list_settings['process_step'] == 'get player':
+            if len(create_list_settings['list'].db) > 0:
+                player = create_list_settings['list'].db.pop(-1)
+                create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
 
-            common_name = ascii_text(player['commonName'])
-            player_name = ascii_text(player['firstName']) + ' ' + ascii_text(player['lastName'])
-            if len(common_name) > 0:
-                player_name = common_name + " (" + player_name + ")"
+                common_name = ascii_text(player['commonName'])
+                player_name = ascii_text(player['firstName']) + ' ' + ascii_text(player['lastName'])
+                if len(common_name) > 0:
+                    player_name = common_name + " (" + player_name + ")"
 
-            message.text = "Removed %s!" % player_name
+                message.text = "Removed %s!" % player_name
 
-            # Disable undo if no players left
-            if len(create_list_settings['list'].db) == 0:
-                undo_btn.enabled = 0
+        # Remove last formation added and save
+        elif create_list_settings['process_step'] == 'get formation':
+            if len(create_list_settings['list'].db) > 0:
+                formation = create_list_settings['list'].db.pop(-1)
+                create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
+
+                message.text = "Removed %s!" % formation['name']
+
+        # Disable undo if no items left
+        if len(create_list_settings['list'].db) == 0:
+            undo_btn.enabled = 0
 
     def back_btn_func():
         # Sort and save player list before exiting
         if create_list_settings['process_step'] == 'get player':
             create_list_settings['list'].sort(['rating'])
+            create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
+
+        # Sort and save formation list before exiting
+        elif create_list_settings['process_step'] == 'get formation':
+            create_list_settings['list'].sort(['name'])
             create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
 
         FilesMenu.open_files_menu(window_x, window_y, db_dict, settings)
@@ -270,7 +311,6 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
     formation_list_btn.style = 'default'
     formation_list_btn.color = button_color
     formation_list_btn.just = 'right'
-    formation_list_btn.enabled = 0  # Not implemented yet
 
     team_list_btn.x = formation_list_btn.right + button_spacing
     team_list_btn.y = player_list_btn.top
@@ -292,16 +332,22 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
     value_tf.font = std_tf_font
 
     # ========== Players navigation functions ==========
-    def previous_btn_func(display_player_db=None, attributes=None, index_range=None):
-        if display_player_db is not None:
+    def previous_btn_func(display_db=None, attributes=None, index_range=None):
+        if display_db is not None:
             # display previous results
-            display_players(display_player_db, attributes, index_range)
+            if create_list_settings['process_step'] == 'get player':
+                display_players(display_db, attributes, index_range)
+            elif create_list_settings['process_step'] == 'get formation':
+                display_formations(display_db, attributes, index_range)
         win_create_list.become_target()
 
-    def next_btn_func(display_player_db=None, attributes=None, index_range=None):
-        if display_player_db is not None:
+    def next_btn_func(display_db=None, attributes=None, index_range=None):
+        if display_db is not None:
             # display next results
-            display_players(display_player_db, attributes, index_range)
+            if create_list_settings['process_step'] == 'get player':
+                display_players(display_db, attributes, index_range)
+            elif create_list_settings['process_step'] == 'get formation':
+                display_formations(display_db, attributes, index_range)
         win_create_list.become_target()
 
     def add_player_btn_func(player):
@@ -330,6 +376,29 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
         # Duplicate player, don't add
         else:
             message.text = "Player already on list."
+            win_create_list.become_target()
+
+    def add_formation_btn_func(formation):
+        # Check for duplicates
+        if create_list_settings['list'].db.count(formation) == 0:
+            # Add formation and save
+            create_list_settings['list'].db.append(formation)
+            create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
+
+            # Remove result messages off page
+            for result_message in create_list_settings['results']:
+                view.remove(result_message)
+
+            # Reset page
+            value_tf.value = ''
+            message.text = "Added %s!" % formation['name']
+            back_btn.title = "Done"
+            undo_btn.enabled = 1
+            value_tf.become_target()
+
+        # Duplicate formation, don't add
+        else:
+            message.text = "Formation already on list."
             win_create_list.become_target()
 
     # ========== Display Players Buttons ==========
@@ -369,7 +438,7 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
     pages_label.color = title_color
     pages_label.just = 'left'
 
-    # ========== Display players from search ==========
+    # ========== Display info from search ==========
     def display_players(results_list, attributes, index_range):
         # Remove old messages off page
         for result_message in create_list_settings['results']:
@@ -385,7 +454,7 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
 
         total_num_results_label.text = str(len(results_list.db)) + " Players"
         pages_label.text = "Page %d of %d" % (int(index_range[1]/num_results),
-                                              math.ceil(len(results_list.db)/num_results) + 1)
+                                              math.ceil(len(results_list.db)/float(num_results)))
 
         if index_range[0] > 0:
             previous_btn.enabled = 1
@@ -408,11 +477,11 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
         add_btn_space = add_btn_width + 10
         spacing_list = [add_btn_space, 125, 40, 40, 65, 115, 115, 115]
         left_border = (win_create_list.width - sum(spacing_list)) / 2
-        msg_x = left_border + add_btn_space
+        msg_x = left_border
         msg_y = previous_btn.bottom + 5
 
         for info_label in labels:
-            player_label = Label(text=info_label, font=std_tf_font_bold, width=win_width-(2*left_border),
+            player_label = Label(text=info_label, font=std_tf_font_bold, width=spacing_list[stat_index]-5,
                                  height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
             create_list_settings['results'].append(player_label)
             msg_x += spacing_list[stat_index]
@@ -437,6 +506,81 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
                                      height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
 
                 create_list_settings['results'].append(player_label)
+                msg_x += spacing_list[stat_index]
+                stat_index += 1
+
+            msg_y += std_tf_height
+
+        for results_msg in create_list_settings['results']:
+            view.add(results_msg)
+
+    def display_formations(results_list, attributes, index_range):
+        # Remove old messages off page
+        for result_message in create_list_settings['results']:
+            view.remove(result_message)
+        del create_list_settings['results'][:]
+
+        # Add navigation buttons to page
+        previous_range = (index_range[0]-num_results, index_range[0])
+        previous_btn.action = (previous_btn_func, results_list, attributes, previous_range)
+
+        next_range = (index_range[1], index_range[1]+num_results)
+        next_btn.action = (next_btn_func, results_list, attributes, next_range)
+
+        total_num_results_label.text = str(len(results_list.db)) + " Formations"
+        pages_label.text = "Page %d of %d" % (int(index_range[1]/num_results),
+                                              math.ceil(len(results_list.db)/float(num_results)))
+
+        if index_range[0] > 0:
+            previous_btn.enabled = 1
+        else:
+            previous_btn.enabled = 0
+        if index_range[1] <= len(results_list.db) - 1:
+            next_btn.enabled = 1
+        else:
+            next_btn.enabled = 0
+
+        create_list_settings['results'].append(previous_btn)
+        create_list_settings['results'].append(next_btn)
+        create_list_settings['results'].append(total_num_results_label)
+        create_list_settings['results'].append(pages_label)
+
+        # Print out labels
+        labels = [''] + formation_info_labels()[:-2]
+        stat_index = 0
+        add_btn_width = 30
+        add_btn_space = add_btn_width + 10
+        spacing_list = [add_btn_space, 100, 100, 55, 55, 55, 55]
+        left_border = (win_create_list.width - sum(spacing_list)) / 2
+        msg_x = left_border
+        msg_y = previous_btn.bottom + 5
+
+        for info_label in labels:
+            player_label = Label(text=info_label, font=std_tf_font_bold, width=win_width-(2*left_border),
+                                 height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
+            create_list_settings['results'].append(player_label)
+            msg_x += spacing_list[stat_index]
+            stat_index += 1
+
+        msg_y += std_tf_height + 5
+
+        # Print out formations
+        for idx, formation in enumerate(results_list.db[index_range[0]:index_range[1]]):
+            msg_x = left_border
+            formation_stats = formation_info(formation)[:-2]
+            stat_index = 0
+
+            add_btn = Button("Add", width=add_btn_width, height=15, x=msg_x, y=msg_y,
+                             action=(add_formation_btn_func, formation))
+            create_list_settings['results'].append(add_btn)
+            msg_x += spacing_list[stat_index]
+            stat_index += 1
+
+            for formation_stat in formation_stats:
+                formation_label = Label(text=formation_stat, font=small_button_font, width=win_width-(2*left_border),
+                                        height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
+
+                create_list_settings['results'].append(formation_label)
                 msg_x += spacing_list[stat_index]
                 stat_index += 1
 
