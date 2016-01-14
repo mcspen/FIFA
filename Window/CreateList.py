@@ -92,8 +92,10 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
 
                     elif create_list_settings['list_type'] == 'team':
                         new_list = TeamDB()
-                        message.text = "Enter team stuff."
+                        message.text = "Blank team list created. Add teams from Search menu."
                         create_list_settings['process_step'] = 'get team'
+                        back_btn.title = "Done"
+                        enter_btn.enabled = 0
 
                     else:
                         new_list = PlayerDB()
@@ -239,6 +241,10 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
             create_list_settings['list'].sort(['name'])
             create_list_settings['list'].save(create_list_settings['file_name'], 'list', True)
 
+        elif create_list_settings['process_step'] == 'get team':
+            create_list_settings['list'].sort(['rating'])
+            create_list_settings['list'].save(create_list_settings['file_name'], True)
+
         FilesMenu.open_files_menu(window_x, window_y, db_dict, settings)
         win_create_list.hide()
 
@@ -321,7 +327,6 @@ def open_create_list_window(window_x, window_y, db_dict, settings):
     team_list_btn.style = 'default'
     team_list_btn.color = button_color
     team_list_btn.just = 'right'
-    team_list_btn.enabled = 0  # Not implemented yet
 
     # ========== Value Textfield ==========
     value_tf = TextField()
