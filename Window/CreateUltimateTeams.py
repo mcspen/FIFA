@@ -62,6 +62,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
 
     # Functions for picking files
     def player_list_current_btn_func():
+        save_settings()
         settings['file_type'] = 'current_player_list'
         settings['file_changes'] = False
         settings['prev_window'] = 'team_creation'
@@ -70,6 +71,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
         win_ultimate_teams.hide()
 
     def formation_list_current_btn_func():
+        save_settings()
         settings['file_type'] = 'current_formation_list'
         settings['file_changes'] = False
         settings['prev_window'] = 'team_creation'
