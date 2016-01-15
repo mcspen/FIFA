@@ -590,6 +590,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
 
         # Erase file name
         team_list_name_tf.value = ''
+        win_ultimate_teams.become_target()
 
     def back_btn_func():
         save_settings()
