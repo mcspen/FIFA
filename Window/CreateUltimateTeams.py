@@ -583,13 +583,13 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
         team = Team.Team()
         teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], db_dict['formation_list'][1]))
 
-        # Erase file name
-        team_list_name_tf.value = ''
-
         if len(teams.db) > 0:
             teams.save(team_list_name_tf.value)
         else:
             print 'Not saved because no teams created.'
+
+        # Erase file name
+        team_list_name_tf.value = ''
 
     def back_btn_func():
         save_settings()

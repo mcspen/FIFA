@@ -347,7 +347,7 @@ class PlayerDB:
                             match = False
                 elif attribute in ['nation', 'league', 'club']:
                     string_value = value.upper()
-                    stat = player[attribute]['name'].upper()
+                    stat = player[attribute]['name'].upper() + ' ' + player[attribute]['abbrName'].upper()
                     if string_value not in stat:
                         match = False
                 elif attribute in ['headshot', 'headshotImgUrl']:

@@ -266,15 +266,37 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
 
             def compare(current_team):
                 """
-                Comparison function for sorting the teams based on attributes list in config file.
+                Based on the list of attributes, return a tuple of attributes for the current team.
+                Input: The current team.
+                Output: A tuple of attributes to compare with.
                 """
-                attribute_tuple = ()
-                for attribute in team_sort_attributes:
 
-                    if attribute in current_team:
-                        attribute_tuple += (current_team[attribute],)
+                attribute_tuple = ()
+                for attr in team_sort_attributes:
+
+                    if attr in current_team:
+                        attribute_tuple += (current_team[attr],)
+                    elif attr in ['style']:
+                        attribute_tuple += (current_team['formation'][attr],)
+                    elif attr in ['manager_league', 'manager_nation']:
+                        attribute_tuple += (current_team['manager'][attr[8:]],)
+                    elif attr in ['player']:
+                        # Get list of player names
+                        player_names = []
+                        for position in current_team['formation']['positions'].itervalues():
+                            player = position['player']
+                            player_names.append(player['name'] + player['commonName'] +
+                                                player['firstName'] + player['lastName'])
+                        attribute_tuple += (player_names,)
+                    elif attr in ['total_skillMoves']:
+                        # Calculate total
+                        total = 0
+                        for position in current_team['formation']['positions'].itervalues():
+                            player = position['player']
+                            total += player[attr[6:]]
+                        attribute_tuple += (total,)
                     else:
-                        print "Invalid Attribute: %s" % attribute
+                        print "Invalid Attribute: %s" % attr
 
                 return attribute_tuple
 
