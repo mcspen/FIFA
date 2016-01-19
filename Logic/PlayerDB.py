@@ -25,7 +25,7 @@ class PlayerDB:
             db_input = [db_input]
         self.db = copy.deepcopy(db_input)
 
-    def download(self, queue=None):
+    def download(self, queue=None, get_prices=True):
         """
         Download the database from the EA FIFA website
         Input: None
@@ -35,39 +35,49 @@ class PlayerDB:
         url_db_start = 'https://www.easports.com/fifa/ultimate-team/api/fut/item?jsonParamObject={"page":"'
         url_db_end = '"}'
         del self.db[:]  # Empty existing DB list
+        players_found = []
 
-        # Create session
-        sess = requests.Session()
+        try:
+            # Create session
+            sess = requests.Session()
 
-        # Get total number of pages of data
-        page_data = sess.get("%s1%s" % (url_db_start, url_db_end)).content  # Get first page data
-        total_pages = json.loads(page_data)['totalPages']   # Get total number of pages
+            # Get total number of pages of data
+            page_data = sess.get("%s1%s" % (url_db_start, url_db_end)).content  # Get first page data
+            total_pages = json.loads(page_data)['totalPages']   # Get total number of pages
 
-        # Iterate through all pages
-        for page_num in range(1, total_pages+1):
-            if queue is not None:
-                queue.put((page_num, total_pages))
-            print "%d of %d pages" % (page_num, total_pages)
+            # Iterate through all pages
+            for page_num in range(1, total_pages+1):
+                if queue is not None:
+                    queue.put((page_num, total_pages))
+                print "%d of %d pages" % (page_num, total_pages)
 
-            while True:
-                try:
-                    # Get first page data
-                    page_data = json.loads(sess.get("%s%s%s" % (url_db_start, page_num, url_db_end)).content)
-                    break
-                except Exception:
-                    print "JSON Loading Error. Retrying Load."
+                while True:
+                    try:
+                        # Get first page data
+                        page_data = json.loads(sess.get("%s%s%s" % (url_db_start, page_num, url_db_end)).content)
+                        break
+                    except Exception:
+                        print "JSON Loading Error. Retrying Load."
 
-            # Get the number of players on the page
-            total_players = page_data['count']
+                # Get the number of players on the page
+                total_players = page_data['count']
 
-            # Iterate through players on page
-            for player_num in range(total_players):
-                # Get player data
-                player_data = page_data['items'][player_num]
+                # Iterate through players on page
+                for player_num in range(total_players):
+                    # Get player data and create player
+                    player_data = page_data['items'][player_num]
+                    temp_player = Player(player_data)
 
-                # Add player to database and avoid duplicates
-                if self.db.count(Player(player_data).__dict__) == 0:
-                    self.db.append(Player(player_data).__dict__)
+                    # Add player to database and avoid duplicates
+                    if players_found.count(temp_player.id) == 0:
+                        if get_prices:
+                            temp_player.get_price()
+                        self.db.append(temp_player.__dict__)
+                        players_found.append(Player(player_data).id)
+
+        except Exception:
+            print "Not connected to internet. Cannot download player db."
+            queue.put("Not connected to internet. Cannot download player db.")
 
         return self.db
 

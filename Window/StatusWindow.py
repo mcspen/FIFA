@@ -19,14 +19,15 @@ def create_teams(db_dict, file_name):
 
 
 # ========== Create teams function ==========
-def download_and_save_player_db(queue, new_db_name):
+def download_and_save_player_db(queue, new_db_name, get_prices):
     # Download player database
     player_db = PlayerDB.PlayerDB()
-    player_db.download(queue)
+    player_db.download(queue, get_prices=get_prices)
     player_db.save(new_db_name, 'db', True)
 
 
-def open_status_window(window_x, window_y, db_dict, file_name=None, settings=None, win_previous=None, win_next=None):
+def open_status_window(window_x, window_y, db_dict,
+                       file_name=None, get_prices=None, settings=None, win_previous=None, win_next=None):
 
     display_list = []
 
@@ -107,13 +108,17 @@ def open_status_window(window_x, window_y, db_dict, file_name=None, settings=Non
                 while not queue.empty():
                     tup = queue.get()
 
-                main_status_label.text = "Approximately %d of %d of players downloaded." % (tup[0]*24, tup[1]*24)
-                percent_status_label.text = str(float(tup[0])/tup[1]*100)[:5] + '%'
-                bar_status_label_fill.text = '|'*int(max_num_bars*float(tup[0])/tup[1])
+                if len(tup) == 1:
+                    main_status_label.text = tup
 
-                if tup[0] == tup[1]:
-                    stop_btn.title = "Done"
-                    update_btn.enabled = 0
+                elif len(tup) == 2:
+                    main_status_label.text = "Approximately %d of %d of players downloaded." % (tup[0]*24, tup[1]*24)
+                    percent_status_label.text = str(float(tup[0])/tup[1]*100)[:5] + '%'
+                    bar_status_label_fill.text = '|'*int(max_num_bars*float(tup[0])/tup[1])
+
+                    if tup[0] == tup[1]:
+                        stop_btn.title = "Done"
+                        update_btn.enabled = 0
 
         status_window.become_target()
 
@@ -172,7 +177,8 @@ def open_status_window(window_x, window_y, db_dict, file_name=None, settings=Non
         title.text = "Downloading Player Database..."
 
         queue = multiprocessing.Queue()
-        download_process = multiprocessing.Process(target=download_and_save_player_db, args=(queue, file_name))
+        download_process = multiprocessing.Process(target=download_and_save_player_db,
+                                                   args=(queue, file_name, get_prices))
         download_process.start()
 
     # ========== Add components to view and add view to window ==========

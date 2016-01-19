@@ -1,4 +1,4 @@
-from GUI import Button, Label, TextField, View, Window
+from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
 from AppConfig import *
 import PickFile
 import FilesMenu
@@ -7,7 +7,6 @@ from Logic.PlayerDB import PlayerDB
 from os import rename
 from os.path import isfile
 from shutil import copyfile
-import multiprocessing
 
 
 def download_and_save(new_db_name):
@@ -18,6 +17,8 @@ def download_and_save(new_db_name):
 
 
 def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill_text='', file_prefix=''):
+
+    general_display = []
 
     if box_type == 'rename':
         title = 'Rename File'
@@ -62,11 +63,13 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
     title.y = top_border
     title.color = title_color
     title.just = 'center'
+    general_display.append(title)
 
     # ========== Message Label ==========
     message = Label(font=title_font_2, width=win_enter_text.width - 50, height=title_height,
                     x=25, y=title.bottom + top_border, color=title_color, just='center')
     message.text = message_text
+    general_display.append(message)
 
     # ========== Button Declarations ==========
     enter_btn = Button("Enter")
@@ -152,14 +155,11 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
                         valid_name = True
 
                 if valid_name:
-
-                    # Start download and saving of the player database, and return to manage menu
-                    #multiprocessing.Process(target=download_and_save, args=(new_player_db_name,)).start()
-
+                    # Open status window to start download of players
                     StatusWindow.open_status_window(win_enter_text.x, win_enter_text.y, db_dict,
+                                                    get_prices=sort_order_radio_group.value,
                                                     file_name=new_player_db_name, settings=settings,
                                                     win_previous=win_enter_text, win_next='FilesMenu')
-                    #FilesMenu.open_files_menu(window_x, window_y, db_dict, settings)
                     win_enter_text.hide()
 
             else:
@@ -182,6 +182,7 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
     enter_btn.style = 'default'
     enter_btn.color = button_color
     enter_btn.just = 'right'
+    general_display.append(enter_btn)
 
     back_btn.x = enter_btn.right + button_spacing
     back_btn.y = enter_btn.top
@@ -192,22 +193,58 @@ def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill
     back_btn.style = 'default'
     back_btn.color = button_color
     back_btn.just = 'right'
+    general_display.append(back_btn)
 
     # ========== Value Textfield ==========
     value_tf = TextField()
     value_tf.width = 200
     value_tf.x = (win_enter_text.width - value_tf.width) / 2
-    value_tf.y = enter_btn.top - 50
+    value_tf.y = enter_btn.top - 65
     value_tf.height = 25
     value_tf.font = std_tf_font
     value_tf.value = fill_text
+    general_display.append(value_tf)
+
+    def get_attribute_sort_order_rg():
+        settings['order_rg'] = sort_order_radio_group.value
+        win_enter_text.become_target()
+
+    sort_order_radio_group = RadioGroup(action=get_attribute_sort_order_rg)
+
+    prices_label_width = 85
+    prices_button_width = 50
+    prices_label = Label(text="Get Prices?:", font=std_tf_font, width=prices_label_width, height=std_tf_height,
+                         color=title_color)
+    prices_label.x = (win_enter_text.width - 2*prices_button_width - 10 - prices_label_width) / 2
+    prices_label.y = enter_btn.top - 38
+    prices_label.just = 'center'
+
+    prices_yes = RadioButton("Yes")
+    prices_yes.width = prices_button_width
+    prices_yes.x = prices_label.right + 5
+    prices_yes.y = prices_label.top
+    prices_yes.group = sort_order_radio_group
+    prices_yes.value = True
+
+    prices_no = RadioButton("No")
+    prices_no.width = prices_button_width
+    prices_no.x = prices_yes.right + 5
+    prices_no.y = prices_label.top
+    prices_no.group = sort_order_radio_group
+    prices_no.value = False
+
+    sort_order_radio_group.value = True
+
+    if box_type == 'download':
+        value_tf.y = enter_btn.top - 75
+
+        general_display.append(prices_label)
+        general_display.append(prices_yes)
+        general_display.append(prices_no)
 
     # ========== Add buttons to window ==========
-    view.add(title)
-    view.add(message)
-    view.add(value_tf)
-    view.add(enter_btn)
-    view.add(back_btn)
+    for item in general_display:
+        view.add(item)
 
     win_enter_text.add(view)
     view.become_target()
