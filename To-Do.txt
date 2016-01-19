@@ -1,6 +1,8 @@
 Add the different team creation types to the Team Window
 Create an option for creating by picking each player.
 
+Add price to all of the player search attributes.
+
 Team sort function should not need to be duplicated in the ultimate team functions page.
 
 Change how teams work so that you can have two lists of teams and move teams back and forth.
