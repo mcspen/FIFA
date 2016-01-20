@@ -362,9 +362,10 @@ class PlayerDB:
                                    'balance', 'ballcontrol', 'crossing', 'curve', 'dribbling', 'finishing',
                                    'freekickaccuracy', 'gkdiving', 'gkhandling', 'gkkicking', 'gkpositioning',
                                    'gkreflexes', 'headingaccuracy', 'interceptions', 'jumping', 'longpassing',
-                                   'longshots', 'marking', 'penalties', 'positioning', 'potential', 'reactions',
-                                   'shortpassing', 'shotpower', 'skillMoves', 'slidingtackle', 'sprintspeed',
-                                   'standingtackle', 'stamina', 'strength', 'vision', 'volleys', 'weakFoot']:
+                                   'longshots', 'marking', 'penalties', 'positioning', 'potential', 'price',
+                                   'reactions', 'shortpassing', 'shotpower', 'skillMoves', 'slidingtackle',
+                                   'sprintspeed', 'standingtackle', 'stamina', 'strength', 'vision', 'volleys',
+                                   'weakFoot']:
                     if compare == 'higher':
                         if not player[attribute] >= value:
                             match = False
