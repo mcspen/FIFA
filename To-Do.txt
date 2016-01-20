@@ -1,7 +1,8 @@
 Add the different team creation types to the Team Window
 Create an option for creating by picking each player.
 
-Add price to all of the player search attributes.
+Add price to the player bio page.
+Figure out a way to still search for price of a player whose position has been changed.
 
 Team sort function should not need to be duplicated in the ultimate team functions page.
 

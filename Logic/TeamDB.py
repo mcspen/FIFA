@@ -2,6 +2,7 @@ import copy
 import json
 from os.path import isfile
 from Team import Team
+from Player import Player
 
 
 class TeamDB:
@@ -92,6 +93,44 @@ class TeamDB:
             return False
 
         return True
+
+    def update_player_prices(self, queue=None, console='PS4'):
+        """
+        Gets updated price information for all the players on all of the teams on the list
+        Input: None
+        Output: None  -  the player price information is updated
+        """
+
+        # Create a list of all the players to avoid duplicating searches
+        player_list = []
+        price_list = {}
+        # Iterate through teams
+        for team in self.db:
+            # Iterate through positions on team
+            for position in team['formation']['positions'].itervalues():
+                player = position['player']
+                if player_list.count(player) == 0:
+                    player_list.append(player)
+
+        # Iterate through list of players and get updated prices
+        total_players = len(player_list)
+        for idx, player_info in enumerate(player_list):
+            player = Player(player_info)
+            price_list[player.id] = player.get_price(console)
+
+            # Display number of pages completed
+            if queue is not None:
+                queue.put((idx+1, total_players))
+            print "%d of %d players updated" % (idx+1, total_players)
+
+        # Assign values back to players on teams
+        # Iterate through teams
+        for team in self.db:
+            # Iterate through positions on team
+            for position in team['formation']['positions'].itervalues():
+                # Assign updated price
+                player = position['player']
+                player['price'] = price_list[player['id']]
 
     def sort(self, attributes, descend=True):
         """

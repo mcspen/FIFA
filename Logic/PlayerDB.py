@@ -47,10 +47,6 @@ class PlayerDB:
 
             # Iterate through all pages
             for page_num in range(1, total_pages+1):
-                if queue is not None:
-                    queue.put((page_num, total_pages))
-                print "%d of %d pages" % (page_num, total_pages)
-
                 while True:
                     try:
                         # Get first page data
@@ -74,6 +70,11 @@ class PlayerDB:
                             temp_player.get_price()
                         self.db.append(temp_player.__dict__)
                         players_found.append(Player(player_data).id)
+
+                # Display number of pages completed
+                if queue is not None:
+                    queue.put((page_num, total_pages))
+                print "%d of %d pages downloaded" % (page_num, total_pages)
 
         except Exception:
             print "Not connected to internet. Cannot download player db."
@@ -169,6 +170,24 @@ class PlayerDB:
         self.__init__(all_players)
 
         return True
+
+    def update_player_prices(self, queue=None, console='PS4'):
+        """
+        Gets updated price information for all the players on the list/db
+        Input: None
+        Output: None  -  the player price information is updated
+        """
+
+        # Iterate through player list and get updated prices
+        total_players = len(self.db)
+        for idx, player_info in enumerate(self.db):
+            player = Player(player_info)
+            self.db[idx]['price'] = player.get_price(console)
+
+            # Display number of pages completed
+            if queue is not None:
+                queue.put((idx+1, total_players))
+            print "%d of %d players updated" % (idx+1, total_players)
 
     def sort(self, attributes, descend=True):
         """

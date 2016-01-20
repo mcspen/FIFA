@@ -1,9 +1,3 @@
-"""
-Helper functions that don't belong to any class
-"""
-
-__author__ = 'mspencer'
-
 import unicodedata
 from PIL import Image
 import urllib2
@@ -331,7 +325,7 @@ def format_attr_name(attribute):
                        "aggression", "agility", "agility", "balance", "foot", "crossing", "curve", "dribbling",
                        "finishing", "interceptions", "jumping", "marking", "penalties", "positioning", "potential",
                        "reactions", "stamina", "strength", "vision", "volleys", "traits", "specialities", "attributes",
-                       "name", "quality", "color", "rating", "formation", "style", "description", "chemistry",
+                       "name", "price", "quality", "color", "rating", "formation", "style", "description", "chemistry",
                        "player"]:
         return attribute.capitalize()
     elif attribute in ["num_links", "num_defenders", "num_attackers", "num_midfielders"]:

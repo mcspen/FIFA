@@ -64,6 +64,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     # ========== Attribute Radio Buttons ==========
     radio_group = RadioGroup(action=selection_made)
     radio_button_list = []
+    buttons_per_column = 11
 
     config_file = '_attributes'
     if attr_type[:4] == 'play':
@@ -93,25 +94,25 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
             print "Invalid attribute type."
 
         if attr_type[:4] == 'play':
-            if idx < 10:
+            if idx < buttons_per_column:
                 button.width = 45
-                button.x = (idx / 10) * (button.width + 5) + 5
-            elif idx < 30:
+                button.x = (idx / buttons_per_column) * (button.width + 5) + 5
+            elif idx < 3*buttons_per_column:
                 button.width = 100
-                button.x = (idx / 10) * (button.width + 5) - 50
-            elif idx < 40:
+                button.x = (idx / buttons_per_column) * (button.width + 5) - 50
+            elif idx < 4*buttons_per_column:
                 button.width = 110
-                button.x = (idx / 10) * (button.width + 5) - 80
+                button.x = (idx / buttons_per_column) * (button.width + 5) - 80
             else:
                 button.width = 100
-                button.x = (idx / 10) * (button.width + 5) - 40
+                button.x = (idx / buttons_per_column) * (button.width + 5) - 40
 
-            button.y = (idx % 10) * 25 + title.bottom + 5
+            button.y = (idx % buttons_per_column) * 25 + title.bottom - 5
 
             # Added for 81st item
-            if idx == 80:
+            """if idx == 80:
                 button.x = 7 * (button.width + 5) - 40
-                button.y = 10 * 25 + title.bottom + 5
+                button.y = 10 * 25 + title.bottom + 5"""
 
         elif attr_type[:4] == 'form':
             button.width = 150

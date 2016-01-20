@@ -5,6 +5,7 @@ import EnterText
 import EditMenu
 import ConfirmPrompt
 import CreateUltimateTeams
+import StatusWindow
 from Logic.PlayerDB import PlayerDB
 from Logic.FormationDB import FormationDB
 from Logic.TeamDB import TeamDB
@@ -87,6 +88,7 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
         # Get corresponding file names
         all_files = listdir('JSONs/')
         file_list = []
+        # Truncate file paths to just the names
         for filename in all_files:
             if filename[:8] == file_prefix:
                 filename = filename[8:]
@@ -172,6 +174,15 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
             EditMenu.open_edit_menu(win_pick_file.x, win_pick_file.y, db_dict, settings=settings)
             win_pick_file.hide()
 
+        def update_prices_func(file_name):
+            win_pick_file.become_target()
+            # Open status window to start updating player prices
+            settings['update_prices'] = True
+            settings['console'] = 'PS4'
+            StatusWindow.open_status_window(win_pick_file.x, win_pick_file.y,
+                                            db_dict, file_name, settings=settings, win_previous=win_pick_file)
+            win_pick_file.hide()
+
         def duplicate_file_func(file_name):
             # Get name for duplicate file and create
             EnterText.open_enter_text_window(win_pick_file.x, win_pick_file.y, db_dict, settings,
@@ -180,7 +191,8 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
 
         def delete_file_func(file_name):
             file_path = 'JSONs/' + file_prefix + file_name + '.json'
-            ConfirmPrompt.open_confirm_prompt_window(win_pick_file.x, win_pick_file.y, db_dict, settings, file_path, file_name)
+            ConfirmPrompt.open_confirm_prompt_window(win_pick_file.x, win_pick_file.y,
+                                                     db_dict, settings, file_path, file_name)
             win_pick_file.hide()
 
         # Display appropriate files
@@ -188,10 +200,13 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
         file_y = sub_title.bottom + small_button_top_spacing
         if file_type[:7] == 'default':
             file_x = (win_width - file_btn_width) / 2
-        elif file_type[-2:] == 'db':
+        elif file_type[-2:] == 'db' and file_type[8:-3] == 'formation':
             file_x = (win_width - file_btn_width - 3*small_file_button_width - 3*file_btn_spacing) / 2
-        else:
+        elif (file_type[-2:] == 'db' and file_type[8:-3] == 'player') or \
+             (file_type[-4:] == 'list' and file_type[8:-5] == 'formation'):
             file_x = (win_width - file_btn_width - 4*small_file_button_width - 4*file_btn_spacing) / 2
+        else:
+            file_x = (win_width - file_btn_width - 5*small_file_button_width - 5*file_btn_spacing) / 2
 
         if 'file_index' not in settings:
             settings['file_index'] = 0
@@ -240,46 +255,60 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
                               font=small_button_font, action=(select_file_func, filename), style='default',
                               x=file_x, y=file_y,
                               color=small_button_color, just='center')
+
+            # Rename file button
+            rename_btn = Button('Rename', height=small_button_height, width=small_file_button_width,
+                                font=small_button_font, action=(rename_file_func, filename), style='default',
+                                x=file_btn.right + file_btn_spacing, y=file_y,
+                                color=small_button_color, just='center')
+
+            # Edit file button
+            edit_btn = Button('Edit', height=small_button_height, width=small_file_button_width,
+                              font=small_button_font, action=(edit_file_func, filename), style='default',
+                              x=rename_btn.right + file_btn_spacing, y=file_y,
+                              color=small_button_color, just='center')
+            if file_type[8:12] != 'play':
+                edit_btn.enabled = 0
+
+            # Update prices button
+            update_prices_btn = Button('Update Prices', height=small_button_height, width=small_file_button_width,
+                                       font=small_button_font, action=(update_prices_func, filename), style='default',
+                                       x=edit_btn.right + file_btn_spacing, y=file_y,
+                                       color=small_button_color, just='center')
+
+            # Duplicate file button
+            duplicate_btn = Button('Duplicate', height=small_button_height, width=small_file_button_width,
+                                   font=small_button_font, action=(duplicate_file_func, filename), style='default',
+                                   x=update_prices_btn.right + file_btn_spacing, y=file_y,
+                                   color=small_button_color, just='center')
+
+            # Delete file button
+            delete_btn = Button('Delete', height=small_button_height, width=small_file_button_width,
+                                font=small_button_font, action=(delete_file_func, filename), style='default',
+                                x=duplicate_btn.right + file_btn_spacing, y=file_y,
+                                color=small_button_color, just='center')
+
+            # Reposition buttons based on those being shown
+            if 'db' in file_type and 'formation' in file_type:
+                duplicate_btn.x = rename_btn.right + file_btn_spacing
+                delete_btn.x = duplicate_btn.right + file_btn_spacing
+            elif 'db' in file_type:
+                update_prices_btn.x = rename_btn.right + file_btn_spacing
+                duplicate_btn.x = update_prices_btn.right + file_btn_spacing
+                delete_btn.x = duplicate_btn.right + file_btn_spacing
+            elif 'list' in file_type and 'formation' in file_type:
+                duplicate_btn.x = edit_btn.right + file_btn_spacing
+                delete_btn.x = duplicate_btn.right + file_btn_spacing
+
+            # Display buttons according to file type
             display_list.append(file_btn)
-
-            if file_type[:7] == 'current':
-                # Rename file button
-                rename_btn = Button('Rename', height=small_button_height, width=small_file_button_width,
-                                    font=small_button_font, action=(rename_file_func, filename), style='default',
-                                    x=file_btn.right + file_btn_spacing, y=file_y,
-                                    color=small_button_color, just='center')
+            if 'current' in file_type:
                 display_list.append(rename_btn)
-
-                if file_type[-4:] == 'list':
-                    # Edit file button
-                    edit_btn = Button('Edit', height=small_button_height, width=small_file_button_width,
-                                      font=small_button_font, action=(edit_file_func, filename), style='default',
-                                      x=rename_btn.right + file_btn_spacing, y=file_y,
-                                      color=small_button_color, just='center')
-                    if file_type[8:12] != 'play':
-                        edit_btn.enabled = 0
+                if 'list' in file_type:
                     display_list.append(edit_btn)
-
-                    # Duplicate file button
-                    duplicate_btn = Button('Duplicate', height=small_button_height, width=small_file_button_width,
-                                           font=small_button_font, action=(duplicate_file_func, filename), style='default',
-                                           x=edit_btn.right + file_btn_spacing, y=file_y,
-                                           color=small_button_color, just='center')
-                    display_list.append(duplicate_btn)
-
-                else:
-                    # Duplicate file button
-                    duplicate_btn = Button('Duplicate', height=small_button_height, width=small_file_button_width,
-                                           font=small_button_font, action=(duplicate_file_func, filename), style='default',
-                                           x=rename_btn.right + file_btn_spacing, y=file_y,
-                                           color=small_button_color, just='center')
-                    display_list.append(duplicate_btn)
-
-                # Delete file button
-                delete_btn = Button('Delete', height=small_button_height, width=small_file_button_width,
-                                    font=small_button_font, action=(delete_file_func, filename), style='default',
-                                    x=duplicate_btn.right + file_btn_spacing, y=file_y,
-                                    color=small_button_color, just='center')
+                if 'player' in file_type or 'team' in file_type:
+                    display_list.append(update_prices_btn)
+                display_list.append(duplicate_btn)
                 display_list.append(delete_btn)
 
             file_y += small_button_height + 3*file_btn_spacing
