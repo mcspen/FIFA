@@ -6,16 +6,27 @@ import PickFile
 import PickPosition
 import AddAttribute
 import PlayerBio
+import FormationBio
+import TeamBio
 from Logic import PlayerDB
 from Logic import FormationDB
 from Logic import TeamDB
 from Logic.HelperFunctions import format_attr_name, player_info_labels, player_info
+from Logic.HelperFunctions import formation_info_labels, formation_info
 
 
 def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, settings=None):
 
     list_players = PlayerDB.PlayerDB()
-    list_players.load(settings['file_name'], 'list')
+    list_formations = FormationDB.FormationDB()
+    list_teams = TeamDB.TeamDB()
+
+    if settings['edit_subject'] == 'players':
+        list_players.load(settings['file_name'], 'list')
+    elif settings['edit_subject'] == 'formations':
+        list_formations.load(settings['file_name'], 'list')
+    elif settings['edit_subject'] == 'teams':
+        list_teams.load(settings['file_name'])
 
     if attr_dict is None:
         attr_dict = {}
@@ -158,7 +169,53 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
 
         # Start button corresponds to formations
         elif settings['edit_subject'] == 'formations':
-            stuff = 0
+
+            # Get the attributes to search with based on what mode is in use
+            if simple_btn.enabled == 0:
+                if len(name_tf.value) > 0:
+                    search_dict = {'name': (name_tf.value, 'exact')}
+                else:
+                    search_dict = {}
+            else:
+                search_dict = attr_dict
+
+            # Get formations from database to add and search
+            if settings['edit_type'] == 'add':
+
+                db_formations = db_dict['formation_db'][1]
+
+                if len(search_dict) == 0:
+                    search_results = db_formations
+                else:
+                    search_results = db_formations.search(search_dict)
+                    search_results = FormationDB.FormationDB(search_results)
+
+            # Get formations from list to edit or delete and search
+            else:
+                if len(search_dict) == 0:
+                    search_results = list_formations
+                else:
+                    search_results = list_formations.search(search_dict)
+                    search_results = FormationDB.FormationDB(search_results)
+
+            # Sort formations - if no attribute selected, use name
+            if len(attr_list) == 0:
+                search_results.sort(['name'], sort_order_radio_group.value)
+            else:
+                search_results.sort(attr_list, sort_order_radio_group.value)
+
+            # Get attributes list and avoid duplicates
+            attributes_list = []
+
+            for attr in attr_list:
+                if attributes_list.count(attr) == 0:
+                    attributes_list.append(attr)
+
+            for attr_key in attr_dict.iterkeys():
+                if attributes_list.count(attr_key) == 0:
+                    attributes_list.append(attr_key)
+
+            display_formations(search_results, attributes_list, (0, num_results))
 
         # Start button corresponds to teams
         elif settings['edit_subject'] == 'teams':
@@ -187,7 +244,7 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
         for display_item in simple_display:
             view.add(display_item)
 
-        rating_tf.become_target()
+        name_tf.become_target()
 
     def advanced_btn_func():
         advanced_btn.enabled = 0
@@ -280,33 +337,65 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
         win_edit.become_target()
 
     def player_bio_btn_func(player):
-        win_edit.hide()
+        win_edit.become_target()
         PlayerBio.open_player_bio_window(win_edit.x, win_edit.y, player, win_edit, settings['file_name'], list_players)
+        win_edit.hide()
 
-    def add_btn_func(player, btn):
-        # Check if player is already on selected players list
-        # Remove player from list
-        player_data = list_players.search({'id': (player['id'], 'exact')})
-        if len(player_data) > 0:
-            # Remove
-            list_players.db.remove(player_data[0])
-            # Save
-            list_players.sort(['rating'])
-            list_players.save(settings['file_name'], 'list', True)
+    def formation_bio_btn_func(formation):
+        win_edit.become_target()
+        FormationBio.open_formation_bio_window(
+                win_edit.x, win_edit.y, formation, win_edit, settings['file_name'], list_formations)
+        win_edit.hide()
 
-            # Switch button title
-            btn.title = "+"
+    def add_btn_func(list_item, btn):
+        if settings['edit_subject'] == 'players':
+            # Check if player is already on selected players list
+            # Remove player from list
+            player_data = list_players.search({'id': (list_item['id'], 'exact')})
+            if len(player_data) > 0:
+                # Remove
+                list_players.db.remove(player_data[0])
+                # Save
+                list_players.sort(['rating'])
+                list_players.save(settings['file_name'], 'list', True)
 
-        # Add player to the list
-        else:
-            # Add
-            list_players.db.append(player)
-            # Save
-            list_players.sort(['rating'])
-            list_players.save(settings['file_name'], 'list', True)
+                # Switch button title
+                btn.title = "+"
 
-            # Switch button title
-            btn.title = "-"
+            # Add player to the list
+            else:
+                # Add
+                list_players.db.append(list_item)
+                # Save
+                list_players.sort(['rating'])
+                list_players.save(settings['file_name'], 'list', True)
+
+                # Switch button title
+                btn.title = "-"
+
+        elif settings['edit_subject'] == 'formations':
+            # Check if formation is already on selected formations list
+            # Remove formation from list
+            if list_item in list_formations.db:
+                # Remove
+                list_formations.db.remove(list_item)
+                # Save
+                list_formations.sort(['name'])
+                list_formations.save(settings['file_name'], 'list', True)
+
+                # Switch button title
+                btn.title = "+"
+
+            # Add formation to the list
+            else:
+                # Add
+                list_formations.db.append(list_item)
+                # Save
+                list_formations.sort(['name'])
+                list_formations.save(settings['file_name'], 'list', True)
+
+                # Switch button title
+                btn.title = "-"
 
         win_edit.become_target()
 
@@ -350,7 +439,13 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
     radio_btn_space = 5
 
     # Edit Type
-    type_add_radio_btn = RadioButton('Add Player(s)')
+    type_add_radio_btn = RadioButton()
+    if settings['edit_subject'] == 'players':
+        type_add_radio_btn.title = 'Add Players'
+    elif settings['edit_subject'] == 'formations':
+        type_add_radio_btn.title = 'Add Formations'
+    elif settings['edit_subject'] == 'teams':
+        type_add_radio_btn.title = 'Add Teams'
     type_add_radio_btn.width = radio_btn_width
     type_add_radio_btn.x = (win_edit.width - 2*radio_btn_width - radio_btn_space) / 2
     type_add_radio_btn.y = start_btn.bottom + small_button_top_spacing
@@ -358,7 +453,13 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
     type_add_radio_btn.value = 'add'
     general_display.append(type_add_radio_btn)
 
-    type_edit_radio_btn = RadioButton('Edit/Delete Player(s)')
+    type_edit_radio_btn = RadioButton()
+    if settings['edit_subject'] == 'players':
+        type_edit_radio_btn.title = 'Edit/Delete Players'
+    elif settings['edit_subject'] == 'formations':
+        type_edit_radio_btn.title = 'Edit/Delete Forms'
+    elif settings['edit_subject'] == 'teams':
+        type_edit_radio_btn.title = 'Edit/Delete Teams'
     type_edit_radio_btn.width = radio_btn_width
     type_edit_radio_btn.x = type_add_radio_btn.right + radio_btn_space
     type_edit_radio_btn.y = type_add_radio_btn.top
@@ -475,19 +576,24 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
     rating_label.x = (win_edit.width - 2*label_width - std_tf_width - rating_tf_width - field_spacing) / 2
     rating_label.y = asc_desc_rg_msg.bottom + 5
     rating_label.color = title_color
-    simple_display.append(rating_label)
+    if settings['edit_subject'] != 'formations':
+        simple_display.append(rating_label)
 
     rating_tf.font = std_tf_font
     rating_tf.width = rating_tf_width
     rating_tf.height = 25
     rating_tf.x = rating_label.right
     rating_tf.y = rating_label.top
-    simple_display.append(rating_tf)
+    if settings['edit_subject'] != 'formations':
+        simple_display.append(rating_tf)
 
     name_label.font = std_tf_font
     name_label.width = label_width
     name_label.height = std_tf_height
-    name_label.x = rating_tf.right + field_spacing
+    if settings['edit_subject'] != 'formations':
+        name_label.x = rating_tf.right + field_spacing
+    else:
+        name_label.x = (win_edit.width - label_width - std_tf_width) / 2
     name_label.y = rating_label.top
     name_label.color = title_color
     simple_display.append(name_label)
@@ -551,89 +657,175 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
     total_num_results_label = Label()
     pages_label = Label()
 
-    def add_to_list_btn_func(player_list, func_type):
-        if func_type == 'add all':
-            added_players = []
-            # Add current results to player list
-            for player in player_list:
-                if list_players.db.count(player) == 0:
-                    list_players.db.append(player)
-                    added_players.append(player)
+    def add_to_list_btn_func(input_list, func_type):
+        import copy
+        item_list = copy.deepcopy(input_list)
 
-            # Sort
-            list_players.sort(['rating'])
-            # Save
-            list_players.save(settings['file_name'], 'list', True)
+        if settings['edit_subject'] == 'players':
+            if func_type == 'add all':
+                added_players = []
+                # Add current results to player list
+                for player in item_list:
+                    if list_players.db.count(player) == 0:
+                        list_players.db.append(player)
+                        added_players.append(player)
 
-            # Change button title and action
-            add_to_list_btn.title = "Remove Added Players"
-            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'remove select')
+                # Sort
+                list_players.sort(['rating'])
+                # Save
+                list_players.save(settings['file_name'], 'list', True)
 
-            # Keep track of just added players
-            settings['messages']['players_changed'] = added_players
+                # Change button title and action
+                add_to_list_btn.title = "Remove Added Players"
+                add_to_list_btn.action = (add_to_list_btn_func, item_list, 'remove select')
 
-        elif func_type == 'remove all':
-            removed_players = []
-            # Remove current results from player list
-            for player in player_list:
-                if list_players.db.count(player) > 0:
-                    list_players.db.remove(player)
-                    removed_players.append(player)
+                # Keep track of just added players
+                settings['messages']['players_changed'] = added_players
 
-            # Sort
-            list_players.sort(['rating'])
-            # Save
-            list_players.save(settings['file_name'], 'list', True)
+            elif func_type == 'remove all':
+                removed_players = []
+                # Remove current results from player list
+                for player in item_list:
+                    if list_players.db.count(player) > 0:
+                        list_players.db.remove(player)
+                        removed_players.append(player)
 
-            # Change button title and action
-            add_to_list_btn.title = "Add Removed Players"
-            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'add select')
+                # Sort
+                list_players.sort(['rating'])
+                # Save
+                list_players.save(settings['file_name'], 'list', True)
 
-            # Keep track of just removed players
-            settings['messages']['players_changed'] = removed_players
+                # Change button title and action
+                add_to_list_btn.title = "Add Removed Players"
+                add_to_list_btn.action = (add_to_list_btn_func, item_list, 'add select')
 
-        elif func_type == 'add select':
-            # Add select players back to player list
-            for player in settings['messages']['players_changed']:
-                if list_players.db.count(player) == 0:
-                    list_players.db.append(player)
+                # Keep track of just removed players
+                settings['messages']['players_changed'] = removed_players
 
-            # Sort
-            list_players.sort(['rating'])
-            # Save
-            list_players.save(settings['file_name'], 'list', True)
+            elif func_type == 'add select':
+                # Add select players back to player list
+                for player in settings['messages']['players_changed']:
+                    if list_players.db.count(player) == 0:
+                        list_players.db.append(player)
 
-            # Change button title and action
-            add_to_list_btn.title = "Remove Added Players"
-            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'remove select')
+                # Sort
+                list_players.sort(['rating'])
+                # Save
+                list_players.save(settings['file_name'], 'list', True)
 
-        elif func_type == 'remove select':
-            # Remove select players from player list
-            for player in settings['messages']['players_changed']:
-                if list_players.db.count(player) > 0:
-                    list_players.db.remove(player)
+                # Change button title and action
+                add_to_list_btn.title = "Remove Added Players"
+                add_to_list_btn.action = (add_to_list_btn_func, item_list, 'remove select')
 
-            # Sort
-            list_players.sort(['rating'])
-            # Save
-            list_players.save(settings['file_name'], 'list', True)
+            elif func_type == 'remove select':
+                # Remove select players from player list
+                for player in settings['messages']['players_changed']:
+                    if list_players.db.count(player) > 0:
+                        list_players.db.remove(player)
 
-            # Change button title and action
-            add_to_list_btn.title = "Add Removed Players"
-            add_to_list_btn.action = (add_to_list_btn_func, player_list, 'add select')
+                # Sort
+                list_players.sort(['rating'])
+                # Save
+                list_players.save(settings['file_name'], 'list', True)
 
+                # Change button title and action
+                add_to_list_btn.title = "Add Removed Players"
+                add_to_list_btn.action = (add_to_list_btn_func, item_list, 'add select')
+
+        elif settings['edit_subject'] == 'formations':
+            if func_type == 'add all':
+                added_formations = []
+                # Add current results to formation list
+                for formation in item_list:
+                    if list_formations.db.count(formation) == 0:
+                        list_formations.db.append(formation)
+                        added_formations.append(formation)
+
+                # Sort
+                list_formations.sort(['name'])
+                # Save
+                list_formations.save(settings['file_name'], 'list', True)
+
+                # Change button title and action
+                add_to_list_btn.title = "Remove Added Forms"
+                add_to_list_btn.action = (add_to_list_btn_func, item_list, 'remove select')
+
+                # Keep track of just added formations
+                settings['messages']['formations_changed'] = added_formations
+
+            elif func_type == 'remove all':
+                removed_formations = []
+                # Remove current results from formation list
+                for formation in item_list:
+                    if formation in list_formations.db:
+                        list_formations.db.remove(formation)
+                        removed_formations.append(formation)
+
+                # Sort
+                list_formations.sort(['name'])
+                # Save
+                list_formations.save(settings['file_name'], 'list', True)
+
+                # Change button title and action
+                add_to_list_btn.title = "Add Removed Forms"
+                add_to_list_btn.action = (add_to_list_btn_func, item_list, 'add select')
+
+                # Keep track of just removed formations
+                settings['messages']['formations_changed'] = removed_formations
+
+            elif func_type == 'add select':
+                # Add select formations back to formation list
+                for formation in settings['messages']['formations_changed']:
+                    if list_formations.db.count(formation) == 0:
+                        list_formations.db.append(formation)
+
+                # Sort
+                list_formations.sort(['name'])
+                # Save
+                list_formations.save(settings['file_name'], 'list', True)
+
+                # Change button title and action
+                add_to_list_btn.title = "Remove Added Forms"
+                add_to_list_btn.action = (add_to_list_btn_func, item_list, 'remove select')
+
+            elif func_type == 'remove select':
+                # Remove select formations from formation list
+                for formation in settings['messages']['formations_changed']:
+                    if list_formations.db.count(formation) > 0:
+                        list_formations.db.remove(formation)
+
+                # Sort
+                list_formations.sort(['name'])
+                # Save
+                list_formations.save(settings['file_name'], 'list', True)
+
+                # Change button title and action
+                add_to_list_btn.title = "Add Removed Forms"
+                add_to_list_btn.action = (add_to_list_btn_func, item_list, 'add select')
+
+        del item_list
         win_edit.become_target()
 
-    def previous_btn_func(display_player_db=None, attributes=None, index_range=None):
-        if display_player_db is not None:
+    def previous_btn_func(display_db=None, attributes=None, index_range=None):
+        if display_db is not None:
             # display previous results
-            display_players(display_player_db, attributes, index_range)
+            if settings['edit_subject'] == 'players':
+                display_players(display_db, attributes, index_range)
+            elif settings['edit_subject'] == 'formations':
+                display_formations(display_db, attributes, index_range)
+            #elif settings['edit_subject'] == 'teams':
+                #display_teams(display_db, attributes, index_range)
         win_edit.become_target()
 
-    def next_btn_func(display_player_db=None, attributes=None, index_range=None):
-        if display_player_db is not None:
+    def next_btn_func(display_db=None, attributes=None, index_range=None):
+        if display_db is not None:
             # display next results
-            display_players(display_player_db, attributes, index_range)
+            if settings['edit_subject'] == 'players':
+                display_players(display_db, attributes, index_range)
+            elif settings['edit_subject'] == 'formations':
+                display_formations(display_db, attributes, index_range)
+            # elif settings['edit_subject'] == 'teams':
+                # display_teams(display_db, attributes, index_range)
         win_edit.become_target()
 
     add_to_list_btn.x = attribute_btn.right + small_button_spacing
@@ -682,7 +874,7 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
     pages_label.just = 'left'
 
     # ========== Display players from search ==========
-    def display_players(display_player_db, attributes, index_range):
+    def display_players(display_db, attributes, index_range):
         # Remove old messages off page
         for message in settings['messages']['results']:
             view.remove(message)
@@ -691,28 +883,28 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
         # Add navigation buttons to page
         if settings['edit_type'] == 'add':
             add_to_list_btn.title = 'Add All Players'
-            add_to_list_btn.action = (add_to_list_btn_func, display_player_db.db, 'add all')
+            add_to_list_btn.action = (add_to_list_btn_func, display_db.db, 'add all')
         elif settings['edit_type'] == 'edit':
             add_to_list_btn.title = 'Remove All Players'
-            add_to_list_btn.action = (add_to_list_btn_func, display_player_db.db, 'remove all')
+            add_to_list_btn.action = (add_to_list_btn_func, display_db.db, 'remove all')
         else:
             print "Invalid edit type."
 
         previous_range = (index_range[0]-num_results, index_range[0])
-        previous_btn.action = (previous_btn_func, display_player_db, attributes, previous_range)
+        previous_btn.action = (previous_btn_func, display_db, attributes, previous_range)
 
         next_range = (index_range[1], index_range[1]+num_results)
-        next_btn.action = (next_btn_func, display_player_db, attributes, next_range)
+        next_btn.action = (next_btn_func, display_db, attributes, next_range)
 
-        total_num_results_label.text = str(len(display_player_db.db)) + " Players"
+        total_num_results_label.text = str(len(display_db.db)) + " Players"
         pages_label.text = "Page %d of %d" % (int(index_range[1]/num_results),
-                                              math.ceil(len(display_player_db.db)/float(num_results)))
+                                              math.ceil(len(display_db.db) / float(num_results)))
 
         if index_range[0] > 0:
             previous_btn.enabled = 1
         else:
             previous_btn.enabled = 0
-        if index_range[1] <= len(display_player_db.db) - 1:
+        if index_range[1] <= len(display_db.db) - 1:
             next_btn.enabled = 1
         else:
             next_btn.enabled = 0
@@ -743,7 +935,7 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
         msg_y += std_tf_height + 5
 
         # Print out players
-        for idx, player in enumerate(display_player_db.db[index_range[0]:index_range[1]]):
+        for idx, player in enumerate(display_db.db[index_range[0]:index_range[1]]):
             msg_x = left_border
             player_stats = player_info(player, attributes)
             stat_index = 0
@@ -796,6 +988,104 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
         for results_msg in settings['messages']['results']:
             view.add(results_msg)
 
+    # ========== Display formations from search ==========
+    def display_formations(display_db, attributes, index_range):
+        # Remove old messages off page
+        for message in settings['messages']['results']:
+            view.remove(message)
+        del settings['messages']['results'][:]
+
+        # Add navigation buttons to page
+        if settings['edit_type'] == 'add':
+            add_to_list_btn.title = 'Add All Formations'
+            add_to_list_btn.action = (add_to_list_btn_func, display_db.db, 'add all')
+        elif settings['edit_type'] == 'edit':
+            add_to_list_btn.title = 'Remove All Formations'
+            add_to_list_btn.action = (add_to_list_btn_func, display_db.db, 'remove all')
+        else:
+            print "Invalid edit type."
+
+        previous_range = (index_range[0]-num_results, index_range[0])
+        previous_btn.action = (previous_btn_func, display_db, attributes, previous_range)
+
+        next_range = (index_range[1], index_range[1]+num_results)
+        next_btn.action = (next_btn_func, display_db, attributes, next_range)
+
+        total_num_results_label.text = str(len(display_db.db)) + " Formations"
+        pages_label.text = "Page %d of %d" % (int(index_range[1]/num_results),
+                                              math.ceil(len(display_db.db)/float(num_results)))
+
+        if index_range[0] > 0:
+            previous_btn.enabled = 1
+        else:
+            previous_btn.enabled = 0
+        if index_range[1] <= len(display_db.db) - 1:
+            next_btn.enabled = 1
+        else:
+            next_btn.enabled = 0
+
+        settings['messages']['results'].append(add_to_list_btn)
+        settings['messages']['results'].append(previous_btn)
+        settings['messages']['results'].append(next_btn)
+        settings['messages']['results'].append(total_num_results_label)
+        settings['messages']['results'].append(pages_label)
+
+        # Print out labels
+        labels = formation_info_labels()
+        stat_index = 1
+        spacing_list = [25, 100, 100, 55, 55, 55, 55, 140, 160]
+        left_border = (win_edit.width - sum(spacing_list))/2
+        msg_x = left_border + spacing_list[0]
+        msg_y = add_to_list_btn.bottom + 5
+
+        for info_label in labels:
+            formation_label = Label(text=info_label, font=std_tf_font_bold, width=spacing_list[stat_index]-5,
+                                    height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
+            settings['messages']['results'].append(formation_label)
+            msg_x += spacing_list[stat_index]
+
+            if stat_index < len(spacing_list)-1:
+                stat_index += 1
+
+        msg_y += std_tf_height + 5
+
+        # Print out formations
+        for idx, formation in enumerate(display_db.db[index_range[0]:index_range[1]]):
+            msg_x = left_border
+            formation_stats = formation_info(formation)
+            stat_index = 0
+
+            if formation in list_formations.db:
+                add_btn_text = '-'
+            else:
+                add_btn_text = '+'
+
+            add_btn = Button(title=add_btn_text, width=spacing_list[stat_index]-5, height=15, x=msg_x, y=msg_y)
+            add_btn.action = (add_btn_func, formation, add_btn)
+            settings['messages']['results'].append(add_btn)
+            msg_x += spacing_list[stat_index]
+            stat_index += 1
+
+            bio_btn = Button(title=formation['name'], width=spacing_list[stat_index]-5, height=15, x=msg_x, y=msg_y,
+                             action=(formation_bio_btn_func, formation))
+            settings['messages']['results'].append(bio_btn)
+            msg_x += spacing_list[stat_index]
+            stat_index += 1
+
+            for formation_stat in formation_stats[1:]:
+                formation_label = Label(text=formation_stat, font=small_button_font, width=spacing_list[stat_index]-5,
+                                        height=std_tf_height, x=msg_x, y=msg_y, color=title_color)
+                settings['messages']['results'].append(formation_label)
+
+                msg_x += spacing_list[stat_index]
+                if stat_index < len(spacing_list) - 1:
+                    stat_index += 1
+
+            msg_y += std_tf_height
+
+        for results_msg in settings['messages']['results']:
+            view.add(results_msg)
+
     # ========== Add components to view and add view to window ==========
     for item in general_display:
         view.add(item)
@@ -814,5 +1104,3 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
     win_edit.add(view)
     view.become_target()
     win_edit.show()
-
-    "settings['file_changes'] = True"

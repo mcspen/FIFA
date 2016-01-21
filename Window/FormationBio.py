@@ -1,9 +1,6 @@
 from GUI import Button, Geometry, Image, Label, View, Window
 from AppConfig import *
 import json
-from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
-    save_image, get_file_prefix
-from Logic import PlayerDB
 
 
 def open_formation_bio_window(window_x, window_y, formation, win_previous, file_name, current_list):

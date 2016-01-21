@@ -267,7 +267,7 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
                               font=small_button_font, action=(edit_file_func, filename), style='default',
                               x=rename_btn.right + file_btn_spacing, y=file_y,
                               color=small_button_color, just='center')
-            if file_type[8:12] != 'play':
+            if file_type[8:12] == 'team':
                 edit_btn.enabled = 0
 
             # Update prices button

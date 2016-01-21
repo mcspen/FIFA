@@ -2,9 +2,7 @@ from GUI import Button, Geometry, Image, Label, View, Window
 from AppConfig import *
 import json
 import operator
-from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
-    save_image, save_small_image, get_file_prefix, text_add_new_lines
-from Logic import PlayerDB
+from Logic.HelperFunctions import ascii_text, format_attr_name, save_small_image, text_add_new_lines
 from Logic import Team
 from Window import PlayerBio
 

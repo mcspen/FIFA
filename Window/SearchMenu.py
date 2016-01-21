@@ -933,7 +933,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         # Spacing values for each of the stats
         spacing_list = [100, 100, 55, 55, 55, 55, 140, 160]
         # Calculate the left border of the stats based on the number and width of the stats
-        left_border = (win_width - sum(spacing_list))/2
+        left_border = (win_search.width - sum(spacing_list))/2
         msg_x = left_border
         msg_y = add_to_list_btn.bottom + 5
 
