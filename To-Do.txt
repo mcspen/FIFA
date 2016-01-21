@@ -1,5 +1,8 @@
 Add the different team creation types to the Team Window
-Create an option for creating by picking each player.
+Create an option for creating by picking players and then finding the rest.
+Create option for specifying players you have and a budget and finding the best team with that.
+
+Check if player list covers all positions for formation (like LW and RW for 4-3-2-1 and 3-4-2-1).
 
 Add price to the player bio page.
 Figure out a way to still search for price of a player whose position has been changed.
