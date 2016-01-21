@@ -166,7 +166,7 @@ class TeamDB:
                         player_names.append(player['name'] + player['commonName'] +
                                             player['firstName'] + player['lastName'])
                     attribute_tuple += (player_names,)
-                elif attr in ['total_skillMoves']:
+                elif attr in ['total_skillMoves', 'total_price']:
                     # Calculate total
                     total = 0
                     for position in current_team['formation']['positions'].itervalues():
@@ -252,7 +252,7 @@ class TeamDB:
                     elif compare == 'lower':
                         if not team[attribute] <= value:
                             match = False
-                elif attribute in ['total_skillMoves']:
+                elif attribute in ['total_skillMoves', 'total_price']:
                     # Calculate total
                     total = 0
                     for position in team['formation']['positions'].itervalues():

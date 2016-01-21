@@ -112,7 +112,7 @@ def team_info_labels(attributes):
 
     # Add attributes from list
     for attribute in attributes:
-        if attribute in ['total_skillMoves']:
+        if attribute in ['total_skillMoves', 'total_price']:
             labels.append(attribute[6:9].capitalize()+'.')
         else:
             labels.append(attribute[:3].capitalize()+'.')
@@ -276,7 +276,7 @@ def team_info(team, attributes):
     for attribute in attributes:
         if attribute in ['player']:
             team_info.append("Player")
-        elif attribute in ['total_skillMoves']:
+        elif attribute in ['total_skillMoves', 'total_price']:
             total = 0
             for position in team['formation']['positions'].itervalues():
                 player = position['player']
@@ -338,6 +338,8 @@ def format_attr_name(attribute):
         return "Total Individual Chemistry"
     elif attribute in ["total_skillMoves"]:
         return "Total Skill Moves"
+    elif attribute in ["total_price"]:
+        return "Total Price"
     else:
         return "ERROR"
 

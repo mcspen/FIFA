@@ -264,7 +264,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                     if 10 < return_value < 56:
                         valid = True
 
-            elif radio_group.value in ["strength"]:
+            elif radio_group.value in ["strength", "total_price"]:
                 # Value should be an integer
                 if value_tf.value.isdigit():
                     return_value = int(value_tf.value)
