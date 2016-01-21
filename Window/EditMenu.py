@@ -1,4 +1,5 @@
 from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
+import copy
 import json
 import math
 from AppConfig import *
@@ -658,7 +659,6 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
     pages_label = Label()
 
     def add_to_list_btn_func(input_list, func_type):
-        import copy
         item_list = copy.deepcopy(input_list)
 
         if settings['edit_subject'] == 'players':

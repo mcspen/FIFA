@@ -1,4 +1,5 @@
 from GUI import Button, Label, RadioButton, RadioGroup, View, Window
+import copy
 import json
 import math
 from AppConfig import *
@@ -578,7 +579,8 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     total_num_results_label = Label()
     pages_label = Label()
 
-    def add_to_list_btn_func(results_list, func_type):
+    def add_to_list_btn_func(input_list, func_type):
+        results_list = copy.deepcopy(input_list)
         if func_type == 'add all':
             if settings['mode'] == 'players':
                 added_players = []
@@ -614,7 +616,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                 db_dict['formation_list'][1].save(db_dict['formation_list'][0], 'list', True)
 
                 # Change button title and action
-                add_to_list_btn.title = "Remove Added Formations"
+                add_to_list_btn.title = "Remove Added Forms"
                 add_to_list_btn.action = (add_to_list_btn_func, results_list, 'remove select')
 
                 # Keep track of just added formations
@@ -655,7 +657,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                 db_dict['formation_list'][1].save(db_dict['formation_list'][0], 'list', True)
 
                 # Change button title and action
-                add_to_list_btn.title = "Add Removed Formations"
+                add_to_list_btn.title = "Add Removed Forms"
                 add_to_list_btn.action = (add_to_list_btn_func, results_list, 'add select')
 
                 # Keep track of just removed players
@@ -689,7 +691,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                 db_dict['formation_list'][1].save(db_dict['formation_list'][0], 'list', True)
 
                 # Change button title and action
-                add_to_list_btn.title = "Remove Added Formations"
+                add_to_list_btn.title = "Remove Added Forms"
                 add_to_list_btn.action = (add_to_list_btn_func, results_list, 'remove select')
 
         elif func_type == 'remove select':
@@ -720,7 +722,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
                 db_dict['formation_list'][1].save(db_dict['formation_list'][0], 'list', True)
 
                 # Change button title and action
-                add_to_list_btn.title = "Add Removed Formations"
+                add_to_list_btn.title = "Add Removed Forms"
                 add_to_list_btn.action = (add_to_list_btn_func, results_list, 'add select')
 
         win_search.become_target()
