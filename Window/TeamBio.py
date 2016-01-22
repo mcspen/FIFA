@@ -424,9 +424,10 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             stat_label.text = str(attr['value'])
             summary_stats.append(stat_label)
 
-            label_y += std_tf_height
+            label_y += std_tf_height - 5
 
         # Weak foot label
+        label_y += 5
         star_label_width = 70
         star_width = 35
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space-star_label_width) + 15
@@ -447,7 +448,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         weak_foot_stars_label.text = '*'*player['weakFoot']
         summary_stats.append(weak_foot_stars_label)
 
-        label_y += std_tf_height
+        label_y += std_tf_height - 5
 
         # Skill moves label
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space-star_label_width) + 15
@@ -467,6 +468,16 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                                   color=star_color, just='left')
         skill_stars_label.text = '*'*player['skillMoves']
         summary_stats.append(skill_stars_label)
+
+        label_y += std_tf_height - 4
+
+        # Price label
+        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border)
+        price_label = Label(text="Price: %d" % player['price'], font=small_tf_font,
+                            width=player_box_width-2*player_border, height=std_tf_height,
+                            x=label_x, y=label_y,
+                            color=title_color, just='center')
+        summary_stats.append(price_label)
 
     def display_summary_stats():
         for stat in summary_stats:
@@ -546,7 +557,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                      'positionFull', 'foot', 'position', 'atkWorkRate', 'defWorkRate', 'modelName', 'lastName',
                      'playStyle', 'birthdate', 'id', 'specialities', 'traits', 'attributes', 'club', 'nation', 'league',
                      'headshot', 'baseId', 'height', 'skillMoves', 'weakFoot', 'isSpecialType', 'isGK', 'weight',
-                     'rating', 'potential']
+                     'rating', 'potential', 'price']
         sorted_attributes = sorted(player.items(), key=operator.itemgetter(1), reverse=True)
 
         strength_text = ''
