@@ -91,7 +91,7 @@ class Player:
         self.attributes = input_dict['attributes']
         self.specialities = input_dict['specialities']
 
-    def get_price(self, console='PS4'):
+    def get_price(self, console='PS4', update_rating=0, update_price=-1):
         """
         Get's the price of the player from futbin.com
         Input: None.
@@ -104,44 +104,45 @@ class Player:
             self.price = -1
             return self.price
 
-        price_site_url_search = 'http://www.futbin.com/api/?term='
-        price_site_url_player = 'http://www.futbin.com/16/player'
-        player_name = ''
-        player_id = ''
+        if self.rating >= update_rating and self.price >= update_price:
+            price_site_url_search = 'http://www.futbin.com/api/?term='
+            price_site_url_player = 'http://www.futbin.com/16/player'
+            player_name = ''
+            player_id = ''
 
-        try:
-            # Create session
-            sess = requests.Session()
+            try:
+                # Create session
+                sess = requests.Session()
 
-            # Search for player and get id and name
-            page_data = json.loads(sess.get(price_site_url_search + self.name).content)
-            for player_data in page_data:
-                if int(player_data['rating']) == self.rating and\
-                   player_data['position'] == self.position:
-                    player_name = player_data['full_name']
-                    player_id = player_data['id']
-                    break
+                # Search for player and get id and name
+                page_data = json.loads(sess.get(price_site_url_search + self.name).content)
+                for player_data in page_data:
+                    if int(player_data['rating']) == self.rating and\
+                       player_data['position'] == self.position:
+                        player_name = player_data['full_name']
+                        player_id = player_data['id']
+                        break
 
-            if player_name != '' and player_id != '':
-                # Get page data of player
-                page_data = sess.get("%s/%s/%s" % (price_site_url_player, player_id, player_name)).content
+                if player_name != '' and player_id != '':
+                    # Get page data of player
+                    page_data = sess.get("%s/%s/%s" % (price_site_url_player, player_id, player_name)).content
 
-                # Get price
-                page_data = page_data.split()
-                if console == 'PS4':
-                    index = page_data.index('id="pslowest"') + 1
+                    # Get price
+                    page_data = page_data.split()
+                    if console == 'PS4':
+                        index = page_data.index('id="pslowest"') + 1
+                    else:
+                        index = page_data.index('id="xboxlowest"') + 1
+
+                    price = page_data[index]
+                    price = int(price[13:-6])
+
                 else:
-                    index = page_data.index('id="xboxlowest"') + 1
+                    price = 0
 
-                price = page_data[index]
-                price = int(price[13:-6])
+                self.price = price
 
-            else:
-                price = 0
-
-            self.price = price
-
-        except Exception as err:
-            print "Not connected to internet. Cannot get player price.\nOr Error:" + err.message
+            except Exception as err:
+                print "Not connected to internet. Cannot get player price.\nOr Error:" + err.message
 
         return self.price
