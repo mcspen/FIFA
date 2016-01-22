@@ -1,6 +1,7 @@
 Add the different team creation types to the Team Window
 Create an option for creating by picking players and then finding the rest.
 Create option for specifying players you have and a budget and finding the best team with that.
+Add budget to team creation. Might need to change legends default price on PS4. Change to 0 or really high price?
 
 Check if player list covers all positions for formation (like LW and RW for 4-3-2-1 and 3-4-2-1).
 
