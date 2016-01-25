@@ -68,6 +68,14 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
             nation_dst_rect = Geometry.offset_rect(nation_rect, nation_image_pos)
             nation_image.draw(c, nation_rect, nation_dst_rect)
 
+            # Coins symbol
+            image_file_name = 'Images/coins.png'
+            coins_image = Image(file=image_file_name)
+            coins_image_pos = coins_pos
+            coins_rect = coins_image.bounds
+            coins_dst_rect = Geometry.offset_rect(coins_rect, coins_image_pos)
+            coins_image.draw(c, coins_rect, coins_dst_rect)
+
     view = StartWindowImageView(size=win_player_bio.size)
 
     # ========== Player Headshot ==========
@@ -92,6 +100,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         player_headshot_pos = (41, 13)
         club_pos = (51, 75)
         nation_spacing = 2
+        coins_pos = (155, 225)
         stat_line_y = 176
         stat_line_spacing = 21
         name_y = 135
@@ -101,11 +110,13 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         card_name_color = black
         card_stat_color = black
         stat_line_color = barely_darker
+        coins_color = black
 
     elif player['color'] in ['green', 'motm', 'pink', 'purple', 'teal']:
         player_headshot_pos = (41, 13)
         club_pos = (51, 74)
         nation_spacing = 1
+        coins_pos = (155, 225)
         stat_line_y = 176
         stat_line_spacing = 21
         name_y = 135
@@ -115,11 +126,13 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         card_name_color = black
         card_stat_color = black
         stat_line_color = barely_darker
+        coins_color = black
 
     elif player['color'] in ['toty', 'easports', 'tots_gold', 'tots_silver', 'tots_bronze']:
         player_headshot_pos = (41, 13)
         club_pos = (51, 74)
         nation_spacing = 1
+        coins_pos = (158, 225)
         stat_line_y = 176
         stat_line_spacing = 21
         name_y = 135
@@ -129,11 +142,13 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         card_name_color = white
         card_stat_color = white
         stat_line_color = barely_lighter
+        coins_color = white
 
     elif player['color'] in ['totw_gold', 'totw_silver', 'totw_bronze']:
         player_headshot_pos = (41, 13)
         club_pos = (51, 74)
         nation_spacing = 1
+        coins_pos = (155, 225)
         stat_line_y = 176
         stat_line_spacing = 21
         name_y = 135
@@ -143,11 +158,13 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         card_name_color = white
         card_stat_color = white
         stat_line_color = barely_lighter
+        coins_color = white
 
     elif player['color'] in ['rare_gold', 'rare_silver', 'rare_bronze']:
         player_headshot_pos = (41, 13)
         club_pos = (51, 74)
         nation_spacing = 1
+        coins_pos = (155, 225)
         stat_line_y = 176
         stat_line_spacing = 21
         name_y = 135
@@ -157,11 +174,13 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         card_name_color = black
         card_stat_color = black
         stat_line_color = barely_darker
+        coins_color = black
 
     elif player['color'] in ['gold', 'silver', 'bronze']:
         player_headshot_pos = (41, 13)
         club_pos = (51, 71)
         nation_spacing = 3
+        coins_pos = (155, 225)
         stat_line_y = 176
         stat_line_spacing = 21
         name_y = 135
@@ -171,11 +190,13 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         card_name_color = black
         card_stat_color = black
         stat_line_color = barely_darker
+        coins_color = black
 
     else:
         player_headshot_pos = (41, 13)
         club_pos = (51, 74)
         nation_spacing = 1
+        coins_pos = (155, 225)
         stat_line_y = 176
         stat_line_spacing = 21
         name_y = 135
@@ -185,6 +206,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         card_name_color = black
         card_stat_color = black
         stat_line_color = barely_darker
+        coins_color = black
 
     # ========== Button Declarations ==========
     add_player_btn = Button()
@@ -342,6 +364,23 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         labels_list.append(stat_title_label)
 
         label_y += std_tf_height + 1
+
+    # ========== Price Section ==========
+    price_width = 80
+    price = str(player['price'])
+    if player['price'] > 999999:
+        price = price[:-6] + ',' + price[-6:-3] + ',' + price[-3:]
+    elif player['price'] > 999:
+        price = price[:-3] + ',' + price[-3:]
+    elif player['price'] < 1:
+        price = '?'
+
+    coins_pos = (coins_pos[0] - (9 - len(price)) * 3, coins_pos[1])
+
+    price_label = Label(text=price,font=std_tf_font_bold, width=price_width, height=std_tf_height,
+                              x=coins_pos[0] - price_width - 3,
+                              y=coins_pos[1], color=coins_color, just='right')
+    labels_list.append(price_label)
 
     # ========== Database Info Section ==========
     db_info_label = Label(font=std_tf_font_bold, width=section_label_width, height=std_tf_height,
