@@ -8,6 +8,11 @@ Check if player list covers all positions for formation (like LW and RW for 4-3-
 Add price to the player bio page.
 Figure out a way to still search for price of a player whose position has been changed.
 
+Fix error for some players, ex. Yevgen Konoplyanka and Danilo Barbosa da Silva
+<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:581)>
+
+Create player list analysis - # of players, # golds, silver, bronze, special, what nations, etc.
+
 Team sort function should not need to be duplicated in the ultimate team functions page.
 
 Change how teams work so that you can have two lists of teams and move teams back and forth.
@@ -24,6 +29,8 @@ Add more options to TeamDB search
 Add team names?
 
 Add option for manager and/or option for team not requiring manager
+
+Remove strengths system? or refine. Doesn't do much.
 
 # **********************************************
 # Optimize ultimate team function to go faster #
@@ -43,6 +50,7 @@ Fix find_team_ultimate using updated function to return list of teams.
 
 Add Subs and Reserves - just best rated remainders, or distribute for position balance
 Update Team Rating based on Subs
+This would almost double size.
 
 
 New player recommendations to improve team

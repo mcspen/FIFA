@@ -158,14 +158,6 @@ if __name__ == '__main__':
         print('\n')
     # """
 
-    # Print strengths of a list of teams
-    """teams = TeamDB()
-    teams.load('2015-11-19')
-    for index, team in enumerate(teams.db):
-        print '============ TEAM %d ==============' % index
-        Team(team).print_team_strengths()
-        print"""
-
     # Create teams of American players
     """americans = PlayerDB(player_db.search({'nation': ('United States',)}))
 
@@ -195,10 +187,13 @@ if __name__ == '__main__':
     print
     team.print_team_strengths()"""
 
-    # Go through all players and get all traits
-    """traits = []
+    # Go through all players and get all traits or specialities
+    """item = 'traits'  # 'specialities'
+    traits = []
     for player in player_db.db:
-        if player['traits'] is not None:
-            traits += player['traits']
+        if player[item] is not None:
+            traits += player[item]
     traits = list(set(traits))
-    print traits"""
+    traits.sort()
+    for trait in traits:
+        print str(trait)"""
