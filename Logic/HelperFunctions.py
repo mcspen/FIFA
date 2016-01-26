@@ -439,16 +439,19 @@ def save_small_image(image_url, image_file_name, ratio=0.75):
 
     # In case of no internet connection
     except Exception as err:
-        source_image_file_name = 'Images/no_internet.png'
-        image_file_name = 'Images/temp/no_internet_small_%d.png' % ratio
+        if 'players' in image_url:
+            source_image_file_name = 'Images/no_internet.png'
+            image_file_name = 'Images/temp/no_internet_small_%s.png' % str(ratio)
 
-        if not os.path.isfile(image_file_name):
-            image_info = Image.open(source_image_file_name)
-            image_info = image_info.resize((int(image_info.size[0]*ratio),
-                                            int(image_info.size[1]*ratio)),
-                                           Image.ANTIALIAS)
-            image_info.save(image_file_name)
-        print err
+            if not os.path.isfile(image_file_name):
+                image_info = Image.open(source_image_file_name)
+                image_info = image_info.resize((int(image_info.size[0]*ratio),
+                                                int(image_info.size[1]*ratio)),
+                                               Image.ANTIALIAS)
+                image_info.save(image_file_name)
+        print "Error: " + err.message
+        print "File: " + image_file_name
+        print "URL: " + image_url
     return image_file_name
 
 
