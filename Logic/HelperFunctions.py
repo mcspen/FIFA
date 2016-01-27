@@ -452,7 +452,7 @@ def save_small_image(image_url, image_file_name, ratio=0.75):
                                                 int(image_info.size[1]*ratio)),
                                                Image.ANTIALIAS)
                 image_info.save(image_file_name)
-        print "Error: " + err.message
+        print "Error: " + err.args[0].args[1]
         print "File: " + image_file_name
         print "URL: " + image_url
 

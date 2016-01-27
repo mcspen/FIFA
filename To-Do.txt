@@ -8,7 +8,7 @@ Check if player list covers all positions for formation (like LW and RW for 4-3-
 Add price to the player bio page.
 Figure out a way to still search for price of a player whose position has been changed.
 
-Fix error for some players, ex. Yevgen Konoplyanka and Danilo Barbosa da Silva
+Fix certification error for getting images.
 <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:581)>
 
 Create player list analysis - # of players, # golds, silver, bronze, special, what nations, etc.
