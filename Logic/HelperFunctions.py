@@ -414,8 +414,11 @@ def save_image(image_url, image_file_name):
             image_file.close()
 
     # In case of no internet connection
-    except Exception:
+    except Exception as err:
         image_file_name = 'Images/no_internet.png'
+        print "Error: " + err.args[0].args[1]
+        print "File: " + image_file_name
+        print "URL: " + image_url
 
     return image_file_name
 
@@ -452,6 +455,7 @@ def save_small_image(image_url, image_file_name, ratio=0.75):
         print "Error: " + err.message
         print "File: " + image_file_name
         print "URL: " + image_url
+
     return image_file_name
 
 
