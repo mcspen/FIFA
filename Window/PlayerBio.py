@@ -7,7 +7,7 @@ from Logic import PlayerDB
 from Logic import Player
 
 
-def open_player_bio_window(window_x, window_y, player, win_previous, db_dict, file_name=None, current_list=None):
+def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=None, file_name=None, current_list=None):
 
     if current_list is None:
         current_list = PlayerDB.PlayerDB()
@@ -246,46 +246,47 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict, fi
         win_previous.show()
 
     def update_price_btn_func():
-        # Get index in player list and player db
-        if player in db_dict['player_list'][1].db:
-            list_index = db_dict['player_list'][1].db.index(player)
-        else:
-            list_index = -1
-        if player in db_dict['player_db'][1].db:
-            db_index = db_dict['player_db'][1].db.index(player)
-        else:
-            db_index = -1
+        if db_dict is not None:
+            # Get index in player list and player db
+            if player in db_dict['player_list'][1].db:
+                list_index = db_dict['player_list'][1].db.index(player)
+            else:
+                list_index = -1
+            if player in db_dict['player_db'][1].db:
+                db_index = db_dict['player_db'][1].db.index(player)
+            else:
+                db_index = -1
 
-        # Get updated price
-        new_price = Player.Player(player).get_price()
+            # Get updated price
+            new_price = Player.Player(player).get_price()
 
-        # Update price displayed
-        new_price_str = str(new_price)
-        if new_price > 999999:
-            new_price_str = new_price_str[:-6] + ',' + new_price_str[-6:-3] + ',' + new_price_str[-3:]
-        elif new_price > 999:
-            new_price_str = new_price_str[:-3] + ',' + new_price_str[-3:]
-        elif new_price < 1:
-            new_price_str = '?'
-        price_label.text = str(new_price_str)
+            # Update price displayed
+            new_price_str = str(new_price)
+            if new_price > 999999:
+                new_price_str = new_price_str[:-6] + ',' + new_price_str[-6:-3] + ',' + new_price_str[-3:]
+            elif new_price > 999:
+                new_price_str = new_price_str[:-3] + ',' + new_price_str[-3:]
+            elif new_price < 1:
+                new_price_str = '?'
+            price_label.text = str(new_price_str)
 
-        # Assigned updated price
-        if list_index > -1:
-            updated_player = db_dict['player_list'][1].db[list_index]
-            updated_player['price'] = new_price
-            db_dict['player_list'][1].db[list_index] = updated_player
-        if db_index > -1:
-            updated_player = db_dict['player_db'][1].db[db_index]
-            updated_player['price'] = new_price
-            db_dict['player_db'][1].db[db_index] = player
+            # Assigned updated price
+            if list_index > -1:
+                updated_player = db_dict['player_list'][1].db[list_index]
+                updated_player['price'] = new_price
+                db_dict['player_list'][1].db[list_index] = updated_player
+            if db_index > -1:
+                updated_player = db_dict['player_db'][1].db[db_index]
+                updated_player['price'] = new_price
+                db_dict['player_db'][1].db[db_index] = player
 
-        # Save
-        if list_index > -1:
-            db_dict['player_list'][1].sort(['rating'])
-            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
-        if db_index > -1:
-            db_dict['player_db'][1].sort(['rating'])
-            db_dict['player_db'][1].save(db_dict['player_db'][0], 'db', True)
+            # Save
+            if list_index > -1:
+                db_dict['player_list'][1].sort(['rating'])
+                db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
+            if db_index > -1:
+                db_dict['player_db'][1].sort(['rating'])
+                db_dict['player_db'][1].save(db_dict['player_db'][0], 'db', True)
 
         win_player_bio.become_target()
 
@@ -327,6 +328,8 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict, fi
     update_price_btn.action = update_price_btn_func
     update_price_btn.style = 'default'
     update_price_btn.color = small_button_color
+    if db_dict is None:
+        update_price_btn.enabled = 0
 
     # ========== Player Info Labels ==========
     # Get attribute lists
