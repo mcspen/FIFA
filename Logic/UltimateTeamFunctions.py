@@ -490,6 +490,38 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
     return [team_list, team_count]
 
 
+def enough_players(players, formation, chemistry_matters):
+    """
+    Quickly checks if there are players for each of the positions in the formation.
+    Input: PlayerDB of players, a formation, and if chemistry matters.
+    Output: Boolean of whether there are enough players.
+    """
+
+    # Get what level of similarity matters when searching for players
+    if chemistry_matters:
+        similarity = 'yellow'
+    else:
+        similarity = 'orange'
+
+    for position in formation['positions'].itervalues():
+        standard_position = position['symbol']
+
+        # Get related positions that could fill that role
+        related_positions = Team.Team.related_positions(standard_position, similarity)
+
+        # Create position tuple list for the player search
+        position_tuple_list = [{'position': (standard_position, 'exact')}]
+        for x in related_positions:
+            position_tuple_list.append({'position': (x, 'exact')})
+
+        # Get all eligible players and check if any exist
+        if len(players.multi_search(position_tuple_list)) < 1:
+            # No players match the position - don't try to create teams for this formation
+            return False
+
+    return True
+
+
 def find_teams_ultimate(players, formations):
     """
     Finds the best team using my thorough method from the given players and formations.
@@ -508,6 +540,7 @@ def find_teams_ultimate(players, formations):
         configs = json.load(f)['ultimate_team_configs']
         f.close()
 
+    # Get mandatory configuration values
     process = configs['process_type']
     team_sort_attributes = configs['team_sort_attributes']
     if len(team_sort_attributes) < 1:
@@ -517,6 +550,7 @@ def find_teams_ultimate(players, formations):
         player_sort_attributes.append('rating')
     chemistry_matters = configs['chemistry_matters']
 
+    # Get optional configuration values or set the defaults
     if configs['players_per_position'][0]:
         players_per_position = configs['players_per_position'][1]
     else:
@@ -542,8 +576,9 @@ def find_teams_ultimate(players, formations):
 
         # Create tuple list for each formation
         for formation in formations.db:
-            input_tuples.append((players, formation, chemistry_matters, time_limit, players_per_position,
-                                 teams_per_formation, team_sort_attributes, player_sort_attributes, num_teams))
+            if enough_players(players, formation, chemistry_matters):
+                input_tuples.append((players, formation, chemistry_matters, time_limit, players_per_position,
+                                     teams_per_formation, team_sort_attributes, player_sort_attributes, num_teams))
 
         # Temporary Timing Information------------------------------------------------------------------------------
         print "Start Multi Process!"
@@ -575,22 +610,24 @@ def find_teams_ultimate(players, formations):
         # Iterate through the formations
         for formation in formations.db:
 
-            # Temporary Timing Information--------------------------------------------------------------------------
-            print "Round Start!"
-            start_time = time.clock()
-            # ------------------------------------------------------------------------------------------------------
+            if enough_players(players, formation, chemistry_matters):
+                # Temporary Timing Information--------------------------------------------------------------------------
+                print "Round Start!"
+                start_time = time.clock()
+                # ------------------------------------------------------------------------------------------------------
 
-            # Call recursive team building function
-            results_sp = recursive_create(players, formation, chemistry_matters, time_limit, players_per_position,
-                                          teams_per_formation, team_sort_attributes, player_sort_attributes, num_teams)
+                # Call recursive team building function
+                results_sp = recursive_create(
+                        players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
+                        team_sort_attributes, player_sort_attributes, num_teams)
 
-            team_list_sp += results_sp[0]
-            count_sp += results_sp[1]
+                team_list_sp += results_sp[0]
+                count_sp += results_sp[1]
 
-            # Temporary Timing Information--------------------------------------------------------------------------
-            end_time = time.clock()
-            print "Finished!     Time:" + str(end_time - start_time)
-            # ------------------------------------------------------------------------------------------------------
+                # Temporary Timing Information--------------------------------------------------------------------------
+                end_time = time.clock()
+                print "Finished!     Time:" + str(end_time - start_time)
+                # ------------------------------------------------------------------------------------------------------
 
         # Temporary Timing Information------------------------------------------------------------------------------
         end_all_time = time.clock()
