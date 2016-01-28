@@ -299,7 +299,7 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
 
     def player_bio_btn_func(player):
         win_search.hide()
-        PlayerBio.open_player_bio_window(win_search.x, win_search.y, player, win_search,
+        PlayerBio.open_player_bio_window(win_search.x, win_search.y, player, win_search, db_dict,
                                          db_dict['player_list'][0], db_dict['player_list'][1])
         win_search.become_target()
 

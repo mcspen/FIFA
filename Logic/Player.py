@@ -15,7 +15,10 @@ class Player:
         """
 
         # Custom Info
-        self.price = 0
+        if 'price' in input_dict:
+            self.price = input_dict['price']
+        else:
+            self.price = 0
 
         # Summary Info
         self.id = input_dict['id']

@@ -4,9 +4,10 @@ import json
 from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, convert_weight, format_birthday,\
     save_image, save_small_image
 from Logic import PlayerDB
+from Logic import Player
 
 
-def open_player_bio_window(window_x, window_y, player, win_previous, file_name=None, current_list=None):
+def open_player_bio_window(window_x, window_y, player, win_previous, db_dict, file_name=None, current_list=None):
 
     if current_list is None:
         current_list = PlayerDB.PlayerDB()
@@ -211,6 +212,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     # ========== Button Declarations ==========
     add_player_btn = Button()
     back_btn = Button("Back")
+    update_price_btn = Button("Update")
 
     # ========== Button Functions ==========
     def add_player_btn_func():
@@ -243,10 +245,54 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
         win_player_bio.hide()
         win_previous.show()
 
-    # ========== Buttons ==========
-    button_x_offset = 50
+    def update_price_btn_func():
+        # Get index in player list and player db
+        if player in db_dict['player_list'][1].db:
+            list_index = db_dict['player_list'][1].db.index(player)
+        else:
+            list_index = -1
+        if player in db_dict['player_db'][1].db:
+            db_index = db_dict['player_db'][1].db.index(player)
+        else:
+            db_index = -1
 
-    add_player_btn.x = win_width - button_width - button_x_offset
+        # Get updated price
+        new_price = Player.Player(player).get_price()
+
+        # Update price displayed
+        new_price_str = str(new_price)
+        if new_price > 999999:
+            new_price_str = new_price_str[:-6] + ',' + new_price_str[-6:-3] + ',' + new_price_str[-3:]
+        elif new_price > 999:
+            new_price_str = new_price_str[:-3] + ',' + new_price_str[-3:]
+        elif new_price < 1:
+            new_price_str = '?'
+        price_label.text = str(new_price_str)
+
+        # Assigned updated price
+        if list_index > -1:
+            updated_player = db_dict['player_list'][1].db[list_index]
+            updated_player['price'] = new_price
+            db_dict['player_list'][1].db[list_index] = updated_player
+        if db_index > -1:
+            updated_player = db_dict['player_db'][1].db[db_index]
+            updated_player['price'] = new_price
+            db_dict['player_db'][1].db[db_index] = player
+
+        # Save
+        if list_index > -1:
+            db_dict['player_list'][1].sort(['rating'])
+            db_dict['player_list'][1].save(db_dict['player_list'][0], 'list', True)
+        if db_index > -1:
+            db_dict['player_db'][1].sort(['rating'])
+            db_dict['player_db'][1].save(db_dict['player_db'][0], 'db', True)
+
+        win_player_bio.become_target()
+
+    # ========== Buttons ==========
+    button_x_offset = 85
+
+    add_player_btn.x = win_player_bio.width - button_width - button_x_offset
     add_player_btn.y = top_border
     add_player_btn.height = small_button_height
     add_player_btn.width = button_width
@@ -272,6 +318,15 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     back_btn.action = back_btn_func
     back_btn.style = 'default'
     back_btn.color = small_button_color
+
+    update_price_btn.x = add_player_btn.right
+    update_price_btn.y = add_player_btn.top
+    update_price_btn.height = small_button_height*2
+    update_price_btn.width = button_width/3
+    update_price_btn.font = small_button_font
+    update_price_btn.action = update_price_btn_func
+    update_price_btn.style = 'default'
+    update_price_btn.color = small_button_color
 
     # ========== Player Info Labels ==========
     # Get attribute lists
@@ -616,6 +671,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, file_name=N
     # ========== Add buttons to window ==========
     view.add(add_player_btn)
     view.add(back_btn)
+    view.add(update_price_btn)
 
     for label in labels_list:
         view.add(label)
