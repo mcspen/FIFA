@@ -66,7 +66,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
         settings['file_type'] = 'current_player_list'
         settings['file_changes'] = False
         settings['prev_window'] = 'team_creation'
-        settings['file_name'] = team_list_name_tf.value
+        settings['create_team_name'] = team_list_name_tf.value
         PickFile.open_pick_file_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, settings)
         win_ultimate_teams.hide()
 
@@ -75,7 +75,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
         settings['file_type'] = 'current_formation_list'
         settings['file_changes'] = False
         settings['prev_window'] = 'team_creation'
-        settings['file_name'] = team_list_name_tf.value
+        settings['create_team_name'] = team_list_name_tf.value
         PickFile.open_pick_file_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, settings)
         win_ultimate_teams.hide()
 
