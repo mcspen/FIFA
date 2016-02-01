@@ -339,7 +339,8 @@ def open_edit_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None, 
 
     def player_bio_btn_func(player):
         win_edit.become_target()
-        PlayerBio.open_player_bio_window(win_edit.x, win_edit.y, player, win_edit, settings['file_name'], list_players)
+        PlayerBio.open_player_bio_window(win_edit.x, win_edit.y, player, win_edit,
+                                         file_name=settings['file_name'], current_list=list_players)
         win_edit.hide()
 
     def formation_bio_btn_func(formation):
