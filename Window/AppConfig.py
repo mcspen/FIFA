@@ -4,6 +4,7 @@ import GUI.StdColors
 
 # ========== Strings ==========
 # Titles on top of windows
+assign_players_title = 'Assign Players'
 attribute_title = 'Attributes Menu'
 confirm_prompt_title = 'Are you sure?'
 create_list_title = 'Create New List'
@@ -14,6 +15,7 @@ files_title = 'Manage Files'
 formation_bio_title = 'Formation Bio'
 formations_title = 'Formations'
 pick_file_title = 'File Menu'
+pick_formation_title = 'Pick Formation'
 pick_position_title = 'Pick New Position'
 player_bio_title = 'Player Bio'
 players_title = 'Players'
@@ -26,6 +28,7 @@ teams_title = 'Teams'
 # Titles on the window bar at the top
 start_win_title = 'FIFA Squad Builder'
 
+assign_players_win_title = start_win_title + ' - ' + assign_players_title
 attribute_win_title = start_win_title + ' - ' + attribute_title
 confirm_prompt_win_title = start_win_title + ' - ' + confirm_prompt_title
 create_list_win_title = start_win_title + ' - ' + create_list_title
@@ -35,6 +38,7 @@ files_win_title = start_win_title + ' - ' + files_title
 formation_bio_win_title = start_win_title + ' - ' + formation_bio_title
 formations_win_title = start_win_title + ' - ' + formations_title
 pick_file_win_title = start_win_title + ' - ' + pick_file_title
+pick_formation_win_title = start_win_title + ' - ' + pick_formation_title
 pick_position_win_title = start_win_title + ' - ' + pick_position_title
 player_bio_win_title = start_win_title + ' - ' + player_bio_title
 players_win_title = start_win_title + ' - ' + players_title

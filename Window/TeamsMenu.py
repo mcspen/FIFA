@@ -3,6 +3,7 @@ from GUI import Button, Label, View, Window
 from AppConfig import *
 import StartMenu
 import CreateUltimateTeams
+import PickFormation
 
 
 def open_teams_menu(window_x, window_y, db_dict):
@@ -41,14 +42,17 @@ def open_teams_menu(window_x, window_y, db_dict):
 
     # ========== Button Functions ==========
     def create_ultimate_teams_btn_func():
+        win_teams.become_target()
         CreateUltimateTeams.open_create_ultimate_teams_window(win_teams.x, win_teams.y, db_dict)
         win_teams.hide()
 
     def manually_create_teams_btn_func():
-        # win_teams.hide()
-        stuff = 0
+        win_teams.become_target()
+        PickFormation.open_pick_formation_window(win_teams.x, win_teams.y, db_dict, win_teams)
+        win_teams.hide()
 
     def back_btn_func():
+        win_teams.become_target()
         StartMenu.open_start_menu(win_teams.x, win_teams.y, db_dict)
         win_teams.hide()
 
