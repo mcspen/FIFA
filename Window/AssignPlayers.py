@@ -19,14 +19,14 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                 print "Invalid position. Position not in formation."
 
     # ========== Window ==========
-    win_team_bio = Window()
-    win_team_bio.title = team_bio_win_title
-    win_team_bio.auto_position = False
-    win_team_bio.position = (window_x, window_y)
-    win_team_bio.size = (win_width, win_height)
-    win_team_bio.resizable = 0
-    win_team_bio.name = team_bio_title + " Window"
-    win_team_bio.show()
+    win_assign_players = Window()
+    win_assign_players.title = team_bio_win_title
+    win_assign_players.auto_position = False
+    win_assign_players.position = (window_x, window_y)
+    win_assign_players.size = (win_width, win_height)
+    win_assign_players.resizable = 0
+    win_assign_players.name = team_bio_title + " Window"
+    win_assign_players.show()
 
     # ========== Load Formation Spacing ==========
     # Get attribute lists
@@ -49,7 +49,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     field_width = field_length*y_to_x_ratio
 
     # Field positioning on screen
-    field_x_offset = (win_team_bio.width - field_width - button_width - 100) / 2
+    field_x_offset = (win_assign_players.width - field_width - button_width - 100) / 2
     field_y_offset = title_border
 
     # Center circle
@@ -227,7 +227,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                 box_dst_rect = Geometry.offset_rect(box_rect, box_pos)
                 box_image.draw(c, box_rect, box_dst_rect)
 
-    view = StartWindowImageView(size=win_team_bio.size)
+    view = StartWindowImageView(size=win_assign_players.size)
 
     # ========== Player Headshots ==========
     player_headshots = []
@@ -316,15 +316,13 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         colors = [red, dark_orange, yellow, dark_green]
         if 'player' in position:
             position_color = colors[Team.Team.position_chemistry(player['position'], position['symbol'])]
-        else:
-            position_color = colors[0]
-        position_label = Label(text=player['position'], font=std_tf_font_bold,
-                               width=position_width, height=std_tf_height,
-                               x=int(dst_rect[0]+position_coordinates[0]*x_space+player_box_height/2 -
-                                     2*player_border-2*position_width),
-                               y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)+player_border,
-                               color=position_color, just='right')
-        player_headshots.append(position_label)
+            position_label = Label(text=player['position'], font=std_tf_font_bold,
+                                   width=position_width, height=std_tf_height,
+                                   x=int(dst_rect[0]+position_coordinates[0]*x_space+player_box_height/2 -
+                                         2*player_border-2*position_width),
+                                   y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)+player_border,
+                                   color=position_color, just='right')
+            player_headshots.append(position_label)
 
         # Formation Position
         position_color = white
@@ -337,10 +335,19 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         player_headshots.append(position_label)
 
         # Player name button
-        def name_btn_func(current_player):
-            win_team_bio.hide()
-            PlayerBio.open_player_bio_window(win_team_bio.x, win_team_bio.y, current_player, win_team_bio)
-            win_team_bio.become_target()
+        def name_btn_func(current_player, symbol):
+            # Go to player search page to add player
+            if current_player['name'] == 'Assign Player':
+                stuff = 0
+
+            # Remove player from roster and info from formation
+            else:
+                roster.pop(symbol)
+                formation['positions'][pos].pop('player')
+                open_assign_players_window(win_assign_players.x, win_assign_players.y,
+                                           db_dict, formation, win_previous, roster)
+            #PlayerBio.open_player_bio_window(win_assign_players.x, win_assign_players.y, current_player, win_assign_players)
+            win_assign_players.hide()
 
         name_color = darker
         player_name = ascii_text(player['name'])
@@ -350,7 +357,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                            y=int(dst_rect[1]+position_coordinates[1]*y_space +
                                  player_box_height/2-player_border-name_height),
                            color=name_color, just='center',
-                            action=(name_btn_func, player))
+                            action=(name_btn_func, player, sym))
         # Make font smaller for long names
         if len(player_name) > 10:
             name_btn.font = title_font_8
@@ -363,25 +370,20 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     def display_headshots():
         for item in player_headshots:
             view.add(item)
-        win_team_bio.become_target()
-
-    def hide_headshots():
-        for item in player_headshots:
-            view.remove(item)
-        win_team_bio.become_target()
+        win_assign_players.become_target()
 
     # ========== Button Declarations ==========
     back_btn = Button("Back")
 
     # ========== Button Functions ==========
     def back_btn_func():
-        win_team_bio.hide()
+        win_assign_players.hide()
         win_previous.show()
 
     # ========== Buttons ==========
     button_x_offset = 50
 
-    back_btn.x = win_team_bio.width - button_width - button_x_offset
+    back_btn.x = win_assign_players.width - button_width - button_x_offset
     back_btn.y = top_border
     back_btn.height = small_button_height
     back_btn.width = button_width
@@ -397,6 +399,6 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
 
     display_headshots()
 
-    win_team_bio.add(view)
+    win_assign_players.add(view)
     view.become_target()
-    win_team_bio.show()
+    win_assign_players.show()
