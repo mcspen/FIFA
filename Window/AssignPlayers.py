@@ -219,7 +219,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                     player = pos['player']
                     box_file_name = 'Images/Cards/' + player['color'] + '_box.png'
                 else:
-                    box_file_name = 'Images/Cards/' + 'bronze' + '_box.png'
+                    box_file_name = 'Images/Cards/' + 'no_one' + '_box.png'
                 box_image = Image(file=box_file_name)
                 box_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2))
@@ -343,10 +343,12 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
             # Remove player from roster and info from formation
             else:
                 roster.pop(symbol)
-                formation['positions'][pos].pop('player')
+                formation['positions'][symbol].pop('player')
+                # Redraw window
+                # This is a cheap temp option
                 open_assign_players_window(win_assign_players.x, win_assign_players.y,
                                            db_dict, formation, win_previous, roster)
-            #PlayerBio.open_player_bio_window(win_assign_players.x, win_assign_players.y, current_player, win_assign_players)
+
             win_assign_players.hide()
 
         name_color = darker
