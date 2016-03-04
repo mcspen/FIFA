@@ -230,7 +230,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     view = StartWindowImageView(size=win_assign_players.size)
 
     # ========== Player Headshots ==========
-    player_headshots = []
+    player_headshots = {}
     name_height = 25
 
     # Player headshots
@@ -289,18 +289,41 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                     nation_dst_rect = Geometry.offset_rect(nation_rect, nation_image_pos)
                     nation_image.draw(c, nation_rect, nation_dst_rect)
 
-    player_headshots.append(HeadshotImageView(size=(int(field_x_offset+field_width+5),
-                                                    int(field_y_offset+field_length+5))))
+    player_headshots['headshots'] = [HeadshotImageView(size=(int(field_x_offset+field_width+5),
+                                                             int(field_y_offset+field_length+5)))]
+
+    # Player name button
+    def name_btn_func(current_player, symbol):
+        # Go to player search page to add player
+        if current_player['name'] == default_message:
+            stuff = 0
+            win_assign_players.hide()
+
+        # Remove player from roster and info from formation
+        else:
+            roster.pop(symbol)
+            formation['positions'][symbol].pop('player')
+
+            # Remove headshots
+            hide_headshots()
+
+            # Remove player info from headshots list
+            remove_headshot(symbol)
+
+            # Display updated headshots
+            display_headshots()
 
     # Player ratings, position, team, nation, and name
     rating_width = 30
     position_width = 45
+    default_message = 'Assign Player'
     for sym, position in formation['positions'].iteritems():
+        player_headshots[sym] = []
         # Get player information
         if 'player' in position:
             player = position['player']
         else:
-            player = {'rating': '', 'position': '', 'name': unicode('Assign Player')}
+            player = {'rating': '', 'position': '', 'name': unicode(default_message)}
         position_coordinates = team_spacing[sym]
         info_color = black  # quality_text_color(position['player']['color'])
 
@@ -310,7 +333,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                              x=int(dst_rect[0]+position_coordinates[0]*x_space-player_box_height/2+2*player_border),
                              y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)-1,
                              color=info_color, just='left')
-        player_headshots.append(rating_label)
+        player_headshots[sym].append(rating_label)
 
         # Player Position
         colors = [red, dark_orange, yellow, dark_green]
@@ -322,7 +345,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                                          2*player_border-2*position_width),
                                    y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)+player_border,
                                    color=position_color, just='right')
-            player_headshots.append(position_label)
+            player_headshots[sym].append(position_label)
 
         # Formation Position
         position_color = white
@@ -332,24 +355,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                                      2*player_border-position_width),
                                y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)+player_border,
                                color=position_color, just='left')
-        player_headshots.append(position_label)
-
-        # Player name button
-        def name_btn_func(current_player, symbol):
-            # Go to player search page to add player
-            if current_player['name'] == 'Assign Player':
-                stuff = 0
-
-            # Remove player from roster and info from formation
-            else:
-                roster.pop(symbol)
-                formation['positions'][symbol].pop('player')
-                # Redraw window
-                # This is a cheap temp option
-                open_assign_players_window(win_assign_players.x, win_assign_players.y,
-                                           db_dict, formation, win_previous, roster)
-
-            win_assign_players.hide()
+        player_headshots[sym].append(position_label)
 
         name_color = darker
         player_name = ascii_text(player['name'])
@@ -359,7 +365,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                            y=int(dst_rect[1]+position_coordinates[1]*y_space +
                                  player_box_height/2-player_border-name_height),
                            color=name_color, just='center',
-                            action=(name_btn_func, player, sym))
+                           action=(name_btn_func, player, sym))
         # Make font smaller for long names
         if len(player_name) > 10:
             name_btn.font = title_font_8
@@ -367,12 +373,35 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
             name_btn.font = title_font_9
         if len(player_name) > 15:
             name_btn.font = title_font_10
-        player_headshots.append(name_btn)
+        player_headshots[sym].append(name_btn)
 
     def display_headshots():
-        for item in player_headshots:
-            view.add(item)
+        for value in player_headshots.itervalues():
+            for item in value:
+                view.add(item)
         win_assign_players.become_target()
+
+    def hide_headshots():
+        for value in player_headshots.itervalues():
+            for item in value:
+                view.remove(item)
+        win_assign_players.become_target()
+
+    def remove_headshot(position_symbol):
+        # Rewrite old player data to default unknown player
+        for item in player_headshots[position_symbol]:
+            if type(item) == Label:
+                if item.text[0] != '/':
+                    item.text = ''
+            else:
+                unknown_player = {'rating': '', 'position': '', 'name': unicode(default_message)}
+                item.title = unknown_player['name']
+                item.font = title_font_8
+                item.action = (name_btn_func, unknown_player, position_symbol)
+
+        # Redraw headshots
+        player_headshots['headshots'] = [HeadshotImageView(size=(int(field_x_offset+field_width+5),
+                                                                 int(field_y_offset+field_length+5)))]
 
     # ========== Button Declarations ==========
     back_btn = Button("Back")
