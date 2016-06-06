@@ -146,6 +146,6 @@ class Player:
                 self.price = price
 
             except Exception as err:
-                print "Not connected to internet. Cannot get player price.\nOr Error:" + err.message
+                print "Not connected to internet. Cannot get player price.\nOr Error: " + err.message
 
         return self.price

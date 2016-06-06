@@ -281,7 +281,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         # Get player information
         player = position['player']
         position_coordinates = team_spacing[sym]
-        info_color = black  # quality_text_color(position['player']['color'])
+        info_color = quality_text_color(position['player']['color'])
 
         # Player rating
         rating_label = Label(text=str(player['rating']), font=title_font_3,

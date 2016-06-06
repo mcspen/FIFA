@@ -61,6 +61,7 @@ def update_player_prices(queue, file_name, settings):
     else:
         print "Invalid file type."
 
+
 def open_status_window(window_x, window_y, db_dict,
                        file_name=None, get_prices=None, settings=None, win_previous=None, win_next=None):
 
@@ -68,12 +69,12 @@ def open_status_window(window_x, window_y, db_dict,
 
     # ========== Window ==========
     status_window = Window()
-    status_window.title = search_win_title
+    status_window.title = status_window_win_title
     status_window.auto_position = False
     status_window.position = (window_x, window_y)
     status_window.size = (win_width, win_height - 250)
     status_window.resizable = 0
-    status_window.name = status_window_win_title
+    status_window.name = status_window_title
 
     # ========== Window Image View ==========
     class WindowImageView(View):

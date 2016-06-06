@@ -119,7 +119,7 @@ def quality_color(value):
 
 
 def quality_text_color(value):
-    if value in ['rare_silver', 'rare_gold']:
+    if value in ['totw_gold', 'rare_gold', 'rare_silver', 'gold']:
         color = black
     else:
         color = white

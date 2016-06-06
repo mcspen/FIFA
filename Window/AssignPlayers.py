@@ -325,7 +325,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         else:
             player = {'rating': '', 'position': '', 'name': unicode(default_message)}
         position_coordinates = team_spacing[sym]
-        info_color = black  # quality_text_color(position['player']['color'])
+        info_color = quality_text_color(position['player']['color'])
 
         # Player rating
         rating_label = Label(text=str(player['rating']), font=title_font_3,
