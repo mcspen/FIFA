@@ -173,6 +173,15 @@ class TeamDB:
                         player = position['player']
                         total += player[attr[6:]]
                     attribute_tuple += (total,)
+                elif attr in ['total_PAC', 'total_SHO', 'total_PAS', 'total_DRI', 'total_DEF', 'total_PHY']:
+                    # Calculate total
+                    total = 0
+                    for position in current_team['formation']['positions'].itervalues():
+                        player = position['player']
+                        if not player['isGK']:
+                            index = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'].index(attr[6:])
+                            total += player['attributes'][index]['value']
+                    attribute_tuple += (total,)
                 else:
                     print "Invalid Attribute: %s" % attr
 
@@ -258,6 +267,23 @@ class TeamDB:
                     for position in team['formation']['positions'].itervalues():
                         player = position['player']
                         total += player[attribute[6:]]
+                    if compare == 'higher':
+                        if not total >= value:
+                            match = False
+                    elif compare == 'exact':
+                        if not total == value:
+                            match = False
+                    elif compare == 'lower':
+                        if not total <= value:
+                            match = False
+                elif attribute in ['total_PAC', 'total_SHO', 'total_PAS', 'total_DRI', 'total_DEF', 'total_PHY']:
+                    # Calculate total
+                    total = 0
+                    for position in team['formation']['positions'].itervalues():
+                        player = position['player']
+                        if not player['isGK']:
+                            index = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'].index(attribute[6:])
+                            total += player['attributes'][index]['value']
                     if compare == 'higher':
                         if not total >= value:
                             match = False

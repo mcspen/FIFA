@@ -44,6 +44,9 @@ if __name__ == '__main__':
     FifaApp.start_app(db_dict)
     # delete_all_temp_images()"""
 
+    # new_player_list = PlayerDB()
+    # new_player_list.get_players_from_account(player_db, "firefox", "test@yahoo.com", "test")
+
     # -------------------------PLAYER DB EXAMPLES---------------------------
     # Initialize DB
     # player_db = PlayerDB()

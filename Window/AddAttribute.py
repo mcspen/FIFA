@@ -120,9 +120,14 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
             button.y = idx * 25 + title.bottom + 5
 
         elif attr_type[:4] == 'team':
-            button.width = 150
-            button.x = (win_attribute.width - button.width) / 2
-            button.y = idx * 25 + title.bottom + 5
+            if idx < buttons_per_column:
+                button.width = 150
+                button.x = win_attribute.width / 2 - (button.width + 5)
+            else:
+                button.width = 150
+                button.x = win_attribute.width / 2 + 5
+
+            button.y = (idx % buttons_per_column) * 25 + title.bottom - 5
 
         else:
             print "Invalid attribute type."
@@ -172,6 +177,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
                     except Exception:
                         print "Invalid attribute value."
+                        value_tf.value = "Invalid attribute value."
 
                 elif value_tf.value.isdigit():
                     # If value is less than 10, assume unit is feet. Else, assume unit is centimeters.
@@ -216,6 +222,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                 erase_btn.enabled = 1
             else:
                 print "Invalid attribute value."
+                value_tf.value = "Invalid attribute value."
 
         # Formation
         elif attr_type == 'formation_search':
@@ -246,6 +253,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                 erase_btn.enabled = 1
             else:
                 print "Invalid attribute value."
+                value_tf.value = "Invalid attribute value."
 
         # Team
         elif attr_type == 'team_search':
@@ -264,7 +272,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                     if 10 < return_value < 56:
                         valid = True
 
-            elif radio_group.value in ["strength", "total_price"]:
+            elif radio_group.value in ["strength", "total_price", "total_PAC", "total_SHO", "total_PAS", "total_DRI",
+                                       "total_DEF", "total_PHY"]:
                 # Value should be an integer
                 if value_tf.value.isdigit():
                     return_value = int(value_tf.value)
@@ -283,6 +292,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
                 erase_btn.enabled = 1
             else:
                 print "Invalid attribute value."
+                value_tf.value = "Invalid attribute value."
 
         else:
             print 'Invalid attr_type for AddAttribute.'

@@ -114,6 +114,8 @@ def team_info_labels(attributes):
     for attribute in attributes:
         if attribute in ['total_skillMoves', 'total_price']:
             labels.append(attribute[6:9].capitalize()+'.')
+        if attribute in ['total_PAC', 'total_SHO', 'total_PAS', 'total_DRI', 'total_DEF', 'total_PHY']:
+            labels.append(attribute[6:])
         else:
             labels.append(attribute[:3].capitalize()+'.')
 
@@ -282,6 +284,14 @@ def team_info(team, attributes):
                 player = position['player']
                 total += player[attribute[6:]]
             team_info.append(str(total))
+        elif attribute in ['total_PAC', 'total_SHO', 'total_PAS', 'total_DRI', 'total_DEF', 'total_PHY']:
+            total = 0
+            for position in team['formation']['positions'].itervalues():
+                player = position['player']
+                if not player['isGK']:
+                    index = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'].index(attribute[6:])
+                    total += player['attributes'][index]['value']
+            team_info.append(str(total))
         else:
             team_info.append(str(team[attribute]))
 
@@ -340,6 +350,8 @@ def format_attr_name(attribute):
         return "Total Skill Moves"
     elif attribute in ["total_price"]:
         return "Total Price"
+    elif attribute in ['total_PAC', 'total_SHO', 'total_PAS', 'total_DRI', 'total_DEF', 'total_PHY']:
+        return "Total " + attribute[6:]
     else:
         return "ERROR"
 
