@@ -119,8 +119,14 @@ def quality_color(value):
 
 
 def quality_text_color(value):
-    if value in ['totw_gold', 'rare_gold', 'rare_silver', 'gold']:
+    if value in ['legend',
+                 'green', 'motm', 'pink', 'purple', 'teal',
+                 'totw_gold', 'totw_silver', 'totw_bronze',
+                 'rare_gold', 'rare_silver', 'rare_bronze',
+                 'gold', 'silver', 'bronze']:
         color = black
+    elif value in ['toty', 'easports', 'tots_gold', 'tots_silver', 'tots_bronze']:
+        color = white
     else:
         color = white
 

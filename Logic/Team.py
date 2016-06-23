@@ -1717,15 +1717,19 @@ class Team:
 # ====================CREATE ULTIMATE TEAM FUNCTIONS========== #
 
     @staticmethod
-    def pass_requirements_check(players, formations):
+    def pass_requirements_check(players, formations, roster=None):
         """
         Checks there are enough players and formations.
         Input: PlayerDB of players and FormationDB of formations.
         Output: Boolean of the check
         """
+        if roster is None:
+            len_roster = 0
+        else:
+            len_roster = len(roster)
 
         # Check if there are at least 11 players
-        if len(players.db) < 11:
+        if (len(players.db) + len_roster) < 11:
             print "Not enough players."
             return False
 
@@ -1803,7 +1807,7 @@ class Team:
         self.__init__(team_dict)
         return True
 
-    def create_team_ultimate(self, players, formations):
+    def create_team_ultimate(self, players, formations, roster=None):
         """
         Creates the best team using my thorough method from the given players and formations.
         Input: PlayerDB of players, FormationDB of formations, the process to use, and the minimum number of teams.
@@ -1815,7 +1819,7 @@ class Team:
             return False
 
         # Create team dict using my thorough method
-        team_list = UltimateTeamFunctions.find_team_ultimate(players, formations)
+        team_list = UltimateTeamFunctions.find_team_ultimate(players, formations, roster)
 
         # Check if team was not created
         if len(team_list) == 0:

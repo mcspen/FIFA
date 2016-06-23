@@ -4,6 +4,7 @@ from AppConfig import *
 import TeamsMenu
 import AddAttribute
 import PickFile
+from Logic import FormationDB
 from Logic import Team
 from Logic import TeamDB
 from Logic.HelperFunctions import format_attr_name
@@ -11,7 +12,7 @@ import json
 
 
 def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_list=None, team_judge_list=None,
-                                      file_name=None):
+                                      file_name=None, roster=None, input_formation=None):
 
     display_items = []
 
@@ -27,6 +28,12 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
     if team_judge_list is not None:
         settings['team_sort_attributes'] = team_judge_list
 
+    if roster is not None:
+        settings['roster'] = roster
+
+    if input_formation is not None:
+        settings['input_formation'] = input_formation
+
     # ========== Window ==========
     win_ultimate_teams = Window()
     win_ultimate_teams.title = create_ultimate_teams_win_title
@@ -37,12 +44,12 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
     win_ultimate_teams.name = create_ultimate_teams_title + " Window"
 
     # ========== Window Image View ==========
-    class FormationsWindowImageView(View):
+    class CreateUltimateTeamsWindowImageView(View):
         def draw(self, c, r):
             c.backcolor = view_backcolor
             c.erase_rect(r)
 
-    view = FormationsWindowImageView(size=win_ultimate_teams.size)
+    view = CreateUltimateTeamsWindowImageView(size=win_ultimate_teams.size)
 
     # ========== Title ==========
     title = Label(text=create_ultimate_teams_title)
@@ -104,6 +111,9 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
                                    color=title_color, just='center',
                                    action=formation_list_current_btn_func)
     display_items.append(formation_list_button)
+    if input_formation is not None:
+        formation_list_button.enabled = 0
+        formation_list_button.title = input_formation['name']
 
     settings_indent = 3*win_width/7
 
@@ -213,9 +223,10 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
         attr_dict = {}
         attr_list = settings['team_sort_attributes']
         attr_type = 'team_sort'
-        attribute_settings = {'window': 'ultimate_team_judging', 'file_name': team_list_name_tf.value}
-        AddAttribute.open_attribute_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, attr_dict,
-                                           attr_list, attr_type, attribute_settings)
+        attribute_settings = {'window': 'ultimate_team_judging', 'file_name': team_list_name_tf.value,
+                              'roster': roster, 'input_formation': input_formation}
+        AddAttribute.open_attribute_window(
+            win_ultimate_teams.x, win_ultimate_teams.y, db_dict, attr_dict, attr_list, attr_type, attribute_settings)
 
         win_ultimate_teams.hide()
 
@@ -259,7 +270,8 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
         attr_dict = {}
         attr_list = settings['player_sort_attributes']
         attr_type = 'player_sort'
-        attribute_settings = {'window': 'ultimate_player_judging', 'file_name': team_list_name_tf.value}
+        attribute_settings = {'window': 'ultimate_player_judging', 'file_name': team_list_name_tf.value,
+                              'roster': roster, 'input_formation': input_formation}
         AddAttribute.open_attribute_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, attr_dict,
                                            attr_list, attr_type, attribute_settings)
 
@@ -574,6 +586,12 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
     def start_btn_func():
         save_settings()
 
+        # Assign formation(s) to use
+        if input_formation is None:
+            formations = db_dict['formation_list'][1]
+        else:
+            formations = FormationDB.FormationDB(input_formation)
+
         # Open status page
         """StatusWindow.open_status_window(win_ultimate_teams.x, win_ultimate_teams.y,
                                         db_dict, team_list_name_tf.value, win_ultimate_teams)
@@ -581,7 +599,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
 
         # Run team creation here
         team = Team.Team()
-        teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], db_dict['formation_list'][1]))
+        teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], formations, roster))
 
         if len(teams.db) > 0:
             teams.save(team_list_name_tf.value)

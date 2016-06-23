@@ -2,9 +2,9 @@ from GUI import Button, Geometry, Image, Label, View, Window
 from AppConfig import *
 import json
 import copy
+import CreateUltimateTeams
 from Logic.HelperFunctions import ascii_text, save_small_image
 from Logic import Team
-from Window import PlayerBio
 
 
 def open_assign_players_window(window_x, window_y, db_dict, input_formation, win_previous, roster=None):
@@ -20,12 +20,12 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
 
     # ========== Window ==========
     win_assign_players = Window()
-    win_assign_players.title = team_bio_win_title
+    win_assign_players.title = assign_players_win_title
     win_assign_players.auto_position = False
     win_assign_players.position = (window_x, window_y)
     win_assign_players.size = (win_width, win_height)
     win_assign_players.resizable = 0
-    win_assign_players.name = team_bio_title + " Window"
+    win_assign_players.name = assign_players_title + " Window"
     win_assign_players.show()
 
     # ========== Load Formation Spacing ==========
@@ -323,9 +323,9 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         if 'player' in position:
             player = position['player']
         else:
-            player = {'rating': '', 'position': '', 'name': unicode(default_message)}
+            player = {'rating': '', 'position': '', 'color': 'none', 'name': unicode(default_message)}
         position_coordinates = team_spacing[sym]
-        info_color = quality_text_color(position['player']['color'])
+        info_color = quality_text_color(player['color'])
 
         # Player rating
         rating_label = Label(text=str(player['rating']), font=title_font_3,
@@ -404,9 +404,15 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                                                                  int(field_y_offset+field_length+5)))]
 
     # ========== Button Declarations ==========
+    next_btn = Button("Next")
     back_btn = Button("Back")
 
     # ========== Button Functions ==========
+    def next_btn_func():
+        win_assign_players.hide()
+        CreateUltimateTeams.open_create_ultimate_teams_window(
+            win_assign_players.x, win_assign_players.y, db_dict, roster=roster, input_formation=input_formation)
+
     def back_btn_func():
         win_assign_players.hide()
         win_previous.show()
@@ -414,8 +420,18 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     # ========== Buttons ==========
     button_x_offset = 50
 
+    next_btn.x = win_assign_players.width - button_width - button_x_offset
+    next_btn.y = top_border
+    next_btn.height = small_button_height
+    next_btn.width = button_width
+    next_btn.font = small_button_font
+    next_btn.action = next_btn_func
+    next_btn.style = 'default'
+    next_btn.color = small_button_color
+    labels_list.append(next_btn)
+
     back_btn.x = win_assign_players.width - button_width - button_x_offset
-    back_btn.y = top_border
+    back_btn.y = next_btn.bottom
     back_btn.height = small_button_height
     back_btn.width = button_width
     back_btn.font = small_button_font

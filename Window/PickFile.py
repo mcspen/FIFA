@@ -147,8 +147,9 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
             settings['file_changes'] = False
             settings['file_index'] = 0
             if settings['prev_window'] == 'team_creation':
-                CreateUltimateTeams.open_create_ultimate_teams_window(win_pick_file.x, win_pick_file.y, db_dict,
-                                                                      file_name=settings['create_team_name'])
+                CreateUltimateTeams.open_create_ultimate_teams_window(
+                    win_pick_file.x, win_pick_file.y, db_dict, file_name=settings['create_team_name'],
+                    roster=settings['roster'], input_formation=settings['input_formation'])
             else:
                 FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
             win_pick_file.hide()
@@ -320,8 +321,9 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
         settings['file_index'] = 0
 
         if settings['prev_window'] == 'team_creation':
-            CreateUltimateTeams.open_create_ultimate_teams_window(win_pick_file.x, win_pick_file.y, db_dict,
-                                                                  file_name=settings['create_team_name'])
+            CreateUltimateTeams.open_create_ultimate_teams_window(
+                win_pick_file.x, win_pick_file.y, db_dict, file_name=settings['create_team_name'],
+                roster=settings['roster'], input_formation=settings['input_formation'])
         else:
             FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
         win_pick_file.hide()

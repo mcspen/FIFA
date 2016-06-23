@@ -14,7 +14,7 @@ def recursive_create_tup(tup):
     """
     Wrapper function to all Team.recursive_create_tup to be called by pool
     """
-    return recursive_create(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8])
+    return recursive_create(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8], roster=tup[9])
 
 
 def calculate_dependency_dict_list(dependent_positions, roster):
@@ -522,7 +522,7 @@ def enough_players(players, formation, chemistry_matters):
     return True
 
 
-def find_teams_ultimate(players, formations):
+def find_teams_ultimate(players, formations, roster=None):
     """
     Finds the best team using my thorough method from the given players and formations.
     Input: PlayerDB of players, FormationDB of formations, and the process type.
@@ -577,8 +577,9 @@ def find_teams_ultimate(players, formations):
         # Create tuple list for each formation
         for formation in formations.db:
             if enough_players(players, formation, chemistry_matters):
-                input_tuples.append((players, formation, chemistry_matters, time_limit, players_per_position,
-                                     teams_per_formation, team_sort_attributes, player_sort_attributes, num_teams))
+                input_tuples.append((
+                    players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
+                    team_sort_attributes, player_sort_attributes, num_teams, roster))
 
         # Temporary Timing Information------------------------------------------------------------------------------
         print "Start Multi Process!"
@@ -619,7 +620,7 @@ def find_teams_ultimate(players, formations):
                 # Call recursive team building function
                 results_sp = recursive_create(
                         players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
-                        team_sort_attributes, player_sort_attributes, num_teams)
+                        team_sort_attributes, player_sort_attributes, num_teams, roster=roster)
 
                 team_list_sp += results_sp[0]
                 count_sp += results_sp[1]
@@ -669,7 +670,7 @@ def find_teams_ultimate(players, formations):
     return []
 
 
-def find_team_ultimate(players, formations):
+def find_team_ultimate(players, formations, roster=None):
     """
     Calls the find_teams_ultimate function and sorts and returns the results.
     Input: PlayerDB of players and FormationDB of formations.
@@ -677,7 +678,7 @@ def find_team_ultimate(players, formations):
     """
 
     # List of teams returned from find_teams_ultimate
-    team_list = find_teams_ultimate(players, formations)
+    team_list = find_teams_ultimate(players, formations, roster)
 
     # Pick the top specified number of teams and ties.
     # Sort teams by rating and total individual chemistry
