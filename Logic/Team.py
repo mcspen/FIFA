@@ -1717,19 +1717,15 @@ class Team:
 # ====================CREATE ULTIMATE TEAM FUNCTIONS========== #
 
     @staticmethod
-    def pass_requirements_check(players, formations, roster=None):
+    def pass_requirements_check(players, formations):
         """
         Checks there are enough players and formations.
         Input: PlayerDB of players and FormationDB of formations.
         Output: Boolean of the check
         """
-        if roster is None:
-            len_roster = 0
-        else:
-            len_roster = len(roster)
 
         # Check if there are at least 11 players
-        if (len(players.db) + len_roster) < 11:
+        if len(players.db) < 11:
             print "Not enough players."
             return False
 

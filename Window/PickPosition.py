@@ -1,9 +1,5 @@
-from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
+from GUI import Button, Label, View, Window
 from AppConfig import *
-import SearchMenu
-import EditMenu
-from Logic.HelperFunctions import format_attr_name
-import json
 
 
 def open_pick_position_window(window_x, window_y, player, player_db, settings, btn, previous_window):

@@ -14,7 +14,8 @@ def recursive_create_tup(tup):
     """
     Wrapper function to all Team.recursive_create_tup to be called by pool
     """
-    return recursive_create(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8], roster=tup[9])
+    return recursive_create(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8],
+                            roster=tup[9], base_ids=tup[10])
 
 
 def calculate_dependency_dict_list(dependent_positions, roster):
@@ -568,6 +569,12 @@ def find_teams_ultimate(players, formations, roster=None):
     else:
         time_limit = time.time() + configs['max_values']['time_limit']
 
+    # If roster exists, set the base IDs list
+    base_ids = []
+    if roster is not None:
+        for player in roster.itervalues():
+            base_ids.append(player['baseId'])
+
     if process in ['multi', 'both']:
         # Multiprocess Method --------------------------------------------------------------------------------------
         # Create objects for recursive function
@@ -579,7 +586,7 @@ def find_teams_ultimate(players, formations, roster=None):
             if enough_players(players, formation, chemistry_matters):
                 input_tuples.append((
                     players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
-                    team_sort_attributes, player_sort_attributes, num_teams, roster))
+                    team_sort_attributes, player_sort_attributes, num_teams, roster, base_ids))
 
         # Temporary Timing Information------------------------------------------------------------------------------
         print "Start Multi Process!"
@@ -620,7 +627,7 @@ def find_teams_ultimate(players, formations, roster=None):
                 # Call recursive team building function
                 results_sp = recursive_create(
                         players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
-                        team_sort_attributes, player_sort_attributes, num_teams, roster=roster)
+                        team_sort_attributes, player_sort_attributes, num_teams, roster=roster, base_ids=base_ids)
 
                 team_list_sp += results_sp[0]
                 count_sp += results_sp[1]

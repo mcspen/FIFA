@@ -3,6 +3,7 @@ from AppConfig import *
 import json
 import copy
 import CreateUltimateTeams
+import PickPlayer
 from Logic.HelperFunctions import ascii_text, save_small_image
 from Logic import Team
 
@@ -296,7 +297,8 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     def name_btn_func(current_player, symbol):
         # Go to player search page to add player
         if current_player['name'] == default_message:
-            stuff = 0
+            PickPlayer.open_pick_player_window(win_assign_players.x, win_assign_players.y, db_dict,
+                                               input_formation, win_previous, roster)
             win_assign_players.hide()
 
         # Remove player from roster and info from formation
