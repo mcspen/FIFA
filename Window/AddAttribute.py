@@ -326,7 +326,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         elif settings['window'] == 'pick_player':
             PickPlayer.open_pick_player_window(win_attribute.x, win_attribute.y, db_dict,
                                                settings['input_formation'], settings['win_previous'],
-                                               settings['roster'], attr_dict, attr_list, settings)
+                                               settings['roster'], settings['pos_symbol'],
+                                               attr_dict, attr_list, settings)
         else:
             print "Invalid window setting."
 

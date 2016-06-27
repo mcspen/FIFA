@@ -16,7 +16,7 @@ from Logic.HelperFunctions import formation_info_labels, formation_info
 from Logic.HelperFunctions import team_info_labels, team_info
 
 
-def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_previous, roster,
+def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_previous, roster, pos_symbol,
                             attr_dict=None, attr_list=None, settings=None):
 
     num_results = 20
@@ -41,12 +41,13 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
             },
             'input_formation': input_formation,
             'roster': roster,
+            'pos_symbol': pos_symbol,
             'win_previous': win_previous
         }
 
     # ========== Window ==========
     win_pick_player = Window()
-    win_pick_player.title = pick_player_win_title
+    win_pick_player.title = pick_player_win_title + ' - ' + pos_symbol
     win_pick_player.auto_position = False
     win_pick_player.position = (window_x, window_y)
     win_pick_player.size = (win_width, win_height)
@@ -62,7 +63,7 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
     view = PickPlayerWindowImageView(size=win_pick_player.size)
 
     # ========== Title ==========
-    title = Label(text=pick_player_title)
+    title = Label(text=pick_player_title + ' - ' + pos_symbol)
     title.font = title_font
     title.width = title_width
     title.height = title_height

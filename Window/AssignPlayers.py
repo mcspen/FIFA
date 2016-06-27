@@ -298,7 +298,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         # Go to player search page to add player
         if current_player['name'] == default_message:
             PickPlayer.open_pick_player_window(win_assign_players.x, win_assign_players.y, db_dict,
-                                               input_formation, win_previous, roster)
+                                               input_formation, win_previous, roster, symbol)
             win_assign_players.hide()
 
         # Remove player from roster and info from formation
