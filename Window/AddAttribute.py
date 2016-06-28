@@ -21,12 +21,12 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     win_attribute.show()
 
     # ========== Window Image View ==========
-    class StartWindowImageView(View):
+    class AddAttributeWindowImageView(View):
         def draw(self, c, r):
             c.backcolor = view_backcolor
             c.erase_rect(r)
 
-    view = StartWindowImageView(size=win_attribute.size)
+    view = AddAttributeWindowImageView(size=win_attribute.size)
 
     attribute_display_list = []
 
@@ -327,7 +327,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
             PickPlayer.open_pick_player_window(win_attribute.x, win_attribute.y, db_dict,
                                                settings['input_formation'], settings['win_previous'],
                                                settings['roster'], settings['pos_symbol'],
-                                               attr_dict, attr_list, settings)
+                                               settings['pick_formations_page'], attr_dict, attr_list, settings)
         else:
             print "Invalid window setting."
 

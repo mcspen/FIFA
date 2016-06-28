@@ -5,9 +5,11 @@ from Logic.HelperFunctions import ascii_text, format_attr_name, convert_height, 
     save_image, save_small_image
 from Logic import PlayerDB
 from Logic import Player
+from Window import AssignPlayers
 
 
-def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=None, file_name=None, current_list=None):
+def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=None, file_name=None, current_list=None,
+                           roster=None, pos_symbol=None, input_formation=None, pick_formations_page=None):
 
     if current_list is None:
         current_list = PlayerDB.PlayerDB()
@@ -23,7 +25,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
     win_player_bio.show()
 
     # ========== Window Image View ==========
-    class StartWindowImageView(View):
+    class PlayerBioWindowImageView(View):
         def draw(self, c, r):
             c.backcolor = view_backcolor
             c.erase_rect(r)
@@ -77,7 +79,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
             coins_dst_rect = Geometry.offset_rect(coins_rect, coins_image_pos)
             coins_image.draw(c, coins_rect, coins_dst_rect)
 
-    view = StartWindowImageView(size=win_player_bio.size)
+    view = PlayerBioWindowImageView(size=win_player_bio.size)
 
     # ========== Player Headshot ==========
     image_url = player['headshotImgUrl']
@@ -232,9 +234,17 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
 
     # ========== Button Functions ==========
     def add_player_btn_func():
+        # Assign player to roster if that is the current process
+        if roster is not None and pos_symbol is not None and input_formation is not None:
+            roster[pos_symbol] = player
+
+            win_player_bio.hide()
+            AssignPlayers.open_assign_players_window(win_player_bio.x, win_player_bio.y, db_dict,
+                                                     input_formation, pick_formations_page, roster)
+
         # Check if player is already on selected players list
         # Remove player from list
-        if player in current_list.db:
+        elif player in current_list.db:
             # Remove
             current_list.db.remove(player)
             # Save
@@ -318,11 +328,24 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
     add_player_btn.style = 'default'
     add_player_btn.color = small_button_color
     # Disable button if no lists selected
-    if file_name is None:
+    if file_name is None and roster is None:
         add_player_btn.enabled = 0
 
+    if roster is not None and pos_symbol is not None and input_formation is not None:
+        add_player_btn.title = "Assign Player to Roster"
+
+        # Get list of player base IDs
+        base_ids = []
+        for player_value in roster.itervalues():
+            base_ids.append(player_value['baseId'])
+
+        # Make sure any version player isn't already on team
+        if player['baseId'] in base_ids:
+            add_player_btn.title = "Player Already on Roster"
+            add_player_btn.enabled = 0
+
     # Check if player is already on selected players list
-    if player in current_list.db:
+    elif player in current_list.db:
         add_player_btn.title = "Remove Player from List"
     else:
         add_player_btn.title = "Add Player to List"

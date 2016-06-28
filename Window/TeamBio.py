@@ -4,7 +4,7 @@ import json
 import operator
 from Logic.HelperFunctions import ascii_text, format_attr_name, save_small_image, text_add_new_lines
 from Logic import Team
-from Window import PlayerBio
+import PlayerBio
 
 
 def open_team_bio_window(window_x, window_y, team, win_previous, file_name, current_list):

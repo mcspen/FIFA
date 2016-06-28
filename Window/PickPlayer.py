@@ -17,7 +17,7 @@ from Logic.HelperFunctions import team_info_labels, team_info
 
 
 def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_previous, roster, pos_symbol,
-                            attr_dict=None, attr_list=None, settings=None):
+                            pick_formations_page, attr_dict=None, attr_list=None, settings=None):
 
     num_results = 20
     general_display = []
@@ -42,7 +42,8 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
             'input_formation': input_formation,
             'roster': roster,
             'pos_symbol': pos_symbol,
-            'win_previous': win_previous
+            'win_previous': win_previous,
+            'pick_formations_page': pick_formations_page
         }
 
     # ========== Window ==========
@@ -114,7 +115,7 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
 
     def back_btn_func():
         win_pick_player.hide()
-        StartMenu.open_start_menu(win_pick_player.x, win_pick_player.y, db_dict)
+        win_previous.show()
 
     # ========== Tool Button Functions ==========
     def attribute_btn_func():
@@ -160,7 +161,8 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
     def player_bio_btn_func(player):
         win_pick_player.hide()
         PlayerBio.open_player_bio_window(win_pick_player.x, win_pick_player.y, player, win_pick_player, db_dict,
-                                         db_dict['player_list'][0], db_dict['player_list'][1])
+                                         db_dict['player_list'][0], db_dict['player_list'][1],
+                                         roster, pos_symbol, input_formation, pick_formations_page)
         win_pick_player.become_target()
 
     # ========== Action Buttons ==========

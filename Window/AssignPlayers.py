@@ -18,6 +18,8 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                 formation['positions'][pos]['player'] = player
             else:
                 print "Invalid position. Position not in formation."
+    else:
+        roster = {}
 
     # ========== Window ==========
     win_assign_players = Window()
@@ -297,8 +299,9 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     def name_btn_func(current_player, symbol):
         # Go to player search page to add player
         if current_player['name'] == default_message:
+            win_assign_players.become_target()
             PickPlayer.open_pick_player_window(win_assign_players.x, win_assign_players.y, db_dict,
-                                               input_formation, win_previous, roster, symbol)
+                                               input_formation, win_assign_players, roster, symbol, win_previous)
             win_assign_players.hide()
 
         # Remove player from roster and info from formation

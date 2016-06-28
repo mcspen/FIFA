@@ -40,18 +40,7 @@ def open_pick_formation_window(window_x, window_y, db_dict, win_previous):
     def formation_btn_func(formation):
         win_pick_formation.become_target()
         AssignPlayers.open_assign_players_window(win_pick_formation.x, win_pick_formation.y,
-                                                 db_dict, formation, win_pick_formation, roster={
-                'LW': db_dict['player_db'][1].db[1],
-                'ST': db_dict['player_db'][1].db[4],
-                'RW': db_dict['player_db'][1].db[0],
-                'LM': db_dict['player_db'][1].db[7],
-                'LCM': db_dict['player_db'][1].db[5],
-                'RCM': db_dict['player_db'][1].db[18],
-                'RM': db_dict['player_db'][1].db[27],
-                'LCB': db_dict['player_db'][1].db[31],
-                'CB': db_dict['player_db'][1].db[26],
-                'RCB': db_dict['player_db'][1].db[32],
-                'GK': db_dict['player_db'][1].db[11]})
+                                                 db_dict, formation, win_pick_formation)
         win_pick_formation.hide()
 
     def any_formation_btn_func():
