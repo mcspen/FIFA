@@ -472,8 +472,13 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
         label_y += std_tf_height - 4
 
         # Price label
-        label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+player_border)
-        price_label = Label(text="Price: %d" % player['price'], font=small_tf_font,
+        label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + player_border)
+        price_value = str(player['price'])
+        if len(price_value) > 6:
+            price_value = price_value[:-6] + ',' + price_value[-6:-3] + ',' + price_value[-3:]
+        elif len(price_value) > 3:
+            price_value = price_value[-6:-3] + ',' + price_value[-3:]
+        price_label = Label(text="Price: %s" % price_value, font=small_tf_font,
                             width=player_box_width-2*player_border, height=std_tf_height,
                             x=label_x, y=label_y,
                             color=title_color, just='center')
