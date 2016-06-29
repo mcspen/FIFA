@@ -43,7 +43,7 @@ def open_pick_formation_window(window_x, window_y, db_dict, win_previous):
                                                  db_dict, formation, win_pick_formation)
         win_pick_formation.hide()
 
-    def any_formation_btn_func():
+    def formation_list_btn_func():
         win_pick_formation.become_target()
         win_pick_formation.hide()
 
@@ -68,12 +68,12 @@ def open_pick_formation_window(window_x, window_y, db_dict, win_previous):
 
     msg_y += 9
 
-    any_formation_btn = Button(title='Any Formation',
-                               font=std_tf_font,
-                               width=formation_button_width, height=std_tf_height,
-                               x=(win_pick_formation.width - formation_button_width)/2, y=msg_y,
-                               action=any_formation_btn_func)
-    general_display.append(any_formation_btn)
+    formation_list_btn = Button(title='Use Formation List',
+                                font=std_tf_font,
+                                width=formation_button_width, height=std_tf_height,
+                                x=(win_pick_formation.width - formation_button_width)/2, y=msg_y,
+                                action=formation_list_btn_func)
+    general_display.append(formation_list_btn)
 
     msg_y += std_tf_height + 10
 

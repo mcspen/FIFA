@@ -31,6 +31,7 @@ class Team:
             self.chemistry = 0
             self.rating = 0
             self.strength = 0
+            self.price = 0
             self.formation = {}
         else:
             self.manager = copy.deepcopy(input_dict['manager'])
@@ -38,6 +39,7 @@ class Team:
             self.chemistry = input_dict['chemistry']
             self.rating = input_dict['rating']
             #self.strength = input_dict['strength']
+            #self.price = input_dict['price']
             self.formation = copy.deepcopy(input_dict['formation'])
 
             # TEMPORARY UNTIL ALL TEAMS HAVE STRENGTHS------------------------------------------------------------------
@@ -46,6 +48,13 @@ class Team:
             else:
                 self.strength = 0
             # TEMPORARY UNTIL ALL TEAMS HAVE STRENGTHS------------------------------------------------------------------
+
+            # TEMPORARY UNTIL ALL TEAMS HAVE PRICES---------------------------------------------------------------------
+            if 'price' in input_dict:
+                self.price = input_dict['price']
+            else:
+                self.price = 0
+            # TEMPORARY UNTIL ALL TEAMS HAVE PRICES---------------------------------------------------------------------
 
     def set_team(self, formation, roster, manager=None, loyalty=True):
         """
@@ -91,6 +100,9 @@ class Team:
 
         # Calculate the team strength
         self.calculate_strength()
+
+        # Calculate the team price
+        self.calculate_price()
 
     def save(self, team_name):
         """
@@ -1272,6 +1284,25 @@ class Team:
         self.strength = strength
 
         return self.strength
+
+    def calculate_price(self):
+        """
+        Calculates the team price
+        Input: None  -  Just uses self
+        Output: The team price
+        """
+
+        price = 0
+
+        for position in self.formation['positions'].itervalues():
+            # Get player's price
+            player_price = position['player']['price']
+
+            price += player_price
+
+        self.price = price
+
+        return self.price
 
     def print_team_strengths(self):
         """

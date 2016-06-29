@@ -1442,19 +1442,25 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
     # ========== Team Info Labels ==========
     info_title_width = 85
-    info_label_text = "Name:\nRating:\nStrength:\nChemistry:\nFormation:\nStyle:"
+    info_label_text = "Name:\nPrice:\nRating:\nStrength:\nChemistry:\nFormation:\nStyle:"
     info_title_label = Label(text=info_label_text, font=title_font_7,
-                             width=info_title_width, height=std_tf_height*6,
+                             width=info_title_width, height=std_tf_height*7,
                              x=headshot_trait_btn.left - 45, y=info_title.bottom - title_border,
                              color=title_color, just='right')
     labels_list.append(info_title_label)
 
     # ========== Team Info ==========
     info_width = 130
-    info_text = ("No Names Yet" + "\n" + str(team['rating'])[:7] + "\n" + str(team['strength']) + "\n" +
-                 str(team['chemistry']) + "\n" + team['formation']['name'] + "\n" + team['formation']['style'])
+    price_value = str(team['price'])
+    if len(price_value) > 6:
+        price_value = price_value[:-6] + ',' + price_value[-6:-3] + ',' + price_value[-3:]
+    elif len(price_value) > 3:
+        price_value = price_value[-6:-3] + ',' + price_value[-3:]
+    info_text = ("No Names Yet" + "\n" + price_value + "\n" + str(team['rating'])[:7] + "\n" +
+                 str(team['strength']) + "\n" + str(team['chemistry']) + "\n" + team['formation']['name'] + "\n" +
+                 team['formation']['style'])
     info_label = Label(text=info_text, font=title_font_7,
-                       width=info_width, height=std_tf_height*6,
+                       width=info_width, height=std_tf_height*7,
                        x=info_title_label.right + 10, y=info_title_label.top,
                        color=title_color, just='left')
     labels_list.append(info_label)

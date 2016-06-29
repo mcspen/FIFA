@@ -98,7 +98,7 @@ class TeamDB:
         """
         Gets updated price information for all the players on all of the teams on the list
         Input: None
-        Output: None  -  the player price information is updated
+        Output: None  -  the player price and team price information is updated
         """
 
         # Create a list of all the players to avoid duplicating searches
@@ -123,14 +123,19 @@ class TeamDB:
                 queue.put((idx+1, total_players))
             print "%d of %d players updated" % (idx+1, total_players)
 
-        # Assign values back to players on teams
+        # Assign values back to players on teams and calculate team price
         # Iterate through teams
         for team in self.db:
+            team_price = 0
             # Iterate through positions on team
             for position in team['formation']['positions'].itervalues():
                 # Assign updated price
                 player = position['player']
                 player['price'] = price_list[player['id']]
+                team_price += player['price']
+
+            # Assign team price
+            team['price'] = team_price
 
     def sort(self, attributes, descend=True):
         """
@@ -166,7 +171,7 @@ class TeamDB:
                         player_names.append(player['name'] + player['commonName'] +
                                             player['firstName'] + player['lastName'])
                     attribute_tuple += (player_names,)
-                elif attr in ['total_skillMoves', 'total_price']:
+                elif attr in ['total_skillMoves']:
                     # Calculate total
                     total = 0
                     for position in current_team['formation']['positions'].itervalues():
@@ -251,7 +256,7 @@ class TeamDB:
                     elif compare == 'lower':
                         if not stat <= string_value:
                             match = False
-                elif attribute in ['rating', 'total_ic', 'chemistry', 'strength']:
+                elif attribute in ['rating', 'total_ic', 'chemistry', 'strength', 'price']:
                     if compare == 'higher':
                         if not team[attribute] >= value:
                             match = False
@@ -261,7 +266,7 @@ class TeamDB:
                     elif compare == 'lower':
                         if not team[attribute] <= value:
                             match = False
-                elif attribute in ['total_skillMoves', 'total_price']:
+                elif attribute in ['total_skillMoves']:
                     # Calculate total
                     total = 0
                     for position in team['formation']['positions'].itervalues():

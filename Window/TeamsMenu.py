@@ -36,8 +36,8 @@ def open_teams_menu(window_x, window_y, db_dict):
     title.just = 'center'
 
     # ========== Button Declarations ==========
-    create_ultimate_teams_btn = Button("Create Ultimate Teams")
-    manually_create_teams_btn = Button("Manually Create Teams")
+    create_ultimate_teams_btn = Button("Generate Ultimate Teams")
+    manually_create_teams_btn = Button("Build Ultimate Teams")
     back_btn = Button("Back")
 
     # ========== Button Functions ==========

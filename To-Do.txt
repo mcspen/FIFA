@@ -7,7 +7,6 @@ Set the order that players are assigned by on the number of available players fo
 
 Check if player list covers all positions for formation (like LW and RW for 4-3-2-1 and 3-4-2-1).
 
-Add price to the player bio page.
 Figure out a way to still search for price of a player whose position has been changed.
 
 Fix certification error for getting images.
