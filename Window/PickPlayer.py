@@ -32,7 +32,7 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
         settings = {
             'window': 'pick_player',
             'p_db_rg': 'player_db',
-            'f_db_rg': 'formation_db',
+            'pos_search_rg': 'exact',
             'order_rg': True,
             'messages': {
                 'search': [],
@@ -227,18 +227,18 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
         settings['p_db_rg'] = p_db_radio_group.value
         win_pick_player.become_target()
 
-    def get_attribute_f_db_rg():
-        settings['f_db_rg'] = f_db_radio_group.value
+    def get_attribute_pos_search_rg():
+        settings['pos_search_rg'] = pos_search_radio_group.value
         win_pick_player.become_target()
 
     p_db_radio_group = RadioGroup(action=get_attribute_p_db_rg)
-    f_db_radio_group = RadioGroup(action=get_attribute_f_db_rg)
+    pos_search_radio_group = RadioGroup(action=get_attribute_pos_search_rg)
 
+    # Players DB RG
     db_radio_btn_width = 125
     db_radio_btn_space = 5
     db_msg_width = 70
 
-    # Players DB RG
     p_db_rg_msg = Label(text="Database:", font=std_tf_font, width=db_msg_width,
                         height=std_tf_height, color=title_color)
     p_db_rg_msg.x = (win_pick_player.width - 2*db_radio_btn_width - db_radio_btn_space - db_msg_width) / 2
@@ -260,38 +260,46 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
 
     p_db_radio_group.value = settings['p_db_rg']
 
-    # Formations DB RG
-    f_db_rg_msg = Label(text="Database:", font=std_tf_font, width=db_msg_width,
-                        height=std_tf_height, color=title_color)
-    f_db_rg_msg.x = (win_pick_player.width - 2*db_radio_btn_width - db_radio_btn_space - db_msg_width) / 2
-    f_db_rg_msg.y = reset_btn.bottom + db_radio_btn_space
-
-    formation_db_radio_btn = RadioButton(db_dict['formation_db'][0])
-    formation_db_radio_btn.width = db_radio_btn_width
-    formation_db_radio_btn.x = f_db_rg_msg.right
-    formation_db_radio_btn.y = f_db_rg_msg.top
-    formation_db_radio_btn.group = f_db_radio_group
-    formation_db_radio_btn.value = 'formation_db'
-
-    formation_list_radio_btn = RadioButton(db_dict['formation_list'][0])
-    formation_list_radio_btn.width = db_radio_btn_width
-    formation_list_radio_btn.x = formation_db_radio_btn.right + db_radio_btn_space
-    formation_list_radio_btn.y = formation_db_radio_btn.top
-    formation_list_radio_btn.group = f_db_radio_group
-    formation_list_radio_btn.value = 'formation_list'
-
-    f_db_radio_group.value = settings['f_db_rg']
-
-    # Teams DB RG
-    teams_db_msg_width = 250
-    t_db_rg_msg = Label(text=("Team List: " + db_dict['team_list'][0]), font=std_tf_font, width=teams_db_msg_width,
-                        height=std_tf_height, color=title_color)
-    t_db_rg_msg.x = (win_pick_player.width - teams_db_msg_width) / 2
-    t_db_rg_msg.y = reset_btn.bottom + db_radio_btn_space
-
     view.add(p_db_rg_msg)
     view.add(player_db_radio_btn)
     view.add(player_list_radio_btn)
+
+    # Position Search RG
+    pos_search_radio_btn_width = 55
+    pos_search_msg_width = 140
+
+    pos_search_rg_msg = Label(text="Positions to Search:", font=std_tf_font, width=pos_search_msg_width,
+                        height=std_tf_height, color=title_color)
+    pos_search_rg_msg.x = (win_pick_player.width-3*pos_search_radio_btn_width-db_radio_btn_space-pos_search_msg_width)/2
+    pos_search_rg_msg.y = p_db_rg_msg.bottom + db_radio_btn_space
+
+    pos_search_exact_radio_btn = RadioButton("Exact")
+    pos_search_exact_radio_btn.width = pos_search_radio_btn_width
+    pos_search_exact_radio_btn.x = pos_search_rg_msg.right
+    pos_search_exact_radio_btn.y = pos_search_rg_msg.top
+    pos_search_exact_radio_btn.group = pos_search_radio_group
+    pos_search_exact_radio_btn.value = 'exact'
+
+    pos_search_similar_radio_btn = RadioButton("Similar")
+    pos_search_similar_radio_btn.width = pos_search_radio_btn_width
+    pos_search_similar_radio_btn.x = pos_search_exact_radio_btn.right + db_radio_btn_space
+    pos_search_similar_radio_btn.y = pos_search_exact_radio_btn.top
+    pos_search_similar_radio_btn.group = pos_search_radio_group
+    pos_search_similar_radio_btn.value = 'similar'
+
+    pos_search_all_radio_btn = RadioButton("All")
+    pos_search_all_radio_btn.width = pos_search_radio_btn_width
+    pos_search_all_radio_btn.x = pos_search_similar_radio_btn.right + db_radio_btn_space
+    pos_search_all_radio_btn.y = pos_search_similar_radio_btn.top
+    pos_search_all_radio_btn.group = pos_search_radio_group
+    pos_search_all_radio_btn.value = 'all'
+
+    pos_search_radio_group.value = settings['pos_search_rg']
+
+    view.add(pos_search_rg_msg)
+    view.add(pos_search_exact_radio_btn)
+    view.add(pos_search_similar_radio_btn)
+    view.add(pos_search_all_radio_btn)
 
     # ========== Sort Order Radio Buttons ==========
     def get_attribute_sort_order_rg():
@@ -307,7 +315,7 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
     asc_desc_rg_msg = Label(text="Sort Order:", font=std_tf_font, width=asc_msg_width, height=std_tf_height,
                             color=title_color)
     asc_desc_rg_msg.x = (win_pick_player.width - 2*asc_desc_radio_btn_width - radio_btn_space - asc_msg_width) / 2
-    asc_desc_rg_msg.y = formation_db_radio_btn.bottom + radio_btn_space
+    asc_desc_rg_msg.y = pos_search_exact_radio_btn.bottom + radio_btn_space
     general_display.append(asc_desc_rg_msg)
 
     descend_radio_btn = RadioButton("Descending")
