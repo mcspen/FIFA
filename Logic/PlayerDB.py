@@ -113,7 +113,6 @@ class PlayerDB:
 
         # Navigate to players after successful login
 
-
     def save(self, file_name, file_type, overwrite=False):
         """
         Save the database to the specified file name and overwrite the data
@@ -347,39 +346,52 @@ class PlayerDB:
                 elif attribute in ['name', 'quality', 'itemType', 'playerType', 'commonName', 'firstName',
                                    'lastName', 'playStyle', 'foot', 'atkWorkRate', 'defWorkRate']:
                     string_value = value.upper()
+                    string_value = string_value.split(',')
                     stat = player[attribute].upper()
-                    if not stat.startswith(string_value):
+                    partial_match = False
+                    for single_value in string_value:
+                        if stat.startswith(single_value):
+                            partial_match = True
+                    if not partial_match:
                         match = False
                 elif attribute in ['color', 'position', 'positionFull', 'modelName']:
                     string_value = value.upper()
+                    string_value = string_value.split(',')
                     stat = player[attribute].upper()
-                    if not string_value in stat:
+                    partial_match = False
+                    for single_value in string_value:
+                        if single_value in stat:
+                            partial_match = True
+                    if not partial_match:
                         match = False
                 # Custom attribute used when user searching for players by any name
                 elif attribute == 'name_custom':
                     string_value = value.upper()
+                    string_value = string_value.split(',')
                     name = ascii_text(player['name']).upper()
                     common_name = ascii_text(player['commonName']).upper()
                     first_name = ascii_text(player['firstName']).upper()
                     last_name = ascii_text(player['lastName']).upper()
-                    if len(string_value) == 1:
-                        if not (name.startswith(string_value) or common_name.startswith(string_value) or
-                                first_name.startswith(string_value) or last_name.startswith(string_value)):
-                            match = False
-                    else:
-                        if not (string_value in name or string_value in common_name or
-                                string_value in first_name or string_value in last_name or
-                                string_value in (first_name+' '+last_name)):
-                            match = False
+                    partial_match = False
+                    for single_value in string_value:
+                        if len(single_value) == 1:
+                            if (name.startswith(single_value) or common_name.startswith(single_value) or
+                                    first_name.startswith(single_value) or last_name.startswith(single_value)):
+                                partial_match = True
+                        else:
+                            if (single_value in name or single_value in common_name or
+                                    single_value in first_name or single_value in last_name or
+                                    single_value in (first_name+' '+last_name)):
+                                partial_match = True
+                    if not partial_match:
+                        match = False
                 elif attribute in ['isGK', 'isSpecialType']:
                     if not player[attribute] == value:
                         match = False
                 elif attribute in ['birthdate']:
                     # Convert birthday to a number
-                    player_birthday = (int(player[attribute][5:7]) * 100
-                                       + int(player[attribute][-2:]))
-                    value_birthday = (int(value[5:7]) * 100
-                                      + int(value[-2:]))
+                    player_birthday = (int(player[attribute][5:7]) * 100 + int(player[attribute][-2:]))
+                    value_birthday = (int(value[5:7]) * 100 + int(value[-2:]))
                     if str.isdigit(value[:4]):
                         player_birthday += int(player[attribute][:4]) * 10000
                         value_birthday += int(value[:4]) * 10000
@@ -413,8 +425,13 @@ class PlayerDB:
                             match = False
                 elif attribute in ['nation', 'league', 'club']:
                     string_value = value.upper()
+                    string_value = string_value.split(',')
                     stat = player[attribute]['name'].upper() + ' ' + player[attribute]['abbrName'].upper()
-                    if string_value not in stat:
+                    partial_match = False
+                    for single_value in string_value:
+                        if single_value in stat:
+                            partial_match = True
+                    if not partial_match:
                         match = False
                 elif attribute in ['headshot', 'headshotImgUrl']:
                     print "Not searching based on " + attribute
