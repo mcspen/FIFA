@@ -37,6 +37,8 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
             'win_previous': win_previous,
             'pick_formations_page': pick_formations_page
         }
+        # Assign exact position as default position to search for.
+        attr_dict['position'] = (input_formation['positions'][pos_symbol]['symbol'], 'exact')
 
     # ========== Window ==========
     win_pick_player = Window()
@@ -77,20 +79,6 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
 
     # ========== Action Button Functions ==========
     def start_btn_func():
-        # Add position search terms if position and positionFull and not specified and not searching all players.
-        if 'position' not in attr_dict and 'positionFull' not in attr_dict and pos_search_radio_group.value != 'red':
-            temp_team = Team.Team()
-            # Get positions of corresponding relevance
-            search_positions_list = temp_team.related_positions(
-                input_formation['positions'][pos_symbol]['symbol'], pos_search_radio_group.value)
-
-            # Concatenate strings
-            search_positions = ""
-            for position in search_positions_list:
-                search_positions += position + ', '
-
-            attr_dict['position'] = (search_positions,)
-
         # Search - if no attribute selected, return all
         if len(attr_dict) == 0:
             search_results = db_dict[p_db_radio_group.value][1]
@@ -164,6 +152,55 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
 
         win_pick_player.become_target()
 
+    def create_attribute_messages():
+        # ========== Messages ==========
+        lowest_msg_l = start_btn.top
+        lowest_msg_r = start_btn.top
+
+        attr_msg_offset = 25
+
+        # Attribute Messages
+        del settings['messages']['search'][:]
+        del settings['messages']['sort'][:]
+
+        if len(attr_dict) > 0:
+            settings['messages']['search'].append(
+                Label(text="Search Attributes:", font=title_tf_font, width=std_tf_width,
+                      height=std_tf_height, x=attr_msg_offset, y=lowest_msg_l,
+                      color=title_color))
+            lowest_msg_l += std_tf_height
+
+            for key, value in attr_dict.iteritems():
+                msg_text = format_attr_name(key) + ": "
+                if key in ['id', 'baseId', 'nationId', 'leagueId', 'clubId']:
+                    msg_text += str(value[0])
+                elif type(value[0]) is int:
+                    msg_text += value[1].capitalize() + ' ' + str(value[0])
+                elif value[1] == 'not':
+                    msg_text += value[1].capitalize() + ' "' + str(value[0]) + '"'
+                else:
+                    msg_text += '"' + str(value[0]) + '"'
+
+                attr_label = Label(text=msg_text, font=std_tf_font, width=std_tf_width,
+                                   height=std_tf_height, x=attr_msg_offset, y=lowest_msg_l, color=title_color)
+                lowest_msg_l += std_tf_height
+                settings['messages']['search'].append(attr_label)
+
+        if len(attr_list) > 0:
+            settings['messages']['sort'].append(Label(text="Sort Attributes:", font=title_tf_font, width=std_tf_width,
+                                                      height=std_tf_height, x=reset_btn.right + 3 * attr_msg_offset,
+                                                      y=lowest_msg_r, color=title_color))
+            lowest_msg_r += std_tf_height
+
+            for value in attr_list:
+                attr_label = Label(text=(format_attr_name(value)), font=std_tf_font, width=std_tf_width,
+                                   height=std_tf_height, x=reset_btn.right + 3 * attr_msg_offset, y=lowest_msg_r,
+                                   color=title_color)
+                lowest_msg_r += std_tf_height
+                settings['messages']['sort'].append(attr_label)
+
+    create_attribute_messages()
+
     def player_bio_btn_func(player):
         win_pick_player.hide()
         PlayerBio.open_player_bio_window(win_pick_player.x, win_pick_player.y, player, win_pick_player, db_dict,
@@ -234,9 +271,42 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
         win_pick_player.become_target()
 
     def get_attribute_pos_search_rg():
-        # Clear position in attribute dictionary
-        attr_dict.pop('position', None)
+        if settings['pos_search_rg'] != pos_search_radio_group.value:
+            button_click = True
+        else:
+            button_click = False
+
         settings['pos_search_rg'] = pos_search_radio_group.value
+
+        # If new radio button was clicked, clear position in attribute dictionary.
+        if button_click:
+            attr_dict.pop('position', None)
+
+        # Add position search terms if position and positionFull and not specified and not searching all players.
+        if pos_search_radio_group.value != 'red' and button_click:
+            temp_team = Team.Team()
+            # Get positions of corresponding relevance
+            search_positions_list = temp_team.related_positions(
+                input_formation['positions'][pos_symbol]['symbol'], pos_search_radio_group.value)
+
+            # Concatenate strings
+            search_positions = ""
+            for position in search_positions_list:
+                search_positions += position + ', '
+            search_positions = search_positions[:-2]
+            attr_dict['position'] = (search_positions, 'exact')
+
+        # Erase current search attributes
+        for message in settings['messages']['search']:
+            view.remove(message)
+
+        # Create new search attributes
+        create_attribute_messages()
+
+        # Display search attributes
+        for message in settings['messages']['search']:
+            view.add(message)
+
         win_pick_player.become_target()
 
     p_db_radio_group = RadioGroup(action=get_attribute_p_db_rg)
@@ -273,7 +343,7 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
     view.add(player_list_radio_btn)
 
     # Position Search RG
-    pos_search_radio_btn_width = 55
+    pos_search_radio_btn_width = 60
     pos_search_msg_width = 140
 
     pos_search_rg_msg = Label(text="Positions to Search:", font=std_tf_font, width=pos_search_msg_width,
@@ -351,51 +421,6 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
     general_display.append(ascend_radio_btn)
 
     sort_order_radio_group.value = settings['order_rg']
-
-    # ========== Messages ==========
-    lowest_msg_l = start_btn.top
-    lowest_msg_r = start_btn.top
-
-    attr_msg_offset = 25
-
-    # Attribute Messages
-    del settings['messages']['search'][:]
-    del settings['messages']['sort'][:]
-
-    if len(attr_dict) > 0:
-        settings['messages']['search'].append(Label(text="Search Attributes:", font=title_tf_font, width=std_tf_width,
-                                                    height=std_tf_height, x=attr_msg_offset, y=lowest_msg_l,
-                                                    color=title_color))
-        lowest_msg_l += std_tf_height
-
-        for key, value in attr_dict.iteritems():
-            msg_text = format_attr_name(key) + ": "
-            if key in ['id', 'baseId', 'nationId', 'leagueId', 'clubId']:
-                msg_text += str(value[0])
-            elif type(value[0]) is int:
-                msg_text += value[1].capitalize() + ' ' + str(value[0])
-            elif value[1] == 'not':
-                msg_text += value[1].capitalize() + ' "' + str(value[0]) + '"'
-            else:
-                msg_text += '"' + str(value[0]) + '"'
-
-            attr_label = Label(text=msg_text, font=std_tf_font, width=std_tf_width,
-                               height=std_tf_height, x=attr_msg_offset, y=lowest_msg_l, color=title_color)
-            lowest_msg_l += std_tf_height
-            settings['messages']['search'].append(attr_label)
-
-    if len(attr_list) > 0:
-        settings['messages']['sort'].append(Label(text="Sort Attributes:", font=title_tf_font, width=std_tf_width,
-                                                  height=std_tf_height, x=reset_btn.right + 3*attr_msg_offset,
-                                                  y=lowest_msg_r, color=title_color))
-        lowest_msg_r += std_tf_height
-
-        for value in attr_list:
-            attr_label = Label(text=(format_attr_name(value)), font=std_tf_font, width=std_tf_width,
-                               height=std_tf_height, x=reset_btn.right + 3*attr_msg_offset, y=lowest_msg_r,
-                               color=title_color)
-            lowest_msg_r += std_tf_height
-            settings['messages']['sort'].append(attr_label)
 
     # ========== Previous, Add to List, Next Buttons ==========
     previous_btn = Button("<<< Previous %d" % num_results)

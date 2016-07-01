@@ -347,6 +347,8 @@ class PlayerDB:
                                    'lastName', 'playStyle', 'foot', 'atkWorkRate', 'defWorkRate']:
                     string_value = value.upper()
                     string_value = string_value.split(',')
+                    for idx, item in enumerate(string_value):
+                        string_value[idx] = item.strip()
                     stat = player[attribute].upper()
                     partial_match = False
                     for single_value in string_value:
@@ -357,6 +359,8 @@ class PlayerDB:
                 elif attribute in ['color', 'position', 'positionFull', 'modelName']:
                     string_value = value.upper()
                     string_value = string_value.split(',')
+                    for idx, item in enumerate(string_value):
+                        string_value[idx] = item.strip()
                     stat = player[attribute].upper()
                     partial_match = False
                     for single_value in string_value:
@@ -368,6 +372,8 @@ class PlayerDB:
                 elif attribute == 'name_custom':
                     string_value = value.upper()
                     string_value = string_value.split(',')
+                    for idx, item in enumerate(string_value):
+                        string_value[idx] = item.strip()
                     name = ascii_text(player['name']).upper()
                     common_name = ascii_text(player['commonName']).upper()
                     first_name = ascii_text(player['firstName']).upper()
@@ -426,6 +432,8 @@ class PlayerDB:
                 elif attribute in ['nation', 'league', 'club']:
                     string_value = value.upper()
                     string_value = string_value.split(',')
+                    for idx, item in enumerate(string_value):
+                        string_value[idx] = item.strip()
                     stat = player[attribute]['name'].upper() + ' ' + player[attribute]['abbrName'].upper()
                     partial_match = False
                     for single_value in string_value:
@@ -471,6 +479,8 @@ class PlayerDB:
                 elif attribute in ['specialities', 'traits']:
                     string_value = value.upper()
                     string_value = string_value.split(',')
+                    for idx, item in enumerate(string_value):
+                        string_value[idx] = item.strip()
                     # Concatenate traits/specialities into a single string
                     if player[attribute] is not None:
                         stat = ' '.join(player[attribute]).upper()
