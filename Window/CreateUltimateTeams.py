@@ -166,6 +166,12 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
 
     process_type_radio_group.value = settings['process_type']
 
+    if input_formation is not None:
+        process_type_radio_group.value = 'single'
+        settings['process_type'] = 'single'
+        multi_process_radio_btn.enabled = 0
+        single_process_radio_btn.enabled = 0
+
     # ========== Chemistry Matters Label ==========
     chemistry_matters_label = Label(text="Chemistry Matters: ", font=std_tf_font_bold,
                                     width=std_tf_width, height=std_tf_height,
