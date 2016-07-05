@@ -322,6 +322,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
             # Recalculate all tabs
             calculate_summary_stats()
             calculate_strength_stats()
+            calculate_traits_list()
+            calculate_specialities_list()
+            calculate_team_league_nation_list()
+            calculate_chemistry_list()
 
     # Player ratings, position, team, nation, and name
     rating_width = 30
@@ -801,91 +805,96 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     # ========== Player Specialities ==========
     specialities_list = []
 
-    # Darker box to display stats on
-    class SpecialitiesBoxImageView(View):
-        def draw(self, c, r):
-            dst_rect = (field_x_offset, field_y_offset, field_x_offset + field_width, field_y_offset + field_length)
+    def calculate_specialities_list():
+        del specialities_list[:]
 
-            for sym, position in roster.iteritems():
-                # Get player coordinates
-                position_coordinates = team_spacing[sym]
+        # Darker box to display stats on
+        class SpecialitiesBoxImageView(View):
+            def draw(self, c, r):
+                dst_rect = (field_x_offset, field_y_offset, field_x_offset + field_width, field_y_offset + field_length)
 
-                # Darker box to display stats
-                c.forecolor = darker
-                c.fill_rect((dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + player_border,
-                             dst_rect[1] + position_coordinates[
-                                 1] * y_space - player_box_height / 2 + player_border,
-                             dst_rect[0] + position_coordinates[0] * x_space + player_box_width / 2 - player_border,
-                             dst_rect[1] + position_coordinates[
-                                 1] * y_space + player_box_height / 2 - player_border))
+                for sym, position in roster.iteritems():
+                    # Get player coordinates
+                    position_coordinates = team_spacing[sym]
 
-    specialities_list.append(SpecialitiesBoxImageView(size=(int(field_x_offset + field_width + 5),
-                                                            int(field_y_offset + field_length + 5))))
+                    # Darker box to display stats
+                    c.forecolor = darker
+                    c.fill_rect((dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + player_border,
+                                 dst_rect[1] + position_coordinates[
+                                     1] * y_space - player_box_height / 2 + player_border,
+                                 dst_rect[0] + position_coordinates[0] * x_space + player_box_width / 2 - player_border,
+                                 dst_rect[1] + position_coordinates[
+                                     1] * y_space + player_box_height / 2 - player_border))
 
-    for sym, player in roster.iteritems():
-        # Get player information
-        position_coordinates = team_spacing[sym]
-        label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
-        label_y = int(dst_rect[1] + position_coordinates[1] * y_space - player_box_height / 2 + 2 * player_border)
+        specialities_list.append(SpecialitiesBoxImageView(size=(int(field_x_offset + field_width + 5),
+                                                                int(field_y_offset + field_length + 5))))
 
-        # Player rating
-        rating_summary_width = 25
-        rating_summary_label = Label(text=str(player['rating']), font=title_font_5,
-                                     width=rating_summary_width, height=std_tf_height,
-                                     x=label_x, y=label_y, just='right')
-        rating_summary_label.color = attr_color(player['rating'])
-        specialities_list.append(rating_summary_label)
+        for sym, player in roster.iteritems():
+            # Get player information
+            position_coordinates = team_spacing[sym]
+            label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
+            label_y = int(dst_rect[1] + position_coordinates[1] * y_space - player_box_height / 2 + 2 * player_border)
 
-        # Player name
-        label_x = rating_summary_label.right
-        name_summary_label = Label(text=ascii_text(player['name']), font=std_tf_font_bold,
-                                   width=player_box_width - rating_summary_width - 2 * player_border,
-                                   height=std_tf_height,
-                                   x=label_x, y=label_y, color=white, just='center')
-        if len(ascii_text(player['name'])) > 10:
-            name_summary_label.font = title_font_9
-            name_summary_label.y += 2
-        if len(ascii_text(player['name'])) > 13:
-            name_summary_label.font = title_font_11
-            name_summary_label.y += 2
-        if len(ascii_text(player['name'])) > 15:
-            name_summary_label.font = title_font_13
-            name_summary_label.y += 2
-        specialities_list.append(name_summary_label)
+            # Player rating
+            rating_summary_width = 25
+            rating_summary_label = Label(text=str(player['rating']), font=title_font_5,
+                                         width=rating_summary_width, height=std_tf_height,
+                                         x=label_x, y=label_y, just='right')
+            rating_summary_label.color = attr_color(player['rating'])
+            specialities_list.append(rating_summary_label)
 
-        label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
-        label_y = rating_summary_label.bottom + player_border
+            # Player name
+            label_x = rating_summary_label.right
+            name_summary_label = Label(text=ascii_text(player['name']), font=std_tf_font_bold,
+                                       width=player_box_width - rating_summary_width - 2 * player_border,
+                                       height=std_tf_height,
+                                       x=label_x, y=label_y, color=white, just='center')
+            if len(ascii_text(player['name'])) > 10:
+                name_summary_label.font = title_font_9
+                name_summary_label.y += 2
+            if len(ascii_text(player['name'])) > 13:
+                name_summary_label.font = title_font_11
+                name_summary_label.y += 2
+            if len(ascii_text(player['name'])) > 15:
+                name_summary_label.font = title_font_13
+                name_summary_label.y += 2
+            specialities_list.append(name_summary_label)
 
-        # Specialities Label
-        specialities_label = Label(font=smallest_tf_font,
-                                   width=player_box_width - 4 * player_border,
-                                   x=label_x, y=label_y, color=white, just='center')
+            label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
+            label_y = rating_summary_label.bottom + player_border
 
-        if player['specialities'] is not None:
-            specialities_text = ''
-            for speciality in player['specialities'][:5]:
-                if speciality == 'Avoids Using Weaker Foot':
-                    speciality_text = 'Avoids Weaker Foot'
-                elif '-' in speciality:
-                    hyphen_index = speciality.index('-')
-                    speciality_text = speciality[hyphen_index + 2:]
-                else:
-                    speciality_text = speciality
-                specialities_text += speciality_text + '\n'
+            # Specialities Label
+            specialities_label = Label(font=smallest_tf_font,
+                                       width=player_box_width - 4 * player_border,
+                                       x=label_x, y=label_y, color=white, just='center')
 
-            if len(player['specialities']) > 5:
-                specialities_text += str(len(player['specialities']) - 5) + ' More Not Shown' + '\n'
+            if player['specialities'] is not None:
+                specialities_text = ''
+                for speciality in player['specialities'][:5]:
+                    if speciality == 'Avoids Using Weaker Foot':
+                        speciality_text = 'Avoids Weaker Foot'
+                    elif '-' in speciality:
+                        hyphen_index = speciality.index('-')
+                        speciality_text = speciality[hyphen_index + 2:]
+                    else:
+                        speciality_text = speciality
+                    specialities_text += speciality_text + '\n'
 
-            specialities_label.text = specialities_text[:-1]
-            specialities_label.color = dark_green
-            specialities_label.height = std_tf_height * len(player['specialities'])
+                if len(player['specialities']) > 5:
+                    specialities_text += str(len(player['specialities']) - 5) + ' More Not Shown' + '\n'
 
-        else:
-            specialities_label.text = 'No Specialities'
-            specialities_label.color = red
-            specialities_label.height = std_tf_height
+                specialities_label.text = specialities_text[:-1]
+                specialities_label.color = dark_green
+                specialities_label.height = std_tf_height * len(player['specialities'])
 
-        specialities_list.append(specialities_label)
+            else:
+                specialities_label.text = 'No Specialities'
+                specialities_label.color = red
+                specialities_label.height = std_tf_height
+
+            specialities_list.append(specialities_label)
+
+    calculate_specialities_list()
 
     def display_specialities():
         for stat in specialities_list:
@@ -900,144 +909,149 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     # ========== Player Team, League, and Nation ==========
     team_league_nation_list = []
 
-    # Darker box to display stats on and player's club/nation images
-    class TeamLeagueNationBoxImageView(View):
-        def draw(self, c, r):
-            dst_rect = (field_x_offset, field_y_offset, field_x_offset + field_width, field_y_offset + field_length)
+    def calculate_team_league_nation_list():
+        del team_league_nation_list[:]
 
-            for sym, player in roster.iteritems():
-                # Get player information
-                position_coordinates = team_spacing[sym]
+        # Darker box to display stats on and player's club/nation images
+        class TeamLeagueNationBoxImageView(View):
+            def draw(self, c, r):
+                dst_rect = (field_x_offset, field_y_offset, field_x_offset + field_width, field_y_offset + field_length)
 
-                # Darker box to display stats
-                c.forecolor = darker
-                c.fill_rect((dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + player_border,
-                             dst_rect[1] + position_coordinates[
-                                 1] * y_space - player_box_height / 2 + player_border,
-                             dst_rect[0] + position_coordinates[0] * x_space + player_box_width / 2 - player_border,
-                             dst_rect[1] + position_coordinates[
-                                 1] * y_space + player_box_height / 2 - player_border))
+                for sym, player in roster.iteritems():
+                    # Get player information
+                    position_coordinates = team_spacing[sym]
 
-                # Club
-                image_url = player['club']['imageUrls']['normal']['large']
-                ratio = 0.75
-                image_file_name = 'club_' + str(player['club']['id']) + '_' + str(ratio)
-                image_file_name = save_small_image(image_url, image_file_name, ratio)
-                club_image = Image(file=image_file_name)
-                club_image_pos = (
-                    (dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border,
-                     dst_rect[1] + position_coordinates[1] * y_space - player_box_height / 4))
-                headshot_rect = club_image.bounds
-                headshot_dst_rect = Geometry.offset_rect(headshot_rect, club_image_pos)
-                club_image.draw(c, headshot_rect, headshot_dst_rect)
+                    # Darker box to display stats
+                    c.forecolor = darker
+                    c.fill_rect((dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + player_border,
+                                 dst_rect[1] + position_coordinates[
+                                     1] * y_space - player_box_height / 2 + player_border,
+                                 dst_rect[0] + position_coordinates[0] * x_space + player_box_width / 2 - player_border,
+                                 dst_rect[1] + position_coordinates[
+                                     1] * y_space + player_box_height / 2 - player_border))
 
-                # Nation
-                image_url = player['nation']['imageUrls']['large']
-                ratio = 0.75
-                image_file_name = 'nation_' + str(player['nation']['id']) + '_' + str(ratio)
-                image_file_name = save_small_image(image_url, image_file_name, ratio)
-                nation_image = Image(file=image_file_name)
-                nation_image_pos = ((club_image_pos[0],
-                                     club_image_pos[1] + club_image.size[1] + 30))
-                headshot_rect = nation_image.bounds
-                headshot_dst_rect = Geometry.offset_rect(headshot_rect, nation_image_pos)
-                nation_image.draw(c, headshot_rect, headshot_dst_rect)
+                    # Club
+                    image_url = player['club']['imageUrls']['normal']['large']
+                    ratio = 0.75
+                    image_file_name = 'club_' + str(player['club']['id']) + '_' + str(ratio)
+                    image_file_name = save_small_image(image_url, image_file_name, ratio)
+                    club_image = Image(file=image_file_name)
+                    club_image_pos = (
+                        (dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border,
+                         dst_rect[1] + position_coordinates[1] * y_space - player_box_height / 4))
+                    headshot_rect = club_image.bounds
+                    headshot_dst_rect = Geometry.offset_rect(headshot_rect, club_image_pos)
+                    club_image.draw(c, headshot_rect, headshot_dst_rect)
 
-    team_league_nation_list.append(TeamLeagueNationBoxImageView(size=(int(field_x_offset + field_width + 5),
-                                                                      int(field_y_offset + field_length + 5))))
+                    # Nation
+                    image_url = player['nation']['imageUrls']['large']
+                    ratio = 0.75
+                    image_file_name = 'nation_' + str(player['nation']['id']) + '_' + str(ratio)
+                    image_file_name = save_small_image(image_url, image_file_name, ratio)
+                    nation_image = Image(file=image_file_name)
+                    nation_image_pos = ((club_image_pos[0],
+                                         club_image_pos[1] + club_image.size[1] + 30))
+                    headshot_rect = nation_image.bounds
+                    headshot_dst_rect = Geometry.offset_rect(headshot_rect, nation_image_pos)
+                    nation_image.draw(c, headshot_rect, headshot_dst_rect)
 
-    for sym, player in roster.iteritems():
-        # Get player information
-        position_coordinates = team_spacing[sym]
-        label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
-        label_y = int(dst_rect[1] + position_coordinates[1] * y_space - player_box_height / 2 + 2 * player_border)
+        team_league_nation_list.append(TeamLeagueNationBoxImageView(size=(int(field_x_offset + field_width + 5),
+                                                                          int(field_y_offset + field_length + 5))))
 
-        # Player rating
-        rating_summary_width = 25
-        rating_summary_label = Label(text=str(player['rating']), font=title_font_5,
-                                     width=rating_summary_width, height=std_tf_height,
-                                     x=label_x, y=label_y, just='right')
-        rating_summary_label.color = attr_color(player['rating'])
-        team_league_nation_list.append(rating_summary_label)
+        for sym, player in roster.iteritems():
+            # Get player information
+            position_coordinates = team_spacing[sym]
+            label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
+            label_y = int(dst_rect[1] + position_coordinates[1] * y_space - player_box_height / 2 + 2 * player_border)
 
-        # Player name
-        label_x = rating_summary_label.right
-        name_summary_label = Label(text=ascii_text(player['name']), font=std_tf_font_bold,
-                                   width=player_box_width - rating_summary_width - 2 * player_border,
-                                   height=std_tf_height,
-                                   x=label_x, y=label_y, color=white, just='center')
-        if len(ascii_text(player['name'])) > 10:
-            name_summary_label.font = title_font_9
-            name_summary_label.y += 2
-        if len(ascii_text(player['name'])) > 13:
-            name_summary_label.font = title_font_11
-            name_summary_label.y += 2
-        if len(ascii_text(player['name'])) > 15:
-            name_summary_label.font = title_font_13
-            name_summary_label.y += 2
-        team_league_nation_list.append(name_summary_label)
+            # Player rating
+            rating_summary_width = 25
+            rating_summary_label = Label(text=str(player['rating']), font=title_font_5,
+                                         width=rating_summary_width, height=std_tf_height,
+                                         x=label_x, y=label_y, just='right')
+            rating_summary_label.color = attr_color(player['rating'])
+            team_league_nation_list.append(rating_summary_label)
 
-        # League Title Label
-        label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 3 * player_border)
-        label_y = rating_summary_label.bottom + 45
-        league_title_width = 45
-        league_title_label = Label(text="League:", font=title_font_11,
-                                   width=league_title_width, height=std_tf_height,
-                                   x=label_x, y=label_y, color=white, just='left')
-        team_league_nation_list.append(league_title_label)
+            # Player name
+            label_x = rating_summary_label.right
+            name_summary_label = Label(text=ascii_text(player['name']), font=std_tf_font_bold,
+                                       width=player_box_width - rating_summary_width - 2 * player_border,
+                                       height=std_tf_height,
+                                       x=label_x, y=label_y, color=white, just='center')
+            if len(ascii_text(player['name'])) > 10:
+                name_summary_label.font = title_font_9
+                name_summary_label.y += 2
+            if len(ascii_text(player['name'])) > 13:
+                name_summary_label.font = title_font_11
+                name_summary_label.y += 2
+            if len(ascii_text(player['name'])) > 15:
+                name_summary_label.font = title_font_13
+                name_summary_label.y += 2
+            team_league_nation_list.append(name_summary_label)
 
-        image_width = 35
-        label_x = int(dst_rect[0] + position_coordinates[
-            0] * x_space - player_box_width / 2 + 2 * player_border + image_width)
-        label_y = rating_summary_label.bottom + 13
+            # League Title Label
+            label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 3 * player_border)
+            label_y = rating_summary_label.bottom + 45
+            league_title_width = 45
+            league_title_label = Label(text="League:", font=title_font_11,
+                                       width=league_title_width, height=std_tf_height,
+                                       x=label_x, y=label_y, color=white, just='left')
+            team_league_nation_list.append(league_title_label)
 
-        # Club Label
-        club_label = Label(font=std_tf_font_bold,
-                           width=player_box_width - 4 * player_border - image_width, height=std_tf_height,
-                           x=label_x, y=label_y, color=white, just='center')
+            image_width = 35
+            label_x = int(dst_rect[0] + position_coordinates[
+                0] * x_space - player_box_width / 2 + 2 * player_border + image_width)
+            label_y = rating_summary_label.bottom + 13
 
-        club_text, num_lines, longest_line = text_add_new_lines(ascii_text(player['club']['abbrName']), 11)
-        club_label.text = club_text
-        club_label.height = num_lines * std_tf_height
+            # Club Label
+            club_label = Label(font=std_tf_font_bold,
+                               width=player_box_width - 4 * player_border - image_width, height=std_tf_height,
+                               x=label_x, y=label_y, color=white, just='center')
 
-        if num_lines > 1:
-            club_label.y -= 6
-            club_label.font = title_font_9
+            club_text, num_lines, longest_line = text_add_new_lines(ascii_text(player['club']['abbrName']), 11)
+            club_label.text = club_text
+            club_label.height = num_lines * std_tf_height
 
-        if longest_line > 9:
-            club_label.font = title_font_9
-        if longest_line > 12:
-            club_label.font = title_font_11
-        team_league_nation_list.append(club_label)
+            if num_lines > 1:
+                club_label.y -= 6
+                club_label.font = title_font_9
 
-        label_y = rating_summary_label.bottom + 43
+            if longest_line > 9:
+                club_label.font = title_font_9
+            if longest_line > 12:
+                club_label.font = title_font_11
+            team_league_nation_list.append(club_label)
 
-        # League Label
-        league_label = Label(text=ascii_text(player['league']['abbrName']), font=std_tf_font_bold,
-                             width=player_box_width - 4 * player_border - image_width, height=std_tf_height,
-                             x=label_x, y=label_y, color=white, just='center')
-        team_league_nation_list.append(league_label)
+            label_y = rating_summary_label.bottom + 43
 
-        label_y = rating_summary_label.bottom + 72
+            # League Label
+            league_label = Label(text=ascii_text(player['league']['abbrName']), font=std_tf_font_bold,
+                                 width=player_box_width - 4 * player_border - image_width, height=std_tf_height,
+                                 x=label_x, y=label_y, color=white, just='center')
+            team_league_nation_list.append(league_label)
 
-        # Nation Label
-        nation_label = Label(font=std_tf_font_bold,
-                             width=player_box_width - 4 * player_border - image_width, height=std_tf_height,
-                             x=label_x, y=label_y, color=white, just='center')
+            label_y = rating_summary_label.bottom + 72
 
-        nation_text, num_lines, longest_line = text_add_new_lines(ascii_text(player['nation']['abbrName']), 11)
-        nation_label.text = nation_text
-        nation_label.height = num_lines * std_tf_height
+            # Nation Label
+            nation_label = Label(font=std_tf_font_bold,
+                                 width=player_box_width - 4 * player_border - image_width, height=std_tf_height,
+                                 x=label_x, y=label_y, color=white, just='center')
 
-        if num_lines > 1:
-            nation_label.y -= 6
-            nation_label.font = title_font_9
+            nation_text, num_lines, longest_line = text_add_new_lines(ascii_text(player['nation']['abbrName']), 11)
+            nation_label.text = nation_text
+            nation_label.height = num_lines * std_tf_height
 
-        if longest_line > 9:
-            nation_label.font = title_font_9
-        if longest_line > 12:
-            nation_label.font = title_font_11
-        team_league_nation_list.append(nation_label)
+            if num_lines > 1:
+                nation_label.y -= 6
+                nation_label.font = title_font_9
+
+            if longest_line > 9:
+                nation_label.font = title_font_9
+            if longest_line > 12:
+                nation_label.font = title_font_11
+            team_league_nation_list.append(nation_label)
+
+    calculate_team_league_nation_list()
 
     def display_team_league_nation():
         for stat in team_league_nation_list:
@@ -1052,309 +1066,314 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     # ========== Chemistry and Links ==========
     chemistry_list = []
 
-    # Darker box to display stats on and Link Lines
-    class ChemistryBoxImageView(View):
-        def draw(self, c, r):
-            dst_rect = (field_x_offset, field_y_offset, field_x_offset + field_width, field_y_offset + field_length)
+    def calculate_chemistry_list():
+        del chemistry_list[:]
 
-            # Links
-            # Iterate through players on team
-            for sym, player in roster.iteritems():
+        # Darker box to display stats on and Link Lines
+        class ChemistryBoxImageView(View):
+            def draw(self, c, r):
+                dst_rect = (field_x_offset, field_y_offset, field_x_offset + field_width, field_y_offset + field_length)
 
-                position_coordinates = team_spacing[sym]
+                # Links
+                # Iterate through players on team
+                for sym, player in roster.iteritems():
 
-                # Iterate through links of player
-                for link in formation['positions'][sym]['links']:
-                    colors = [red, orange, yellow, green]
-                    if link in roster:
-                        color_num = Team.Team.teammate_chemistry(player, roster[link])
-                    else:
-                        color_num = default_player_value
-                    c.forecolor = colors[color_num]
-                    link_coordinates = team_spacing[link]
+                    position_coordinates = team_spacing[sym]
 
-                    # Determine line direction to decide which points to use
-                    change_y = (link_coordinates[1] - position_coordinates[1]) * y_space
-                    change_x = (link_coordinates[0] - position_coordinates[0]) * x_space + 0.0001
-                    ratio = change_y / change_x
+                    # Iterate through links of player
+                    for link in formation['positions'][sym]['links']:
+                        colors = [red, orange, yellow, green]
+                        if link in roster:
+                            color_num = Team.Team.teammate_chemistry(player, roster[link])
+                        else:
+                            color_num = default_player_value
+                        c.forecolor = colors[color_num]
+                        link_coordinates = team_spacing[link]
 
-                    # Horizontal width line
-                    if abs(ratio) >= 1:
-                        c.fill_poly([(int(dst_rect[0] + position_coordinates[0] * x_space) - link_size / 2,
-                                      int(dst_rect[1] + position_coordinates[1] * y_space)),
-                                     (int(dst_rect[0] + position_coordinates[0] * x_space) + link_size / 2,
-                                      int(dst_rect[1] + position_coordinates[1] * y_space)),
-                                     (int(dst_rect[0] + link_coordinates[0] * x_space + link_size / 2),
-                                      int(dst_rect[1] + link_coordinates[1] * y_space)),
-                                     (int(dst_rect[0] + link_coordinates[0] * x_space - link_size / 2),
-                                      int(dst_rect[1] + link_coordinates[1] * y_space))])
+                        # Determine line direction to decide which points to use
+                        change_y = (link_coordinates[1] - position_coordinates[1]) * y_space
+                        change_x = (link_coordinates[0] - position_coordinates[0]) * x_space + 0.0001
+                        ratio = change_y / change_x
 
-                    # Vertical width line
-                    else:
-                        c.fill_poly([(int(dst_rect[0] + position_coordinates[0] * x_space),
-                                      int(dst_rect[1] + position_coordinates[1] * y_space) - link_size / 2),
-                                     (int(dst_rect[0] + position_coordinates[0] * x_space),
-                                      int(dst_rect[1] + position_coordinates[1] * y_space) + link_size / 2),
-                                     (int(dst_rect[0] + link_coordinates[0] * x_space),
-                                      int(dst_rect[1] + link_coordinates[1] * y_space) + link_size / 2),
-                                     (int(dst_rect[0] + link_coordinates[0] * x_space),
-                                      int(dst_rect[1] + link_coordinates[1] * y_space) - link_size / 2)])
+                        # Horizontal width line
+                        if abs(ratio) >= 1:
+                            c.fill_poly([(int(dst_rect[0] + position_coordinates[0] * x_space) - link_size / 2,
+                                          int(dst_rect[1] + position_coordinates[1] * y_space)),
+                                         (int(dst_rect[0] + position_coordinates[0] * x_space) + link_size / 2,
+                                          int(dst_rect[1] + position_coordinates[1] * y_space)),
+                                         (int(dst_rect[0] + link_coordinates[0] * x_space + link_size / 2),
+                                          int(dst_rect[1] + link_coordinates[1] * y_space)),
+                                         (int(dst_rect[0] + link_coordinates[0] * x_space - link_size / 2),
+                                          int(dst_rect[1] + link_coordinates[1] * y_space))])
 
-            # Draw darker boxes
-            for sym in roster.iterkeys():
-                # Get player information
-                position_coordinates = team_spacing[sym]
+                        # Vertical width line
+                        else:
+                            c.fill_poly([(int(dst_rect[0] + position_coordinates[0] * x_space),
+                                          int(dst_rect[1] + position_coordinates[1] * y_space) - link_size / 2),
+                                         (int(dst_rect[0] + position_coordinates[0] * x_space),
+                                          int(dst_rect[1] + position_coordinates[1] * y_space) + link_size / 2),
+                                         (int(dst_rect[0] + link_coordinates[0] * x_space),
+                                          int(dst_rect[1] + link_coordinates[1] * y_space) + link_size / 2),
+                                         (int(dst_rect[0] + link_coordinates[0] * x_space),
+                                          int(dst_rect[1] + link_coordinates[1] * y_space) - link_size / 2)])
 
-                # Darker box to display stats
-                c.forecolor = darker
-                c.fill_rect((dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + player_border,
-                             dst_rect[1] + position_coordinates[
-                                 1] * y_space - player_box_height / 2 + player_border,
-                             dst_rect[0] + position_coordinates[0] * x_space + player_box_width / 2 - player_border,
-                             dst_rect[1] + position_coordinates[
-                                 1] * y_space + player_box_height / 2 - player_border))
+                # Draw darker boxes
+                for sym in roster.iterkeys():
+                    # Get player information
+                    position_coordinates = team_spacing[sym]
 
-    chemistry_list.append(ChemistryBoxImageView(size=(int(field_x_offset + field_width + 5),
-                                                      int(field_y_offset + field_length + 5))))
+                    # Darker box to display stats
+                    c.forecolor = darker
+                    c.fill_rect((dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + player_border,
+                                 dst_rect[1] + position_coordinates[
+                                     1] * y_space - player_box_height / 2 + player_border,
+                                 dst_rect[0] + position_coordinates[0] * x_space + player_box_width / 2 - player_border,
+                                 dst_rect[1] + position_coordinates[
+                                     1] * y_space + player_box_height / 2 - player_border))
 
-    for sym, player in roster.iteritems():
-        # Get player information
-        position_coordinates = team_spacing[sym]
-        label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
-        label_y = int(dst_rect[1] + position_coordinates[1] * y_space - player_box_height / 2 + 2 * player_border)
+        chemistry_list.append(ChemistryBoxImageView(size=(int(field_x_offset + field_width + 5),
+                                                          int(field_y_offset + field_length + 5))))
 
-        # Player rating
-        rating_summary_width = 25
-        rating_summary_label = Label(text=str(player['rating']), font=title_font_5,
-                                     width=rating_summary_width, height=std_tf_height,
-                                     x=label_x, y=label_y, just='right')
-        rating_summary_label.color = attr_color(player['rating'])
-        chemistry_list.append(rating_summary_label)
+        for sym, player in roster.iteritems():
+            # Get player information
+            position_coordinates = team_spacing[sym]
+            label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
+            label_y = int(dst_rect[1] + position_coordinates[1] * y_space - player_box_height / 2 + 2 * player_border)
 
-        # Player name
-        label_x = rating_summary_label.right
-        name_summary_label = Label(text=ascii_text(player['name']), font=std_tf_font_bold,
-                                   width=player_box_width - rating_summary_width - 2 * player_border,
-                                   height=std_tf_height,
-                                   x=label_x, y=label_y, color=white, just='center')
-        if len(ascii_text(player['name'])) > 10:
-            name_summary_label.font = title_font_9
-            name_summary_label.y += 2
-        if len(ascii_text(player['name'])) > 13:
-            name_summary_label.font = title_font_11
-            name_summary_label.y += 2
-        if len(ascii_text(player['name'])) > 15:
-            name_summary_label.font = title_font_13
-            name_summary_label.y += 2
-        chemistry_list.append(name_summary_label)
+            # Player rating
+            rating_summary_width = 25
+            rating_summary_label = Label(text=str(player['rating']), font=title_font_5,
+                                         width=rating_summary_width, height=std_tf_height,
+                                         x=label_x, y=label_y, just='right')
+            rating_summary_label.color = attr_color(player['rating'])
+            chemistry_list.append(rating_summary_label)
 
-        chemistry_label_width = 42
-        chemistry_info_width = 30
-        chemistry_point_width = 33
+            # Player name
+            label_x = rating_summary_label.right
+            name_summary_label = Label(text=ascii_text(player['name']), font=std_tf_font_bold,
+                                       width=player_box_width - rating_summary_width - 2 * player_border,
+                                       height=std_tf_height,
+                                       x=label_x, y=label_y, color=white, just='center')
+            if len(ascii_text(player['name'])) > 10:
+                name_summary_label.font = title_font_9
+                name_summary_label.y += 2
+            if len(ascii_text(player['name'])) > 13:
+                name_summary_label.font = title_font_11
+                name_summary_label.y += 2
+            if len(ascii_text(player['name'])) > 15:
+                name_summary_label.font = title_font_13
+                name_summary_label.y += 2
+            chemistry_list.append(name_summary_label)
 
-        # === Position ====
-        # Position Label
-        label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
-        label_y = rating_summary_label.bottom + 5
-        position_title_label = Label(text="Position:", font=title_font_13,
-                                     width=chemistry_label_width, height=std_tf_height,
-                                     x=label_x, y=label_y, color=white, just='right')
-        chemistry_list.append(position_title_label)
+            chemistry_label_width = 42
+            chemistry_info_width = 30
+            chemistry_point_width = 33
 
-        # Position Stat
-        colors = [red, dark_orange, yellow, dark_green]
-        position_chem_number = Team.Team.position_chemistry(player['position'], formation['positions'][sym]['symbol'])
-        position_color = colors[position_chem_number]
-        position_label = Label(text=player['position'] + '\n/' + formation['positions'][sym]['symbol'],
-                               font=title_font_13, width=chemistry_info_width, height=std_tf_height * 2,
-                               x=position_title_label.right + 5, y=label_y - 7, color=position_color, just='center')
-        chemistry_list.append(position_label)
+            # === Position ====
+            # Position Label
+            label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
+            label_y = rating_summary_label.bottom + 5
+            position_title_label = Label(text="Position:", font=title_font_13,
+                                         width=chemistry_label_width, height=std_tf_height,
+                                         x=label_x, y=label_y, color=white, just='right')
+            chemistry_list.append(position_title_label)
 
-        # Position Score
-        position_tiers = ['Bad', 'Okay', 'Good', 'Perfect']
-        position_tier = position_tiers[position_chem_number]
-        position_point = Label(text=position_tier, font=title_font_13,
-                               width=chemistry_point_width, height=std_tf_height,
-                               x=position_label.right + 5, y=label_y, color=position_color, just='center')
-        chemistry_list.append(position_point)
+            # Position Stat
+            colors = [red, dark_orange, yellow, dark_green]
+            position_chem_number = Team.Team.position_chemistry(player['position'], formation['positions'][sym]['symbol'])
+            position_color = colors[position_chem_number]
+            position_label = Label(text=player['position'] + '\n/' + formation['positions'][sym]['symbol'],
+                                   font=title_font_13, width=chemistry_info_width, height=std_tf_height * 2,
+                                   x=position_title_label.right + 5, y=label_y - 7, color=position_color, just='center')
+            chemistry_list.append(position_label)
 
-        label_y = position_title_label.bottom - 3
+            # Position Score
+            position_tiers = ['Bad', 'Okay', 'Good', 'Perfect']
+            position_tier = position_tiers[position_chem_number]
+            position_point = Label(text=position_tier, font=title_font_13,
+                                   width=chemistry_point_width, height=std_tf_height,
+                                   x=position_label.right + 5, y=label_y, color=position_color, just='center')
+            chemistry_list.append(position_point)
 
-        # === Link Chemistry ====
-        link_total = 0
+            label_y = position_title_label.bottom - 3
 
-        link_label_width = 30
-        link_point_width = 40
+            # === Link Chemistry ====
+            link_total = 0
 
-        for link in formation['positions'][sym]['links']:
-            # Link Label
-            link_title_label = Label(text=link.upper(), font=title_font_13,
-                                     width=link_label_width, height=std_tf_height,
-                                     x=label_x, y=label_y, color=white, just='right')
-            chemistry_list.append(link_title_label)
+            link_label_width = 30
+            link_point_width = 40
 
-            # Link Score
-            if link in roster:
-                link_score = Team.Team.teammate_chemistry(player, roster[link])
+            for link in formation['positions'][sym]['links']:
+                # Link Label
+                link_title_label = Label(text=link.upper(), font=title_font_13,
+                                         width=link_label_width, height=std_tf_height,
+                                         x=label_x, y=label_y, color=white, just='right')
+                chemistry_list.append(link_title_label)
+
+                # Link Score
+                if link in roster:
+                    link_score = Team.Team.teammate_chemistry(player, roster[link])
+                else:
+                    link_score = default_player_value
+                score_color = colors[link_score]
+                link_point = Label(text=str(link_score) + ' match', font=title_font_13,
+                                   width=link_point_width, height=std_tf_height,
+                                   x=link_title_label.right + 5, y=label_y, color=score_color, just='left')
+                chemistry_list.append(link_point)
+
+                link_total += link_score
+                label_y = link_title_label.bottom - 9
+
+            # === Link Average ====
+            label_x = int(dst_rect[0] + position_coordinates[0] * x_space + 13 + 5)
+            label_y = position_title_label.bottom - 3
+            avg_title_width = 20
+            # Link Average Label
+            link_avg_title_label = Label(text='Avg:', font=title_font_13,
+                                         width=avg_title_width, height=std_tf_height,
+                                         x=label_x, y=label_y, color=white, just='right')
+            chemistry_list.append(link_avg_title_label)
+
+            # Link Average Stat
+            avg_width = 20
+            link_avg = float(link_total) / len(formation['positions'][sym]['links'])
+            if link_avg < 0.3:
+                link_point_color = red
+            elif link_avg < 1:
+                link_point_color = dark_orange
+            elif link_avg <= 1.6:
+                link_point_color = yellow
             else:
-                link_score = default_player_value
-            score_color = colors[link_score]
-            link_point = Label(text=str(link_score) + ' match', font=title_font_13,
-                               width=link_point_width, height=std_tf_height,
-                               x=link_title_label.right + 5, y=label_y, color=score_color, just='left')
-            chemistry_list.append(link_point)
+                link_point_color = dark_green
+            link_avg_label = Label(text=str(link_avg)[:4], font=title_font_13,
+                                   width=avg_width, height=std_tf_height,
+                                   x=link_avg_title_label.right + 2, y=label_y,
+                                   color=link_point_color, just='left')
+            chemistry_list.append(link_avg_label)
 
-            link_total += link_score
-            label_y = link_title_label.bottom - 9
+            # === Position Links Chem Points ====
+            label_x = int(dst_rect[0] + position_coordinates[0] * x_space + 13 + 4)
+            label_y = link_avg_title_label.bottom - 9
+            pl_chem_title_width = 30
+            # Position Links Chem Points Label
+            pl_chem_title_label = Label(text='Chem:', font=title_font_13,
+                                        width=pl_chem_title_width, height=std_tf_height,
+                                        x=label_x, y=label_y, color=white, just='right')
+            chemistry_list.append(pl_chem_title_label)
 
-        # === Link Average ====
-        label_x = int(dst_rect[0] + position_coordinates[0] * x_space + 13 + 5)
-        label_y = position_title_label.bottom - 3
-        avg_title_width = 20
-        # Link Average Label
-        link_avg_title_label = Label(text='Avg:', font=title_font_13,
-                                     width=avg_title_width, height=std_tf_height,
-                                     x=label_x, y=label_y, color=white, just='right')
-        chemistry_list.append(link_avg_title_label)
+            # Position Links Chem Points Stat
+            pl_chem_width = 20
+            # Calculate Position Links Chemistry
+            bad_points = [0, 1, 2, 3]
+            okay_points = [1, 3, 5, 6]
+            good_points = [2, 5, 8, 9]
+            perfect_points = [2, 5, 9, 10]
 
-        # Link Average Stat
-        avg_width = 20
-        link_avg = float(link_total) / len(position['links'])
-        if link_avg < 0.3:
-            link_point_color = red
-        elif link_avg < 1:
-            link_point_color = dark_orange
-        elif link_avg <= 1.6:
-            link_point_color = yellow
-        else:
-            link_point_color = dark_green
-        link_avg_label = Label(text=str(link_avg)[:4], font=title_font_13,
-                               width=avg_width, height=std_tf_height,
-                               x=link_avg_title_label.right + 2, y=label_y,
-                               color=link_point_color, just='left')
-        chemistry_list.append(link_avg_label)
+            if link_avg < 0.3:
+                pl_chem_points = bad_points[position_chem_number]
+            elif link_avg < 1:
+                pl_chem_points = okay_points[position_chem_number]
+            elif link_avg <= 1.6:
+                pl_chem_points = good_points[position_chem_number]
+            else:
+                pl_chem_points = perfect_points[position_chem_number]
 
-        # === Position Links Chem Points ====
-        label_x = int(dst_rect[0] + position_coordinates[0] * x_space + 13 + 4)
-        label_y = link_avg_title_label.bottom - 9
-        pl_chem_title_width = 30
-        # Position Links Chem Points Label
-        pl_chem_title_label = Label(text='Chem:', font=title_font_13,
-                                    width=pl_chem_title_width, height=std_tf_height,
-                                    x=label_x, y=label_y, color=white, just='right')
-        chemistry_list.append(pl_chem_title_label)
+            # Assign Position Links Chemistry Color
+            if pl_chem_points < 4:
+                pl_chem_color = red
+            elif pl_chem_points < 7:
+                pl_chem_color = dark_orange
+            elif pl_chem_points <= 8:
+                pl_chem_color = yellow
+            else:
+                pl_chem_color = dark_green
+            pl_chem_label = Label(text=str(pl_chem_points), font=title_font_13,
+                                  width=pl_chem_width, height=std_tf_height,
+                                  x=pl_chem_title_label.right + 2, y=label_y,
+                                  color=pl_chem_color, just='left')
+            chemistry_list.append(pl_chem_label)
 
-        # Position Links Chem Points Stat
-        pl_chem_width = 20
-        # Calculate Position Links Chemistry
-        bad_points = [0, 1, 2, 3]
-        okay_points = [1, 3, 5, 6]
-        good_points = [2, 5, 8, 9]
-        perfect_points = [2, 5, 9, 10]
+            # === Manager Chemistry Points ====
+            label_x = int(dst_rect[0] + position_coordinates[0] * x_space + 13 + 9)
+            label_y = pl_chem_title_label.bottom - 9
+            manager_chem_title_width = 25
 
-        if link_avg < 0.3:
-            pl_chem_points = bad_points[position_chem_number]
-        elif link_avg < 1:
-            pl_chem_points = okay_points[position_chem_number]
-        elif link_avg <= 1.6:
-            pl_chem_points = good_points[position_chem_number]
-        else:
-            pl_chem_points = perfect_points[position_chem_number]
+            # Manager Chemistry Points Label
+            manager_chem_title_label = Label(text='Mgr:', font=title_font_13,
+                                             width=manager_chem_title_width, height=std_tf_height,
+                                             x=label_x, y=label_y, color=white, just='right')
+            chemistry_list.append(manager_chem_title_label)
 
-        # Assign Position Links Chemistry Color
-        if pl_chem_points < 4:
-            pl_chem_color = red
-        elif pl_chem_points < 7:
-            pl_chem_color = dark_orange
-        elif pl_chem_points <= 8:
-            pl_chem_color = yellow
-        else:
-            pl_chem_color = dark_green
-        pl_chem_label = Label(text=str(pl_chem_points), font=title_font_13,
-                              width=pl_chem_width, height=std_tf_height,
-                              x=pl_chem_title_label.right + 2, y=label_y,
-                              color=pl_chem_color, just='left')
-        chemistry_list.append(pl_chem_label)
+            # Manager Chemistry Points Stat
+            manager_chem_width = 20
+            manager_points = 0
+            manager_points_color = red
 
-        # === Manager Chemistry Points ====
-        label_x = int(dst_rect[0] + position_coordinates[0] * x_space + 13 + 9)
-        label_y = pl_chem_title_label.bottom - 9
-        manager_chem_title_width = 25
+            manager_chem_label = Label(text=str(manager_points), font=title_font_13,
+                                       width=manager_chem_width, height=std_tf_height,
+                                       x=manager_chem_title_label.right + 2, y=label_y,
+                                       color=manager_points_color, just='left')
+            chemistry_list.append(manager_chem_label)
 
-        # Manager Chemistry Points Label
-        manager_chem_title_label = Label(text='Mgr:', font=title_font_13,
-                                         width=manager_chem_title_width, height=std_tf_height,
-                                         x=label_x, y=label_y, color=white, just='right')
-        chemistry_list.append(manager_chem_title_label)
+            # === Loyalty Chemistry Points ====
+            label_x = int(dst_rect[0] + position_coordinates[0] * x_space + 13 + 4)
+            label_y = manager_chem_title_label.bottom - 9
+            loyalty_chem_title_width = 30
 
-        # Manager Chemistry Points Stat
-        manager_chem_width = 20
-        manager_points = 0
-        manager_points_color = red
+            # Loyalty Chemistry Points Label
+            loyalty_chem_title_label = Label(text='Loyal:', font=title_font_13,
+                                             width=loyalty_chem_title_width, height=std_tf_height,
+                                             x=label_x, y=label_y, color=white, just='right')
+            chemistry_list.append(loyalty_chem_title_label)
 
-        manager_chem_label = Label(text=str(manager_points), font=title_font_13,
-                                   width=manager_chem_width, height=std_tf_height,
-                                   x=manager_chem_title_label.right + 2, y=label_y,
-                                   color=manager_points_color, just='left')
-        chemistry_list.append(manager_chem_label)
+            # Loyalty Chemistry Points Stat
+            loyalty_chem_width = 20
+            loyalty_points = 1
+            if loyalty_points == 1:
+                loyalty_points_color = dark_green
+            else:
+                loyalty_points_color = red
 
-        # === Loyalty Chemistry Points ====
-        label_x = int(dst_rect[0] + position_coordinates[0] * x_space + 13 + 4)
-        label_y = manager_chem_title_label.bottom - 9
-        loyalty_chem_title_width = 30
+            loyalty_chem_label = Label(text=str(loyalty_points), font=title_font_13,
+                                       width=loyalty_chem_width, height=std_tf_height,
+                                       x=loyalty_chem_title_label.right + 2, y=label_y,
+                                       color=loyalty_points_color, just='left')
+            chemistry_list.append(loyalty_chem_label)
 
-        # Loyalty Chemistry Points Label
-        loyalty_chem_title_label = Label(text='Loyal:', font=title_font_13,
-                                         width=loyalty_chem_title_width, height=std_tf_height,
-                                         x=label_x, y=label_y, color=white, just='right')
-        chemistry_list.append(loyalty_chem_title_label)
+            # === Total Chemistry Points ====
+            label_x = int(
+                dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border + 7)
+            label_y = int(dst_rect[1] + position_coordinates[1] * y_space + player_box_height / 2 - player_border - 18)
+            total_chem_title_width = 90
 
-        # Loyalty Chemistry Points Stat
-        loyalty_chem_width = 20
-        loyalty_points = 1
-        if loyalty_points == 1:
-            loyalty_points_color = dark_green
-        else:
-            loyalty_points_color = red
+            # Total Chemistry Points Label
+            total_chem_title_label = Label(text='Total Chemistry:', font=title_font_11,
+                                           width=total_chem_title_width, height=std_tf_height,
+                                           x=label_x, y=label_y, color=white, just='right')
+            chemistry_list.append(total_chem_title_label)
 
-        loyalty_chem_label = Label(text=str(loyalty_points), font=title_font_13,
-                                   width=loyalty_chem_width, height=std_tf_height,
-                                   x=loyalty_chem_title_label.right + 2, y=label_y,
-                                   color=loyalty_points_color, just='left')
-        chemistry_list.append(loyalty_chem_label)
+            # Total Chemistry Points Stat
+            total_chem_width = 30
+            total_chem_points = pl_chem_points + manager_points + loyalty_points
+            if total_chem_points > 10:
+                total_chem_points = 10
 
-        # === Total Chemistry Points ====
-        label_x = int(
-            dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border + 7)
-        label_y = int(dst_rect[1] + position_coordinates[1] * y_space + player_box_height / 2 - player_border - 18)
-        total_chem_title_width = 90
+            if total_chem_points < 4:
+                total_chem_color = red
+            elif total_chem_points < 7:
+                total_chem_color = dark_orange
+            elif total_chem_points < 10:
+                total_chem_color = yellow
+            else:
+                total_chem_color = dark_green
 
-        # Total Chemistry Points Label
-        total_chem_title_label = Label(text='Total Chemistry:', font=title_font_11,
-                                       width=total_chem_title_width, height=std_tf_height,
-                                       x=label_x, y=label_y, color=white, just='right')
-        chemistry_list.append(total_chem_title_label)
+            total_chem_label = Label(text=str(total_chem_points), font=title_font_11,
+                                     width=total_chem_width, height=std_tf_height,
+                                     x=total_chem_title_label.right + 2, y=label_y,
+                                     color=total_chem_color, just='left')
+            chemistry_list.append(total_chem_label)
 
-        # Total Chemistry Points Stat
-        total_chem_width = 30
-        total_chem_points = pl_chem_points + manager_points + loyalty_points
-        if total_chem_points > 10:
-            total_chem_points = 10
-
-        if total_chem_points < 4:
-            total_chem_color = red
-        elif total_chem_points < 7:
-            total_chem_color = dark_orange
-        elif total_chem_points < 10:
-            total_chem_color = yellow
-        else:
-            total_chem_color = dark_green
-
-        total_chem_label = Label(text=str(total_chem_points), font=title_font_11,
-                                 width=total_chem_width, height=std_tf_height,
-                                 x=total_chem_title_label.right + 2, y=label_y,
-                                 color=total_chem_color, just='left')
-        chemistry_list.append(total_chem_label)
+    calculate_chemistry_list()
 
     def display_chemistry():
         for stat in chemistry_list:

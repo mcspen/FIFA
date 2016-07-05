@@ -271,7 +271,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
         win_player_bio.hide()
         win_previous.show()
 
-    def update_price_btn_func():
+    def update_price_btn_func(console='PS4'):
         if db_dict is not None:
             # Get index in player list and player db
             if player in db_dict['player_list'][1].db:
@@ -284,7 +284,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
                 db_index = -1
 
             # Get updated price
-            new_price = Player.Player(player).get_price()
+            new_price = Player.Player(player).get_price(console)
 
             # Update price displayed
             new_price_str = str(new_price)

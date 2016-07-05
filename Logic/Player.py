@@ -103,7 +103,7 @@ class Player:
 
         # Skip price if player is legend and console is PS4
         # Legends are only on X-Box
-        if console == 'PS4' and self.color == 'legend':
+        if console.upper() in ['PS4', 'PLAYSTATION', 'PS'] and self.color == 'legend':
             self.price = -1
             return self.price
 
@@ -132,7 +132,7 @@ class Player:
 
                     # Get price
                     page_data = page_data.split()
-                    if console == 'PS4':
+                    if console.upper() in ['PS4', 'PLAYSTATION', 'PS']:
                         index = page_data.index('id="pslowest"') + 1
                     else:
                         index = page_data.index('id="xboxlowest"') + 1
