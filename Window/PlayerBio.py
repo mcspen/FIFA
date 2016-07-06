@@ -271,7 +271,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
         win_player_bio.hide()
         win_previous.show()
 
-    def update_price_btn_func(console='PS4'):
+    def update_price_btn_func():
         if db_dict is not None:
             # Get index in player list and player db
             if player in db_dict['player_list'][1].db:
@@ -283,8 +283,14 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
             else:
                 db_index = -1
 
+            # Load console type
+            settings = {'console_type': ''}
+            with open('configs.json', 'r') as f:
+                settings["console_type"] = json.load(f)['console_type']
+                f.close()
+
             # Get updated price
-            new_price = Player.Player(player).get_price(console)
+            new_price = Player.Player(player).get_price(settings["console_type"])
 
             # Update price displayed
             new_price_str = str(new_price)

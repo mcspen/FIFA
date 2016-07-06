@@ -3,17 +3,9 @@ from AppConfig import *
 import PickFile
 import FilesMenu
 import StatusWindow
-from Logic.PlayerDB import PlayerDB
 from os import rename
 from os.path import isfile
 from shutil import copyfile
-
-
-def download_and_save(new_db_name):
-    # Download player database
-    player_db = PlayerDB()
-    player_db.download()
-    player_db.save(new_db_name, 'db', True)
 
 
 def open_enter_text_window(window_x, window_y, db_dict, settings, box_type, fill_text='', file_prefix=''):

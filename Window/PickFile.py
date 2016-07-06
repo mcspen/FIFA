@@ -181,7 +181,6 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
             win_pick_file.become_target()
             # Open status window to start updating player prices
             settings['update_prices'] = True
-            settings['console'] = 'PS4'
             StatusWindow.open_status_window(win_pick_file.x, win_pick_file.y,
                                             db_dict, file_name, settings=settings, win_previous=win_pick_file)
             settings['file_changes'] = True

@@ -5,6 +5,7 @@ from Logic import Team
 from Logic import TeamDB
 from Logic import PlayerDB
 import multiprocessing
+import json
 import time
 
 
@@ -21,9 +22,15 @@ def create_teams(db_dict, file_name):
 
 # ========== Download player db and save function ==========
 def download_and_save_player_db(queue, new_db_name, get_prices):
+    # Load console type
+    settings = {'console_type': ''}
+    with open('configs.json', 'r') as f:
+        settings["console_type"] = json.load(f)['console_type']
+        f.close()
+
     # Download player database
     player_db = PlayerDB.PlayerDB()
-    player_db.download(queue, get_prices=get_prices)
+    player_db.download(queue, get_prices=get_prices, console=settings["console_type"])
 
     # Save player database
     player_db.save(new_db_name, 'db', True)
@@ -51,7 +58,12 @@ def update_player_prices(queue, file_name, settings):
         file_type = 'Not used'
         object_list = PlayerDB.PlayerDB()
 
-    object_list.update_player_prices(queue=queue, console=settings['console'])
+    # Load console type
+    with open('configs.json', 'r') as f:
+        settings["console_type"] = json.load(f)['console_type']
+        f.close()
+
+    object_list.update_player_prices(queue=queue, console=settings['console_type'])
 
     # Save list/db and overwrite previous
     if 'player' in settings['file_type']:
