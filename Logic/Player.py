@@ -102,7 +102,7 @@ class Player:
         """
 
         # Skip price if player is legend and console is PS4
-        # Legends are only on X-Box
+        # Legends are only on Xbox
         if console.upper() in ['PS4', 'PLAYSTATION', 'PS'] and self.color == 'legend':
             self.price = -1
             return self.price
