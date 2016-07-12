@@ -352,7 +352,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         # Player Position
         colors = [red, dark_orange, yellow, dark_green]
         if 'player' in position:
-            position_color = colors[Team.Team.position_chemistry(player['position'], position['symbol'])]
+            if input_formation['name'] == 'Generic':
+                position_color = colors[3]
+            else:
+                position_color = colors[Team.Team.position_chemistry(player['position'], position['symbol'])]
             position_label = Label(text=player['position'], font=std_tf_font_bold,
                                    width=position_width, height=std_tf_height,
                                    x=int(dst_rect[0]+position_coordinates[0]*x_space+player_box_height/2 -
@@ -1377,7 +1380,8 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                                      color=total_chem_color, just='left')
             chemistry_list.append(total_chem_label)
 
-    calculate_chemistry_list()
+    if input_formation['name'] != 'Generic':
+        calculate_chemistry_list()
 
     def display_chemistry():
         for stat in chemistry_list:

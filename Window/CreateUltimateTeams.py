@@ -111,7 +111,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
                                    color=title_color, just='center',
                                    action=formation_list_current_btn_func)
     display_items.append(formation_list_button)
-    if input_formation is not None:
+    if input_formation is not None and input_formation['name'] != 'Generic':
         formation_list_button.enabled = 0
         formation_list_button.title = input_formation['name']
 
