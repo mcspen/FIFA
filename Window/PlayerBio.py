@@ -90,8 +90,8 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
     # ========== Player Background ==========
     # Assign player background card
     if player['color'] in ['bronze', 'easports', 'gold', 'green', 'legend', 'motm', 'pink', 'purple',
-                           'rare_bronze', 'rare_gold', 'rare_silver', 'silver', 'teal', 'tots_bronze', 'tots_gold',
-                           'tots_silver', 'totw_bronze', 'totw_gold', 'totw_silver', 'toty']:
+                           'rare_bronze', 'rare_gold', 'rare_silver', 'red_blue', 'silver', 'teal', 'tots_bronze',
+                           'tots_gold', 'tots_silver', 'totw_bronze', 'totw_gold', 'totw_silver', 'toty']:
         background_file = 'Images/Cards/' + player['color'] + '.png'
     else:
         background_file = 'Images/Cards/idk.png'

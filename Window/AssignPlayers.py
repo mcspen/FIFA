@@ -1236,7 +1236,11 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
 
             # Link Average Stat
             avg_width = 20
-            link_avg = float(link_total) / len(formation['positions'][sym]['links'])
+            # Check if there are 0 links (when using the generic formation) and avoid division by 0
+            total_links = len(formation['positions'][sym]['links'])
+            if total_links < 1:
+                total_links = 1
+            link_avg = float(link_total) / total_links
             if link_avg < 0.3:
                 link_point_color = red
             elif link_avg < 1:
@@ -1564,6 +1568,9 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     chemistry_btn.style = 'default'
     chemistry_btn.color = small_button_color
     labels_list.append(chemistry_btn)
+
+    if input_formation['name'] == 'Generic':
+        chemistry_btn.enabled = 0
 
     # ========== Add buttons to window ==========
     for label in labels_list:

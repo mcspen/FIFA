@@ -35,10 +35,15 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
             'roster': roster,
             'pos_symbol': pos_symbol,
             'win_previous': win_previous,
-            'pick_formations_page': pick_formations_page
-        }
+            'pick_formations_page': pick_formations_page}
+
         # Assign exact position as default position to search for.
         attr_dict['position'] = (input_formation['positions'][pos_symbol]['symbol'], 'exact')
+
+        # Not position dependent - search all.
+        if input_formation['name'] == 'Generic':
+            settings['pos_search_rg'] = 'red'
+            attr_dict.pop('position', None)
 
     # ========== Window ==========
     win_pick_player = Window()
@@ -294,6 +299,8 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
             for position in search_positions_list:
                 search_positions += position + ', '
             search_positions = search_positions[:-2]
+            if len(search_positions) < 1:
+                search_positions = 'none'
             attr_dict['position'] = (search_positions, 'exact')
 
         # Erase current search attributes
@@ -386,6 +393,11 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
     view.add(pos_search_yellow_radio_btn)
     view.add(pos_search_orange_radio_btn)
     view.add(pos_search_red_radio_btn)
+
+    if input_formation['name'] == 'Generic':
+        pos_search_green_radio_btn.enabled = 0
+        pos_search_yellow_radio_btn.enabled = 0
+        pos_search_orange_radio_btn.enabled = 0
 
     # ========== Sort Order Radio Buttons ==========
     def get_attribute_sort_order_rg():
