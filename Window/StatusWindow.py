@@ -169,7 +169,9 @@ def open_status_window(window_x, window_y, db_dict,
                     tup = queue.get()
 
                 if len(tup) == 1:
-                    main_status_label.text = tup
+                    main_status_label.text = tup[0]
+                    stop_btn.title = "Done"
+                    update_btn.enabled = 0
 
                 elif len(tup) == 2:
                     main_status_label.text = "Approximately %d of %d of players downloaded." % (tup[0]*24, tup[1]*24)
@@ -188,7 +190,9 @@ def open_status_window(window_x, window_y, db_dict,
                         tup = queue.get()
 
                     if len(tup) == 1:
-                        main_status_label.text = tup
+                        main_status_label.text = tup[0]
+                        stop_btn.title = "Done"
+                        update_btn.enabled = 0
 
                     elif len(tup) == 2:
                         main_status_label.text = "%d of %d of players updated." % (tup[0], tup[1])

@@ -77,8 +77,8 @@ class PlayerDB:
                 print "%d of %d pages downloaded" % (page_num, total_pages)
 
         except Exception:
-            print "Not connected to internet. Cannot download player db."
-            queue.put("Not connected to internet. Cannot download player db.")
+            print "Not connected to Internet. Cannot download player db."
+            queue.put(("Not connected to Internet. Cannot download player db.",))
 
         return self.db
 
