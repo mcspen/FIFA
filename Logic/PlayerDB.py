@@ -42,7 +42,7 @@ class PlayerDB:
             sess = requests.Session()
 
             # Get total number of pages of data
-            page_data = sess.get("%s1%s" % (url_db_start, url_db_end)).content  # Get first page data
+            page_data = sess.get("%s1%s" % (url_db_start, url_db_end), verify=False).content  # Get first page data
             total_pages = json.loads(page_data)['totalPages']   # Get total number of pages
 
             # Iterate through all pages
@@ -76,9 +76,13 @@ class PlayerDB:
                     queue.put((page_num, total_pages))
                 print "%d of %d pages downloaded" % (page_num, total_pages)
 
-        except Exception:
+        except requests.ConnectionError:
             print "Not connected to Internet. Cannot download player db."
             queue.put(("Not connected to Internet. Cannot download player db.",))
+
+        except Exception as err:
+            print err.__str__()
+            queue.put((err.__str__(),))
 
         return self.db
 

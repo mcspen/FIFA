@@ -33,7 +33,8 @@ def download_and_save_player_db(queue, new_db_name, get_prices):
     player_db.download(queue, get_prices=get_prices, console=settings["console_type"])
 
     # Save player database
-    player_db.save(new_db_name, 'db', True)
+    if len(player_db.db) > 0:
+        player_db.save(new_db_name, 'db', True)
 
 
 # ========== Update player prices function ==========
@@ -170,7 +171,7 @@ def open_status_window(window_x, window_y, db_dict,
 
                 if len(tup) == 1:
                     main_status_label.text = tup[0]
-                    stop_btn.title = "Done"
+                    stop_btn.title = "Stop"
                     update_btn.enabled = 0
 
                 elif len(tup) == 2:
@@ -191,7 +192,7 @@ def open_status_window(window_x, window_y, db_dict,
 
                     if len(tup) == 1:
                         main_status_label.text = tup[0]
-                        stop_btn.title = "Done"
+                        stop_btn.title = "Stop"
                         update_btn.enabled = 0
 
                     elif len(tup) == 2:
