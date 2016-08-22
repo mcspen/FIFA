@@ -36,8 +36,6 @@ Copyright 2016 Matthew Spencer
 |Just restart and create a new list.
 |
 |Prices are retrieved from www.futbin.com
-|Currently prices are set to PS4. I have the code for XBox,
-|I just haven't created the menus to select it yet.
 |
 |I haven't finished filling out the formation styles or
 |descriptions yet. So ignore the temporary information.
@@ -221,10 +219,27 @@ Copyright 2016 Matthew Spencer
 |three buttons.
 |
 |Create Ultimate Teams: Opens the ultimate team creation window.
-|Manually Create Teams: NOT IMPLEMENTED YET! But in the future
-|I hope it will allow the user to select certain players and
-|have the program fill out the rest of the team.
+|    Generates teams based on the player list and formation list.
+|Manually Create Teams: Opens the formation selection window.
+|    Select players and formations to generate teams using.
 |Back: Returns to the first menu of the program.
+|
+|Formation Selection Window:
+|Select one of the formations to create teams using. Or select
+|the formations list button at the bottom to use all of the
+|formations on the list. Selecting one of the options with open
+|the Assign Player Window.
+|
+|Assign Player Window:
+|If a specific formation was selected, each position is represented
+|on the field diagram. From here a player can be selected for each
+|position for as many players as desired. The remaining players will
+|be generated automatically. If the formation list was selected
+|instead of a formation, 11 spots are lined up. Players can be assigned
+|to any of these spots, position doesn't matter, and a team will be
+|generated using them. Clicking next opens the ultimate team creation
+|window where the team creation is kicked off using the selected
+|players and formation(s).
 |
 |Ultimate Team Creation Window:
 |'Player List' is the currently selected player list. These are
@@ -330,8 +345,6 @@ Copyright 2016 Matthew Spencer
 |Currently creating a team list just creates a blank list.
 |
 |'Download Player DB'
-|WARNING!!! This function seems to not work when I created the exe!!!!
-|I will look into it more.
 |When the button is clicked, a new window opens. Enter the new
 |database name and select whether to get prices or not. Currently
 |it gets all prices. In the future I plan to implement options to
