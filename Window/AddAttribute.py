@@ -317,11 +317,11 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
             EditMenu.open_edit_menu(win_attribute.x, win_attribute.y, db_dict, attr_dict, attr_list, settings)
         elif settings['window'] == 'ultimate_player_judging':
             CreateUltimateTeams.open_create_ultimate_teams_window(
-                win_attribute.x, win_attribute.y, db_dict, player_judge_list=attr_list,
+                win_attribute.x, win_attribute.y, db_dict, settings['prev_window_value'], player_judge_list=attr_list,
                 file_name=settings['file_name'], roster=settings['roster'], input_formation=settings['input_formation'])
         elif settings['window'] == 'ultimate_team_judging':
             CreateUltimateTeams.open_create_ultimate_teams_window(
-                win_attribute.x, win_attribute.y, db_dict, team_judge_list=attr_list,
+                win_attribute.x, win_attribute.y, db_dict, settings['prev_window_value'], team_judge_list=attr_list,
                 file_name=settings['file_name'], roster=settings['roster'], input_formation=settings['input_formation'])
         elif settings['window'] == 'pick_player':
             PickPlayer.open_pick_player_window(win_attribute.x, win_attribute.y, db_dict,

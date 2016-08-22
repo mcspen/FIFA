@@ -1,7 +1,6 @@
 from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
 
 from AppConfig import *
-import TeamsMenu
 import AddAttribute
 import PickFile
 from Logic import FormationDB
@@ -11,8 +10,8 @@ from Logic.HelperFunctions import format_attr_name
 import json
 
 
-def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_list=None, team_judge_list=None,
-                                      file_name=None, roster=None, input_formation=None):
+def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous, player_judge_list=None,
+                                      team_judge_list=None, file_name=None, roster=None, input_formation=None):
 
     display_items = []
 
@@ -73,6 +72,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
         settings['file_type'] = 'current_player_list'
         settings['file_changes'] = False
         settings['prev_window'] = 'team_creation'
+        settings['prev_window_value'] = win_previous
         settings['create_team_name'] = team_list_name_tf.value
         PickFile.open_pick_file_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, settings)
         win_ultimate_teams.hide()
@@ -82,6 +82,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
         settings['file_type'] = 'current_formation_list'
         settings['file_changes'] = False
         settings['prev_window'] = 'team_creation'
+        settings['prev_window_value'] = win_previous
         settings['create_team_name'] = team_list_name_tf.value
         PickFile.open_pick_file_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, settings)
         win_ultimate_teams.hide()
@@ -166,11 +167,13 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
 
     process_type_radio_group.value = settings['process_type']
 
+    # If building a team based on one formation, there is no benefit to using multiple processes.
     if input_formation is not None:
-        process_type_radio_group.value = 'single'
-        settings['process_type'] = 'single'
-        multi_process_radio_btn.enabled = 0
-        single_process_radio_btn.enabled = 0
+        if input_formation['name'] != 'Generic':
+            process_type_radio_group.value = 'single'
+            settings['process_type'] = 'single'
+            multi_process_radio_btn.enabled = 0
+            single_process_radio_btn.enabled = 0
 
     # ========== Chemistry Matters Label ==========
     chemistry_matters_label = Label(text="Chemistry Matters: ", font=std_tf_font_bold,
@@ -230,7 +233,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
         attr_list = settings['team_sort_attributes']
         attr_type = 'team_sort'
         attribute_settings = {'window': 'ultimate_team_judging', 'file_name': team_list_name_tf.value,
-                              'roster': roster, 'input_formation': input_formation}
+                              'roster': roster, 'input_formation': input_formation, 'prev_window_value': win_previous}
         AddAttribute.open_attribute_window(
             win_ultimate_teams.x, win_ultimate_teams.y, db_dict, attr_dict, attr_list, attr_type, attribute_settings)
 
@@ -277,7 +280,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
         attr_list = settings['player_sort_attributes']
         attr_type = 'player_sort'
         attribute_settings = {'window': 'ultimate_player_judging', 'file_name': team_list_name_tf.value,
-                              'roster': roster, 'input_formation': input_formation}
+                              'roster': roster, 'input_formation': input_formation, 'prev_window_value': win_previous}
         AddAttribute.open_attribute_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, attr_dict,
                                            attr_list, attr_type, attribute_settings)
 
@@ -618,7 +621,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, player_judge_
 
     def back_btn_func():
         save_settings()
-        TeamsMenu.open_teams_menu(win_ultimate_teams.x, win_ultimate_teams.y, db_dict)
+        win_previous.show()
         win_ultimate_teams.hide()
 
     # Save the attribute lists if they were changed

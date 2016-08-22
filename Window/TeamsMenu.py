@@ -43,7 +43,7 @@ def open_teams_menu(window_x, window_y, db_dict):
     # ========== Button Functions ==========
     def create_ultimate_teams_btn_func():
         win_teams.become_target()
-        CreateUltimateTeams.open_create_ultimate_teams_window(win_teams.x, win_teams.y, db_dict)
+        CreateUltimateTeams.open_create_ultimate_teams_window(win_teams.x, win_teams.y, db_dict, win_teams)
         win_teams.hide()
 
     def manually_create_teams_btn_func():

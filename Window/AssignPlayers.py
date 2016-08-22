@@ -1416,9 +1416,11 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
 
     # ========== Button Functions ==========
     def next_btn_func():
+        win_assign_players.become_target()
         win_assign_players.hide()
         CreateUltimateTeams.open_create_ultimate_teams_window(
-            win_assign_players.x, win_assign_players.y, db_dict, roster=roster, input_formation=input_formation)
+            win_assign_players.x, win_assign_players.y, db_dict, win_assign_players,
+            roster=roster, input_formation=input_formation)
 
     def back_btn_func():
         win_assign_players.hide()
