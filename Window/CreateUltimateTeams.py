@@ -642,6 +642,8 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
     start_btn.color = button_color
     start_btn.just = 'right'
     display_items.append(start_btn)
+    if input_formation is not None and input_formation['name'] == 'Generic':
+        start_btn.enabled = 0
 
     back_btn.x = start_btn.right + button_spacing
     back_btn.y = start_btn.top
