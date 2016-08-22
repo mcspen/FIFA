@@ -23,7 +23,7 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
     if settings is None:
         settings = {
             'window': 'pick_player',
-            'p_db_rg': 'player_db',
+            'p_db_rg': 'player_list',
             'pos_search_rg': 'green',
             'order_rg': True,
             'messages': {

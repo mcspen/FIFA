@@ -310,7 +310,8 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
             if db_index > -1:
                 updated_player = db_dict['player_db'][1].db[db_index]
                 updated_player['price'] = new_price
-                db_dict['player_db'][1].db[db_index] = player
+                db_dict['player_db'][1].db[db_index] = updated_player
+            player['price'] = new_price
 
             # Save
             if list_index > -1:
