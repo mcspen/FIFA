@@ -309,9 +309,10 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
                      team_sort_attributes, player_sort_attributes, num_teams,
                      pos_index=0, roster=None, base_ids=None, team_list=None, team_count=0):
     """
-    Recursive function to build all possible team combinations with good chemistry
+    Recursive function to build all possible team combinations with good chemistry.
+    Builds team by position.
     Input: PlayerDB of players, one formation, position index, roster, base IDs list, list of teams, and team count.
-    Output: The list of teams and the team count
+    Output: The list of teams and the team count.
     """
 
     print_formation_name_and_team_count = False
@@ -502,6 +503,203 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
                                        num_teams, next_index, roster_copy, base_ids_copy, team_list, team_count)
             team_list = results[0]
             team_count = results[1]
+
+    return [team_list, team_count]
+
+
+def recursive_create_2(players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
+                       team_sort_attributes, player_sort_attributes, num_teams,
+                       pos_index=0, roster=None, base_ids=None, team_list=None, team_count=0):
+    """
+    Recursive function to build all possible team combinations with good chemistry.
+    Builds team based on best players.
+    Input: PlayerDB of players, one formation, position index, roster, base IDs list, list of teams, and team count.
+    Output: The list of teams and the team count.
+    """
+
+    print_formation_name_and_team_count = False
+    print_all_team_chemistry = False
+
+    # Set defaults
+    if roster is None:
+        roster = {}
+    if base_ids is None:
+        base_ids = []
+    if team_list is None:
+        team_list = []
+
+    # Check if recursion is finished and team is full
+    if pos_index > 10:
+
+        # Set the team using the roster and add to list
+        temp_team = Team.Team()
+        temp_team.set_team(formation, roster)
+        team_list.append(temp_team.__dict__)
+        team_count += 1
+
+        # Print out progress information -------------------------------------------------------------------------------
+        if print_formation_name_and_team_count:
+            print "%s: %d team(s)" % (formation['name'], team_count)
+        # TEMPORARY ----------------------------------------------------------------------------------------------------
+
+        # Print out team chemistry -------------------------------------------------------------------------------------
+        if print_all_team_chemistry:
+            for team in team_list:
+                temp = Team.Team(team)
+                temp.print_summary()
+                temp.print_chemistry_stats()
+                print ''
+        # TEMPORARY ----------------------------------------------------------------------------------------------------
+
+        # Narrow down team_list to save memory
+        if (team_count % num_teams) == 0:
+            print "Calculating... %d teams created" % team_count
+            team_list = reduce_teams(team_sort_attributes, num_teams, team_list)
+
+        return [team_list, team_count]
+
+    # Check to see if function should return
+    if team_count >= teams_per_formation or time.time() > time_limit:
+        return [team_list, team_count]
+
+    # Set next position index value
+    next_index = pos_index + 1
+
+    # Sort players by specified attributes
+    players.sort(player_sort_attributes)
+
+    # Iterate players
+    for player in players.db:
+
+        # Check if player is already used
+        if player['baseId'] in base_ids:
+            continue
+
+        # Create possible position list
+        # Add natural position
+        pos_list = [player['position']]
+        # Add very similar positions
+        pos_list.extend(Team.Team.related_positions(player['position'], 'yellow'))
+        # If chemistry doesn't matter, add all other positions
+        if not chemistry_matters:
+            pos_list.extend(Team.Team.related_positions(player['position'], 'orange'))
+            pos_list.extend(Team.Team.related_positions(player['position'], 'red'))
+
+        # Match position list up to positions in the formation
+        formation_pos_list = []
+        for pos_symbol in pos_list:
+            # Find what custom positions in the formation match up with the position list...............................
+            blah = 0
+
+        # Iterate through positions for player
+        for pos_symbol in pos_list:
+            # Get position
+            custom_symbol = formation['positions']
+            position = formation['positions']
+
+            for sym, pos in formation['positions'].iteritems():
+                if pos['index'] == pos_index:
+                    custom_symbol = sym
+                    position = dict(pos)
+                    break
+
+        # Calculate current teammate potential chemistry
+        potential_chemistry = 0.0
+        if chemistry_matters:
+            for link in position['links']:
+
+                # Player is assigned. Get link chemistry.
+                if link in roster:
+                    potential_chemistry += Team.Team.teammate_chemistry(player, roster[link])
+
+                # Player not assigned yet. Best possible chemistry is 3
+                else:
+                    potential_chemistry += 3
+
+            potential_chemistry /= len(position['links'])
+
+        # Check if player meets chemistry requirements (must at least be 1 to reach 10 individual chemistry)
+        if (potential_chemistry >= 1) or not chemistry_matters:
+            # Create copy of base IDs list and roster for recursive function
+            base_ids_copy = copy.deepcopy(base_ids)
+            roster_copy = copy.deepcopy(roster)
+
+            # Place current player in position
+            roster_copy[custom_symbol] = player
+            base_ids_copy.append(player['baseId'])
+
+            # Call recursive function
+            results = recursive_create(players, formation, chemistry_matters, time_limit, players_per_position,
+                                       teams_per_formation, team_sort_attributes, player_sort_attributes,
+                                       num_teams, next_index, roster_copy, base_ids_copy, team_list, team_count)
+            team_list = results[0]
+            team_count = results[1]
+
+    custom_symbol = ''
+    position = {}
+    for sym, pos in formation['positions'].iteritems():
+        if pos['index'] == pos_index:
+            custom_symbol = sym
+            position = dict(pos)
+            break
+
+    # Check if position is already filled.
+    if custom_symbol in roster:
+        # Call recursive function
+        results = recursive_create(players, formation, chemistry_matters, time_limit, players_per_position,
+                                   teams_per_formation, team_sort_attributes, player_sort_attributes,
+                                   num_teams, next_index, roster, base_ids, team_list, team_count)
+        team_list = results[0]
+        team_count = results[1]
+
+        return [team_list, team_count]
+
+    dependent_pos = []
+    pos_list = []
+
+    # If chemistry matters
+    if chemistry_matters:
+        # Check previously assigned players for critical dependencies
+        dependent_pos.extend(find_dependent_players(position, custom_symbol, formation, roster))
+
+    # Since chemistry doesn't matter, add in 'orange' similar positions, but not 'red'. Need to keep it reasonable.
+    else:
+        pos_list += Team.Team.related_positions(position['symbol'], 'orange')
+
+    # Get all eligible positions (exact and related) for current position
+    pos_list += Team.Team.related_positions(position['symbol'], 'yellow')
+
+    # If no dependent players, simple search
+    if len(dependent_pos) < 1:
+
+        # Create position tuple list for the player search
+        position_tuple_list = [{'position': (position['symbol'], 'exact')}]
+        for x in pos_list:
+            position_tuple_list.append({'position': (x, 'exact')})
+
+        # Get all eligible players and create DB
+        eligible_players = PlayerDB(players.multi_search(position_tuple_list))
+
+    # Add required traits for dependent player(s) to search
+    else:
+
+        # Get a list of tuples of traits of players eligible based on dependencies
+        dependency_tuple_list = calculate_dependency_dict_list(dependent_pos, roster)
+
+        # Get all players that match dependency and create DB
+        dependency_match = PlayerDB(players.multi_search(dependency_tuple_list))
+
+        # Create position tuple list for the player position search
+        position_tuple_list = [{'position': (position['symbol'], 'exact')}]
+        for x in pos_list:
+            position_tuple_list.append({'position': (x, 'exact')})
+
+        # Get all eligible players from smaller pool matching dependency and create DB
+        eligible_players = PlayerDB(dependency_match.multi_search(position_tuple_list))
+
+        del position_tuple_list
+        del dependency_tuple_list
+        del dependency_match
 
     return [team_list, team_count]
 
