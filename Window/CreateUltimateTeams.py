@@ -30,8 +30,8 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
     if roster is not None:
         settings['roster'] = roster
 
-    if input_formation is not None:
-        settings['input_formation'] = input_formation
+    # Assign input formation, or lack thereof, to settings
+    settings['input_formation'] = input_formation
 
     # ========== Window ==========
     win_ultimate_teams = Window()
