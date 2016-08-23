@@ -215,6 +215,96 @@ def calculate_dependency_dict_list(dependent_positions, roster):
     return []
 
 
+def reduce_teams(team_sort_attributes, num_teams, team_list):
+    """
+    Narrow down the team list to the top teams to save memory.
+    """
+
+    def compare(current_team):
+        """
+        Based on the list of attributes, return a tuple of attributes for the current team.
+        Input: The current team.
+        Output: A tuple of attributes to compare with.
+        """
+
+        attribute_tuple = ()
+        for attr in team_sort_attributes:
+
+            if attr in current_team:
+                attribute_tuple += (current_team[attr],)
+            elif attr in ['style']:
+                attribute_tuple += (current_team['formation'][attr],)
+            elif attr in ['manager_league', 'manager_nation']:
+                attribute_tuple += (current_team['manager'][attr[8:]],)
+            elif attr in ['player']:
+                # Get list of player names
+                player_names = []
+                for position in current_team['formation']['positions'].itervalues():
+                    player = position['player']
+                    player_names.append(player['name'] + player['commonName'] +
+                                        player['firstName'] + player['lastName'])
+                attribute_tuple += (player_names,)
+            elif attr in ['total_skillMoves']:
+                # Calculate total
+                total = 0
+                for position in current_team['formation']['positions'].itervalues():
+                    player = position['player']
+                    total += player[attr[6:]]
+                attribute_tuple += (total,)
+            else:
+                print "Invalid Attribute: %s" % attr
+
+        return attribute_tuple
+
+    # Compare teams and narrow down to specified max number of teams
+    sorted_list = sorted(team_list, key=compare, reverse=True)
+    return sorted_list[:num_teams]
+
+
+def find_dependent_players(position, custom_symbol, formation, roster,):
+    """
+    Check previously assigned players for critical dependencies
+    """
+
+    dependent_pos = []
+
+    # Get list of previously assigned players
+    recheck_list = []
+    for link in position['links']:
+
+        # Check if position is already assigned and if it is add position to recheck list
+        if link in roster:
+            recheck_list.append(link)
+
+    # Recheck chemistry of previously assigned positions for critical dependencies
+    for recheck_position in recheck_list:
+        recheck_chemistry = 0.0
+
+        # Iterate through previously assigned player's links
+        for link in formation['positions'][recheck_position]['links']:
+
+            # Player currently being assigned. Assume 0 chemistry to see if dependent on player.
+            if link == custom_symbol:
+                recheck_chemistry += 0.0
+
+            # Player is assigned. Get link chemistry.
+            elif link in roster:
+                recheck_chemistry += Team.Team.teammate_chemistry(roster[recheck_position], roster[link])
+
+            # Player not assigned yet and isn't currently being assigned. Best possible chemistry is 3
+            else:
+                recheck_chemistry += 3.0
+
+        recheck_chemistry /= len(formation['positions'][recheck_position]['links'])
+
+        # Check if chemistry meets requirements
+        if recheck_chemistry < 1:
+            needed_chem = (1.0 - recheck_chemistry) * len(formation['positions'][recheck_position]['links'])
+            dependent_pos.append((recheck_position, needed_chem))
+
+    return dependent_pos
+
+
 def recursive_create(players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
                      team_sort_attributes, player_sort_attributes, num_teams,
                      pos_index=0, roster=None, base_ids=None, team_list=None, team_count=0):
@@ -248,67 +338,29 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
         team_list.append(temp_team.__dict__)
         team_count += 1
 
-        # Print out progress information
+        # Print out progress information -------------------------------------------------------------------------------
         if print_formation_name_and_team_count:
             print "%s: %d team(s)" % (formation['name'], team_count)
+        # TEMPORARY ----------------------------------------------------------------------------------------------------
 
-        # Print out team chemistry ---------------------------------------------------------------------------------
+        # Print out team chemistry -------------------------------------------------------------------------------------
         if print_all_team_chemistry:
             for team in team_list:
                 temp = Team.Team(team)
                 temp.print_summary()
                 temp.print_chemistry_stats()
                 print ''
-        # TEMPORARY ------------------------------------------------------------------------------------------------
+        # TEMPORARY ----------------------------------------------------------------------------------------------------
 
         # Narrow down team_list to save memory
         if (team_count % num_teams) == 0:
             print "Calculating... %d teams created" % team_count
+            team_list = reduce_teams(team_sort_attributes, num_teams, team_list)
 
-            def compare(current_team):
-                """
-                Based on the list of attributes, return a tuple of attributes for the current team.
-                Input: The current team.
-                Output: A tuple of attributes to compare with.
-                """
+        return [team_list, team_count]
 
-                attribute_tuple = ()
-                for attr in team_sort_attributes:
-
-                    if attr in current_team:
-                        attribute_tuple += (current_team[attr],)
-                    elif attr in ['style']:
-                        attribute_tuple += (current_team['formation'][attr],)
-                    elif attr in ['manager_league', 'manager_nation']:
-                        attribute_tuple += (current_team['manager'][attr[8:]],)
-                    elif attr in ['player']:
-                        # Get list of player names
-                        player_names = []
-                        for position in current_team['formation']['positions'].itervalues():
-                            player = position['player']
-                            player_names.append(player['name'] + player['commonName'] +
-                                                player['firstName'] + player['lastName'])
-                        attribute_tuple += (player_names,)
-                    elif attr in ['total_skillMoves']:
-                        # Calculate total
-                        total = 0
-                        for position in current_team['formation']['positions'].itervalues():
-                            player = position['player']
-                            total += player[attr[6:]]
-                        attribute_tuple += (total,)
-                    else:
-                        print "Invalid Attribute: %s" % attr
-
-                return attribute_tuple
-
-            # Compare teams and narrow down to specified max number of teams
-            sorted_list = sorted(team_list, key=compare, reverse=True)
-            return [sorted_list[:num_teams], team_count]
-
-        # Check to see if function should return
-        if team_count >= teams_per_formation or time.time() > time_limit:
-            return [team_list, team_count]
-
+    # Check to see if function should return
+    if team_count >= teams_per_formation or time.time() > time_limit:
         return [team_list, team_count]
 
     # Set next position index value
@@ -340,39 +392,7 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
     # If chemistry matters
     if chemistry_matters:
         # Check previously assigned players for critical dependencies
-        # Get list of previously assigned players
-        recheck_list = []
-        for link in position['links']:
-
-            # Check if position is already assigned and if it is add position to recheck list
-            if link in roster:
-                recheck_list.append(link)
-
-        # Recheck chemistry of previously assigned positions for critical dependencies
-        for recheck_position in recheck_list:
-            recheck_chemistry = 0.0
-
-            # Iterate through previously assigned player's links
-            for link in formation['positions'][recheck_position]['links']:
-
-                # Player currently being assigned. Assume 0 chemistry to see if dependent on player.
-                if link == custom_symbol:
-                    recheck_chemistry += 0.0
-
-                # Player is assigned. Get link chemistry.
-                elif link in roster:
-                    recheck_chemistry += Team.Team.teammate_chemistry(roster[recheck_position], roster[link])
-
-                # Player not assigned yet and isn't currently being assigned. Best possible chemistry is 3
-                else:
-                    recheck_chemistry += 3.0
-
-            recheck_chemistry /= len(formation['positions'][recheck_position]['links'])
-
-            # Check if chemistry meets requirements
-            if recheck_chemistry < 1:
-                needed_chem = (1.0 - recheck_chemistry) * len(formation['positions'][recheck_position]['links'])
-                dependent_pos.append((recheck_position, needed_chem))
+        dependent_pos.extend(find_dependent_players(position, custom_symbol, formation, roster))
 
     # Since chemistry doesn't matter, add in 'orange' similar positions, but not 'red'. Need to keep it reasonable.
     else:
@@ -482,10 +502,6 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
                                        num_teams, next_index, roster_copy, base_ids_copy, team_list, team_count)
             team_list = results[0]
             team_count = results[1]
-
-            # Check to see if function should return
-            if team_count >= teams_per_formation or time.time() > time_limit:
-                return [team_list, team_count]
 
     return [team_list, team_count]
 
