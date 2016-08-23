@@ -3,6 +3,7 @@ from GUI import Button, Label, RadioButton, RadioGroup, TextField, View, Window
 from AppConfig import *
 import AddAttribute
 import PickFile
+import StartMenu
 from Logic import FormationDB
 from Logic import Team
 from Logic import TeamDB
@@ -549,6 +550,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
 
     # ========== Button Declarations ==========
     start_btn = Button("Start")
+    menu_btn = Button("Main Menu")
     back_btn = Button("Back")
 
     # ========== Button Functions ==========
@@ -619,6 +621,11 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         team_list_name_tf.value = ''
         win_ultimate_teams.become_target()
 
+    def menu_btn_func():
+        save_settings()
+        StartMenu.open_start_menu(win_ultimate_teams.x, win_ultimate_teams.y, db_dict)
+        win_ultimate_teams.hide()
+
     def back_btn_func():
         save_settings()
         win_previous.show()
@@ -632,7 +639,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         save_settings()
 
     # ========== Buttons ==========
-    start_btn.x = (win_width - 2*button_width - button_spacing) / 2
+    start_btn.x = (win_width - 3*button_width - 2*button_spacing) / 2
     start_btn.y = win_ultimate_teams.height - 100
     start_btn.height = button_height
     start_btn.width = button_width
@@ -645,7 +652,18 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
     if input_formation is not None and input_formation['name'] == 'Generic':
         start_btn.enabled = 0
 
-    back_btn.x = start_btn.right + button_spacing
+    menu_btn.x = start_btn.right + button_spacing
+    menu_btn.y = start_btn.top
+    menu_btn.height = button_height
+    menu_btn.width = button_width
+    menu_btn.font = button_font
+    menu_btn.action = menu_btn_func
+    menu_btn.style = 'default'
+    menu_btn.color = button_color
+    menu_btn.just = 'right'
+    display_items.append(menu_btn)
+
+    back_btn.x = menu_btn.right + button_spacing
     back_btn.y = start_btn.top
     back_btn.height = button_height
     back_btn.width = button_width

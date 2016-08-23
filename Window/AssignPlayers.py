@@ -41,6 +41,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         f.close()
 
     labels_list = []
+    team_info_labels = []
 
     # ========== Field Ratio ==========
     y_to_x_ratio = 0.825
@@ -326,6 +327,13 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
             calculate_specialities_list()
             calculate_team_league_nation_list()
             calculate_chemistry_list()
+
+            # Remove team info
+            hide_team_info_labels()
+            # Update team info
+            calculate_team_info()
+            # Display team info
+            display_team_info_labels()
 
     # Player ratings, position, team, nation, and name
     rating_width = 30
@@ -1578,9 +1586,71 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     if input_formation['name'] == 'Generic':
         chemistry_btn.enabled = 0
 
+    def calculate_team_info():
+        # Delete old labels
+        del team_info_labels[:]
+
+        # ========== Formation Info Title Label ==========
+        info_title = Label(text="Team Info", font=title_font_2,
+                           width=title_width, height=title_height,
+                           x=headshot_trait_btn.right - button_width / 2 - title_width / 2,
+                           y=chemistry_btn.bottom + top_border,
+                           color=title_color, just='center')
+        team_info_labels.append(info_title)
+
+        # ========== Team Info Labels ==========
+        info_title_width = 88
+        info_label_text = "Formation:\nStyle:\nRating:\nAvg Rating:\nPrice:"
+        info_title_label = Label(text=info_label_text, font=title_font_7,
+                                 width=info_title_width, height=std_tf_height * 5,
+                                 x=headshot_trait_btn.left - 48, y=info_title.bottom - title_border,
+                                 color=title_color, just='right')
+        team_info_labels.append(info_title_label)
+
+        # ========== Team Info ==========
+        info_width = 130
+
+        price_value = 0
+        total_rating = 0.0
+        for player in roster.values():
+            price_value += player['price']
+            total_rating += player['rating']
+        if len(roster) > 0:
+            avg_rating = str(total_rating/len(roster))
+        else:
+            avg_rating = '0.0'
+        team_rating = str(total_rating/11)
+        price_value = str(price_value)
+
+        if len(price_value) > 6:
+            price_value = price_value[:-6] + ',' + price_value[-6:-3] + ',' + price_value[-3:]
+        elif len(price_value) > 3:
+            price_value = price_value[-6:-3] + ',' + price_value[-3:]
+
+        info_text = (input_formation['name'] + "\n" + input_formation['style'] + "\n" + team_rating[:7]
+                     + "\n" + avg_rating[:7] + "\n" + price_value)
+        info_label = Label(text=info_text, font=title_font_7,
+                           width=info_width, height=std_tf_height * 5,
+                           x=info_title_label.right + 10, y=info_title_label.top,
+                           color=title_color, just='left')
+        team_info_labels.append(info_label)
+
+    def display_team_info_labels():
+        for label in team_info_labels:
+            view.add(label)
+        win_assign_players.become_target()
+
+    def hide_team_info_labels():
+        for label in team_info_labels:
+            view.remove(label)
+        win_assign_players.become_target()
+
     # ========== Add buttons to window ==========
     for label in labels_list:
         view.add(label)
+
+    calculate_team_info()
+    display_team_info_labels()
 
     display_headshots()
 
