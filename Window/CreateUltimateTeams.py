@@ -28,8 +28,9 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
     if team_judge_list is not None:
         settings['team_sort_attributes'] = team_judge_list
 
-    if roster is not None:
-        settings['roster'] = roster
+    if roster is None:
+        roster = {}
+    settings['roster'] = roster
 
     # Assign input formation, or lack thereof, to settings
     settings['input_formation'] = input_formation
@@ -610,7 +611,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
 
         # Run team creation here
         team = Team.Team()
-        teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], formations, roster))
+        teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], formations))
 
         if len(teams.db) > 0:
             teams.save(team_list_name_tf.value)

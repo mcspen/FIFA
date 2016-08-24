@@ -1834,7 +1834,7 @@ class Team:
         self.__init__(team_dict)
         return True
 
-    def create_team_ultimate(self, players, formations, roster=None):
+    def create_team_ultimate(self, players, formations):
         """
         Creates the best team using my thorough method from the given players and formations.
         Input: PlayerDB of players, FormationDB of formations, the process to use, and the minimum number of teams.
@@ -1846,7 +1846,7 @@ class Team:
             return False
 
         # Create team dict using my thorough method
-        team_list = UltimateTeamFunctions.find_team_ultimate(players, formations, roster)
+        team_list = UltimateTeamFunctions.find_team_ultimate(players, formations)
 
         # Check if team was not created
         if len(team_list) == 0:
