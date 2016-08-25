@@ -272,7 +272,7 @@ def find_dependent_players(position, custom_symbol, formation, roster,):
     recheck_list = []
     for link in position['links']:
 
-        # Check if position is already assigned and if it is add position to recheck list
+        # Check if position is already assigned and if it is, add position to recheck list
         if link in roster:
             recheck_list.append(link)
 
@@ -303,6 +303,24 @@ def find_dependent_players(position, custom_symbol, formation, roster,):
             dependent_pos.append((recheck_position, needed_chem))
 
     return dependent_pos
+
+
+def check_current_player_chemistry(player, position, roster):
+    potential_chemistry = 0.0
+
+    for link in position['links']:
+
+        # Player is assigned. Get link chemistry.
+        if link in roster:
+            potential_chemistry += Team.Team.teammate_chemistry(player, roster[link])
+
+        # Player not assigned yet. Best possible chemistry is 3
+        else:
+            potential_chemistry += 3
+
+    potential_chemistry /= len(position['links'])
+
+    return potential_chemistry
 
 
 def recursive_create(players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
@@ -399,7 +417,7 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
     else:
         pos_list += Team.Team.related_positions(position['symbol'], 'orange')
 
-    # Get all eligible positions (exact and related) for current position
+    # Get all eligible positions (related, exact is added individually later) for current position
     pos_list += Team.Team.related_positions(position['symbol'], 'yellow')
 
     # If no dependent players, simple search
@@ -474,17 +492,7 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
         # Calculate current teammate potential chemistry
         potential_chemistry = 0.0
         if chemistry_matters:
-            for link in position['links']:
-
-                # Player is assigned. Get link chemistry.
-                if link in roster:
-                    potential_chemistry += Team.Team.teammate_chemistry(player, roster[link])
-
-                # Player not assigned yet. Best possible chemistry is 3
-                else:
-                    potential_chemistry += 3
-
-            potential_chemistry /= len(position['links'])
+            potential_chemistry = check_current_player_chemistry(player, position, roster)
 
         # Check if player meets chemistry requirements (must at least be 1 to reach 10 individual chemistry)
         if (potential_chemistry >= 1) or not chemistry_matters:
@@ -521,6 +529,32 @@ def find_related_custom_positions(position_list, formation):
     return custom_positions
 
 
+def check_linked_players_chemistry(linked_positions, formation, roster):
+    """
+    Check chemistry of affected previously assigned players.
+    """
+
+    # Get list of previously assigned players
+    recheck_list = []
+    for link in linked_positions:
+
+        # Check if position is already assigned and if it is, add position to recheck list.
+        if link in roster:
+            recheck_list.append(link)
+
+    # Recheck chemistry of previously assigned positions for critical dependencies.
+    for recheck_position in recheck_list:
+        potential_chemistry = check_current_player_chemistry(roster[recheck_position],
+                                                             formation['positions'][recheck_position],
+                                                             roster)
+
+        # Check if chemistry meets requirements
+        if potential_chemistry < 1:
+            return False
+
+    return True
+
+
 def recursive_create_2(players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
                        team_sort_attributes, player_sort_attributes, num_teams,
                        pos_index=0, roster=None, base_ids=None, team_list=None, team_count=0):
@@ -531,8 +565,8 @@ def recursive_create_2(players, formation, chemistry_matters, time_limit, player
     Output: The list of teams and the team count.
     """
 
-    print_formation_name_and_team_count = True
-    print_all_team_chemistry = True
+    print_formation_name_and_team_count = False
+    print_all_team_chemistry = False
 
     # Set defaults
     if roster is None:
@@ -543,8 +577,8 @@ def recursive_create_2(players, formation, chemistry_matters, time_limit, player
         team_list = []
 
     # Check if recursion is finished and team is full
-    if pos_index > 10:
-
+    if len(roster) > 10:
+        print "MADE A TEAM!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         # Set the team using the roster and add to list
         temp_team = Team.Team()
         temp_team.set_team(formation, roster)
@@ -575,6 +609,24 @@ def recursive_create_2(players, formation, chemistry_matters, time_limit, player
     # Check to see if function should return
     if team_count >= teams_per_formation or time.time() > time_limit:
         return [team_list, team_count]
+
+
+
+
+    # Special path for last person
+    if len(roster) > 9:
+        #print "Reached 10 players!"
+        # Call recursive function 1
+        results = recursive_create(players, formation, chemistry_matters, time_limit, players_per_position,
+                                   teams_per_formation, team_sort_attributes, player_sort_attributes,
+                                   num_teams, pos_index, roster, base_ids, team_list, team_count)
+        team_list = results[0]
+        team_count = results[1]
+        return [team_list, team_count]
+
+
+
+
 
     # Sort players by specified attributes
     players.sort(player_sort_attributes)
@@ -609,40 +661,40 @@ def recursive_create_2(players, formation, chemistry_matters, time_limit, player
             # Get position's info
             position = formation['positions'][custom_symbol]
 
-            # Calculate current teammate potential chemistry in selected position
-            potential_chemistry = 0.0
+            # Check chemistry values of new player and linked teammates.
             if chemistry_matters:
-                for link in position['links']:
+                # Calculate current teammate potential chemistry in selected position.
+                potential_chemistry = check_current_player_chemistry(player, position, roster)
+                # If potential chemistry is not high enough, skip to next position or player.
+                if potential_chemistry < 1:
+                    continue
 
-                    # Player is assigned. Get link chemistry.
-                    if link in roster:
-                        potential_chemistry += Team.Team.teammate_chemistry(player, roster[link])
-
-                    # Player not assigned yet. Best possible chemistry is 3
-                    else:
-                        potential_chemistry += 3
-
-                potential_chemistry /= len(position['links'])
-
-            # Check if player in position meets chemistry requirements (must at least be 1 to reach 10 individual chem)
-            if (potential_chemistry >= 1) or not chemistry_matters:
-                # Set next position index value
-                next_index = pos_index + 1
-
-                # Create copy of base IDs list and roster for recursive function
-                base_ids_copy = copy.deepcopy(base_ids)
+                # Check if the chemistry of linked of teammates is high enough.
                 roster_copy = copy.deepcopy(roster)
-
-                # Place current player in position
                 roster_copy[custom_symbol] = player
-                base_ids_copy.append(player['baseId'])
+                # If potential chemistry of linked players is not high enough, skip to next position or player.
+                if not check_linked_players_chemistry(position['links'], formation, roster_copy):
+                    continue
 
-                # Call recursive function
-                results = recursive_create_2(players, formation, chemistry_matters, time_limit, players_per_position,
-                                             teams_per_formation, team_sort_attributes, player_sort_attributes,
-                                             num_teams, next_index, roster_copy, base_ids_copy, team_list, team_count)
-                team_list = results[0]
-                team_count = results[1]
+            # All checks passed. Add player to roster and move on to next iteration.
+            # Create copy of base IDs list and roster for recursive function
+            base_ids_copy = copy.deepcopy(base_ids)
+            roster_copy = copy.deepcopy(roster)
+
+            # Place current player in position
+            roster_copy[custom_symbol] = player
+            base_ids_copy.append(player['baseId'])
+
+            # Call recursive function
+            results = recursive_create_2(players, formation, chemistry_matters, time_limit, players_per_position,
+                                         teams_per_formation, team_sort_attributes, player_sort_attributes,
+                                         num_teams, pos_index, roster_copy, base_ids_copy, team_list, team_count)
+            team_list = results[0]
+            team_count = results[1]
+
+        # Check to see if function should return
+        if team_count >= teams_per_formation or time.time() > time_limit:
+            break
 
     return [team_list, team_count]
 
