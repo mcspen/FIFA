@@ -14,7 +14,7 @@ def recursive_create_tup(tup):
     """
     Wrapper function to all Team.recursive_create_tup to be called by pool
     """
-    return recursive_create(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8],
+    return recursive_create_2(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8],
                             roster=tup[9], base_ids=tup[10])
 
 
