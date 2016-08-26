@@ -132,7 +132,7 @@ def calculate_dependency_dict_list(dependent_positions, roster):
 
                         # Change league to the club's league if club is first position trait and nation isn't
                         if (club_index == 0) and (nation_index != 0):
-                            league = roster[club_position[0]]['club']['name']
+                            league = roster[club_position[0]]['league']['name']
 
                         # Check if club is in the league
                         else:
@@ -578,7 +578,6 @@ def recursive_create_2(players, formation, chemistry_matters, time_limit, player
 
     # Check if recursion is finished and team is full
     if len(roster) > 10:
-        print "MADE A TEAM!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         # Set the team using the roster and add to list
         temp_team = Team.Team()
         temp_team.set_team(formation, roster)
@@ -614,8 +613,7 @@ def recursive_create_2(players, formation, chemistry_matters, time_limit, player
 
 
     # Special path for last person
-    if len(roster) > 9:
-        #print "Reached 10 players!"
+    if len(roster) > 7:
         # Call recursive function 1
         results = recursive_create(players, formation, chemistry_matters, time_limit, players_per_position,
                                    teams_per_formation, team_sort_attributes, player_sort_attributes,
