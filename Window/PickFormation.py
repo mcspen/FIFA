@@ -46,7 +46,7 @@ def open_pick_formation_window(window_x, window_y, db_dict, win_previous):
     def formation_list_btn_func():
         generic_formation = {"style": "Generic",
                              "name": "Generic",
-                             "description": "Generic formation for assigning players to be used with list of formations.",
+                             "description": "Generic formation for picking players to be used with list of formations.",
                              "num_links": 17,
                              "num_defenders": 4,
                              "num_midfielders": 4,
@@ -76,6 +76,9 @@ def open_pick_formation_window(window_x, window_y, db_dict, win_previous):
     # ========== Formation Button Declarations ==========
     formation_button_width = 200
     msg_y = title.bottom
+
+    # Sort DB so it is consistent
+    db_dict['formation_db'][1].sort(['name'])
 
     for formation in db_dict['formation_db'][1].db:
         formation_btn = Button(title=formation['name'],

@@ -15,7 +15,7 @@ def recursive_create_tup(tup):
     Wrapper function to all Team.recursive_create_tup to be called by pool
     """
     return recursive_create_2(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8],
-                            roster=tup[9], base_ids=tup[10])
+                              roster=tup[9], base_ids=tup[10], start_roster_num=tup[11], must_have_players=tup[12])
 
 
 def calculate_dependency_dict_list(dependent_positions, roster):
@@ -557,7 +557,8 @@ def check_linked_players_chemistry(linked_positions, formation, roster):
 
 def recursive_create_2(players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
                        team_sort_attributes, player_sort_attributes, num_teams,
-                       pos_index=0, roster=None, base_ids=None, team_list=None, team_count=0):
+                       pos_index=0, roster=None, base_ids=None, team_list=None, team_count=0,
+                       start_roster_num=0, must_have_players=None):
     """
     Recursive function to build all possible team combinations with good chemistry.
     Builds team based on best players.
@@ -609,11 +610,9 @@ def recursive_create_2(players, formation, chemistry_matters, time_limit, player
     if team_count >= teams_per_formation or time.time() > time_limit:
         return [team_list, team_count]
 
-
-
-
-    # Special path for last person
-    if len(roster) > 7:
+    # ==================================================================================================================
+    # Temp path which switches to recursive function 1 when specified players have been assigned.
+    if len(roster) >= start_roster_num:
         # Call recursive function 1
         results = recursive_create(players, formation, chemistry_matters, time_limit, players_per_position,
                                    teams_per_formation, team_sort_attributes, player_sort_attributes,
@@ -621,16 +620,15 @@ def recursive_create_2(players, formation, chemistry_matters, time_limit, player
         team_list = results[0]
         team_count = results[1]
         return [team_list, team_count]
-
-
-
-
+    # ==================================================================================================================
 
     # Sort players by specified attributes
-    players.sort(player_sort_attributes)
+    # players.sort(player_sort_attributes)
+    must_have_players.sort(player_sort_attributes)
 
     # Iterate players
-    for player in players.db:
+    # for player in players.db:
+    for player in must_have_players.db:
 
         # Check if player is already used
         if player['baseId'] in base_ids:
@@ -686,7 +684,8 @@ def recursive_create_2(players, formation, chemistry_matters, time_limit, player
             # Call recursive function
             results = recursive_create_2(players, formation, chemistry_matters, time_limit, players_per_position,
                                          teams_per_formation, team_sort_attributes, player_sort_attributes,
-                                         num_teams, pos_index, roster_copy, base_ids_copy, team_list, team_count)
+                                         num_teams, pos_index, roster_copy, base_ids_copy, team_list, team_count,
+                                         start_roster_num, must_have_players)
             team_list = results[0]
             team_count = results[1]
 
@@ -782,6 +781,19 @@ def find_teams_ultimate(players, formations):
         for player in roster.itervalues():
             base_ids.append(player['baseId'])
 
+    start_roster_num = 0
+    must_have_players = None
+    #  Check if players without positions are assigned
+    if any(key in roster for key in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']):
+        # Set the number of players starting on the roster
+        start_roster_num = len(roster)
+        # Assign roster players to special list to be assigned
+        must_have_players = PlayerDB()
+        must_have_players.add(list(roster.values()))
+        # Delete roster
+        roster.clear()
+        base_ids = []
+
     if process in ['multi', 'both']:
         # Multiprocess Method --------------------------------------------------------------------------------------
         # Create objects for recursive function
@@ -793,7 +805,8 @@ def find_teams_ultimate(players, formations):
             if enough_players(players, formation, chemistry_matters):
                 input_tuples.append((
                     players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
-                    team_sort_attributes, player_sort_attributes, num_teams, roster, base_ids))
+                    team_sort_attributes, player_sort_attributes, num_teams, roster, base_ids,
+                    start_roster_num, must_have_players))
 
         # Temporary Timing Information------------------------------------------------------------------------------
         print "Start Multi Process!"
@@ -834,7 +847,8 @@ def find_teams_ultimate(players, formations):
                 # Call recursive team building function
                 results_sp = recursive_create_2(
                         players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
-                        team_sort_attributes, player_sort_attributes, num_teams, roster=roster, base_ids=base_ids)
+                        team_sort_attributes, player_sort_attributes, num_teams, roster=roster, base_ids=base_ids,
+                        start_roster_num=start_roster_num, must_have_players=must_have_players)
 
                 team_list_sp += results_sp[0]
                 count_sp += results_sp[1]

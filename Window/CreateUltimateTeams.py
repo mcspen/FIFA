@@ -599,7 +599,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         save_settings()
 
         # Assign formation(s) to use
-        if input_formation is None:
+        if input_formation is None or input_formation['name'] == "Generic":
             formations = db_dict['formation_list'][1]
         else:
             formations = FormationDB.FormationDB(input_formation)
@@ -650,8 +650,6 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
     start_btn.color = button_color
     start_btn.just = 'right'
     display_items.append(start_btn)
-    if input_formation is not None and input_formation['name'] == 'Generic':
-        start_btn.enabled = 0
 
     menu_btn.x = start_btn.right + button_spacing
     menu_btn.y = start_btn.top
