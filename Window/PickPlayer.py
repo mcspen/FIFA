@@ -2,6 +2,7 @@ from GUI import Button, Label, RadioButton, RadioGroup, View, Window
 import math
 from AppConfig import *
 import AddAttribute
+import PickFile
 import PlayerBio
 from Logic import PlayerDB
 from Logic import Team
@@ -270,6 +271,33 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
     reset_btn.just = 'right'
     general_display.append(reset_btn)
 
+    # ========== Pick DB/List Button Functions ==========
+    def pick_file():
+        # Remove old messages off page
+        for message in settings['messages']['results']:
+            view.remove(message)
+        del settings['messages']['results'][:]
+
+        settings['file_changes'] = False
+        settings['prev_window'] = 'pick_player'
+        settings['input_formation'] = input_formation
+        settings['win_previous'] = win_previous
+        settings['roster'] = roster
+        settings['pos_symbol'] = pos_symbol
+        settings['pick_formations_page'] = pick_formations_page
+        settings['attr_dict'] = attr_dict
+        settings['attr_list'] = attr_list
+        PickFile.open_pick_file_window(win_pick_player.x, win_pick_player.y, db_dict, settings)
+        win_pick_player.hide()
+
+    def pick_p_db_func():
+        settings['file_type'] = 'current_player_db'
+        pick_file()
+
+    def pick_p_list_func():
+        settings['file_type'] = 'current_player_list'
+        pick_file()
+
     # ========== DB Radio Buttons ==========
     def get_attribute_p_db_rg():
         settings['p_db_rg'] = p_db_radio_group.value
@@ -319,35 +347,63 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
     p_db_radio_group = RadioGroup(action=get_attribute_p_db_rg)
     pos_search_radio_group = RadioGroup(action=get_attribute_pos_search_rg)
 
-    # Players DB RG
-    db_radio_btn_width = 125
+    # File Label
+    db_msg_width = 35
+    db_radio_btn_width = 150
+    db_file_btn_width = 40
     db_radio_btn_space = 5
-    db_msg_width = 70
+    db_file_btn_space = 2
 
-    p_db_rg_msg = Label(text="Database:", font=std_tf_font, width=db_msg_width,
+    file_label = Label(text="File", font=std_tf_font, width=db_msg_width,
                         height=std_tf_height, color=title_color)
-    p_db_rg_msg.x = (win_pick_player.width - 2*db_radio_btn_width - db_radio_btn_space - db_msg_width) / 2
-    p_db_rg_msg.y = reset_btn.bottom + db_radio_btn_space
+    file_label.x = (win_pick_player.width - 2*db_radio_btn_width - 2*db_file_btn_width - db_radio_btn_space
+                    - 2*db_file_btn_space - db_msg_width) / 2
+    file_label.y = reset_btn.bottom + db_radio_btn_space
 
+    # Players DB RG
     player_db_radio_btn = RadioButton(db_dict['player_db'][0])
     player_db_radio_btn.width = db_radio_btn_width
-    player_db_radio_btn.x = p_db_rg_msg.right
-    player_db_radio_btn.y = p_db_rg_msg.top
+    player_db_radio_btn.x = file_label.right
+    player_db_radio_btn.y = file_label.top
     player_db_radio_btn.group = p_db_radio_group
     player_db_radio_btn.value = 'player_db'
 
+    player_db_file_btn = Button("Pick")
+    player_db_file_btn.x = player_db_radio_btn.right + db_file_btn_space
+    player_db_file_btn.y = file_label.top
+    player_db_file_btn.height = std_tf_height
+    player_db_file_btn.width = db_file_btn_width
+    player_db_file_btn.font = small_button_font
+    player_db_file_btn.action = pick_p_db_func
+    player_db_file_btn.style = 'default'
+    player_db_file_btn.color = small_button_color
+    player_db_file_btn.just = 'right'
+
     player_list_radio_btn = RadioButton(db_dict['player_list'][0])
     player_list_radio_btn.width = db_radio_btn_width
-    player_list_radio_btn.x = player_db_radio_btn.right + db_radio_btn_space
-    player_list_radio_btn.y = player_db_radio_btn.top
+    player_list_radio_btn.x = player_db_file_btn.right + db_radio_btn_space
+    player_list_radio_btn.y = file_label.top
     player_list_radio_btn.group = p_db_radio_group
     player_list_radio_btn.value = 'player_list'
 
+    player_list_file_btn = Button("Pick")
+    player_list_file_btn.x = player_list_radio_btn.right + db_file_btn_space
+    player_list_file_btn.y = file_label.top
+    player_list_file_btn.height = std_tf_height
+    player_list_file_btn.width = db_file_btn_width
+    player_list_file_btn.font = small_button_font
+    player_list_file_btn.action = pick_p_list_func
+    player_list_file_btn.style = 'default'
+    player_list_file_btn.color = small_button_color
+    player_list_file_btn.just = 'right'
+
     p_db_radio_group.value = settings['p_db_rg']
 
-    view.add(p_db_rg_msg)
+    view.add(file_label)
     view.add(player_db_radio_btn)
+    view.add(player_db_file_btn)
     view.add(player_list_radio_btn)
+    view.add(player_list_file_btn)
 
     # Position Search RG
     pos_search_radio_btn_width = 60
@@ -356,7 +412,7 @@ def open_pick_player_window(window_x, window_y, db_dict, input_formation, win_pr
     pos_search_rg_msg = Label(text="Positions to Search:", font=std_tf_font, width=pos_search_msg_width,
                         height=std_tf_height, color=title_color)
     pos_search_rg_msg.x = (win_pick_player.width-4*pos_search_radio_btn_width-db_radio_btn_space-pos_search_msg_width)/2
-    pos_search_rg_msg.y = p_db_rg_msg.bottom + db_radio_btn_space
+    pos_search_rg_msg.y = file_label.bottom + db_radio_btn_space
 
     pos_search_green_radio_btn = RadioButton("Exact")
     pos_search_green_radio_btn.width = pos_search_radio_btn_width

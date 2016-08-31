@@ -5,6 +5,7 @@ import EnterText
 import EditMenu
 import ConfirmPrompt
 import CreateUltimateTeams
+import PickPlayer
 import SearchMenu
 import StatusWindow
 from Logic.PlayerDB import PlayerDB
@@ -156,6 +157,12 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
             elif settings['prev_window'] == 'search':
                 SearchMenu.open_search_menu(win_pick_file.x, win_pick_file.y, db_dict,
                                             settings['attr_dict'], settings['attr_list'], settings)
+            elif settings['prev_window'] == 'pick_player':
+                PickPlayer.open_pick_player_window(win_pick_file.x, win_pick_file.y, db_dict,
+                                                   settings['input_formation'], settings['win_previous'],
+                                                   settings['roster'], settings['pos_symbol'],
+                                                   settings['pick_formations_page'], settings['attr_dict'],
+                                                   settings['attr_list'], settings)
             else:
                 FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
             win_pick_file.hide()
@@ -336,6 +343,12 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
         elif settings['prev_window'] == 'search':
             SearchMenu.open_search_menu(win_pick_file.x, win_pick_file.y, db_dict,
                                         settings['attr_dict'], settings['attr_list'], settings)
+        elif settings['prev_window'] == 'pick_player':
+            PickPlayer.open_pick_player_window(win_pick_file.x, win_pick_file.y, db_dict,
+                                               settings['input_formation'], settings['win_previous'],
+                                               settings['roster'], settings['pos_symbol'],
+                                               settings['pick_formations_page'], settings['attr_dict'],
+                                               settings['attr_list'], settings)
         else:
             FilesMenu.open_files_menu(win_pick_file.x, win_pick_file.y, db_dict, settings)
         win_pick_file.hide()
