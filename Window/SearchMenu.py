@@ -1,12 +1,12 @@
 from GUI import Button, Label, RadioButton, RadioGroup, View, Window
 import copy
-import json
 import math
 from AppConfig import *
-import StartMenu
 import AddAttribute
-import PlayerBio
 import FormationBio
+import PickFile
+import PlayerBio
+import StartMenu
 import TeamBio
 from Logic import PlayerDB
 from Logic import FormationDB
@@ -189,14 +189,16 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         # Reset screen
         reset_btn_func()
 
-        view.remove(f_db_rg_msg)
         view.remove(formation_db_radio_btn)
+        view.remove(f_db_file_btn)
         view.remove(formation_list_radio_btn)
-        view.remove(t_db_rg_msg)
+        view.remove(f_list_file_btn)
+        view.remove(team_list_button)
 
-        view.add(p_db_rg_msg)
         view.add(player_db_radio_btn)
+        view.add(p_db_file_btn)
         view.add(player_list_radio_btn)
+        view.add(p_list_file_btn)
 
         win_search.become_target()
 
@@ -209,14 +211,16 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         # Reset screen
         reset_btn_func()
 
-        view.remove(p_db_rg_msg)
         view.remove(player_db_radio_btn)
+        view.remove(p_db_file_btn)
         view.remove(player_list_radio_btn)
-        view.remove(t_db_rg_msg)
+        view.remove(p_list_file_btn)
+        view.remove(team_list_button)
 
-        view.add(f_db_rg_msg)
         view.add(formation_db_radio_btn)
+        view.add(f_db_file_btn)
         view.add(formation_list_radio_btn)
+        view.add(f_list_file_btn)
 
         win_search.become_target()
 
@@ -229,14 +233,16 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         # Reset screen
         reset_btn_func()
 
-        view.remove(p_db_rg_msg)
         view.remove(player_db_radio_btn)
+        view.remove(p_db_file_btn)
         view.remove(player_list_radio_btn)
-        view.remove(f_db_rg_msg)
+        view.remove(p_list_file_btn)
         view.remove(formation_db_radio_btn)
+        view.remove(f_db_file_btn)
         view.remove(formation_list_radio_btn)
+        view.remove(f_list_file_btn)
 
-        view.add(t_db_rg_msg)
+        view.add(team_list_button)
 
         win_search.become_target()
 
@@ -314,6 +320,40 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
         TeamBio.open_team_bio_window(win_search.x, win_search.y, team, win_search,
                                           db_dict['team_list'][0], db_dict['team_list'][1])
         win_search.become_target()
+
+    # ========== Pick DB/List Button Functions ==========
+    def pick_file():
+        # Remove old messages off page
+        for message in settings['messages']['results']:
+            view.remove(message)
+        del settings['messages']['results'][:]
+
+        settings['file_changes'] = False
+        settings['prev_window'] = 'search'
+        settings['attr_dict'] = attr_dict
+        settings['attr_list'] = attr_list
+        PickFile.open_pick_file_window(win_search.x, win_search.y, db_dict, settings)
+        win_search.hide()
+
+    def pick_p_db_func():
+        settings['file_type'] = 'current_player_db'
+        pick_file()
+
+    def pick_p_list_func():
+        settings['file_type'] = 'current_player_list'
+        pick_file()
+
+    def pick_f_db_func():
+        settings['file_type'] = 'current_formation_db'
+        pick_file()
+
+    def pick_f_list_func():
+        settings['file_type'] = 'current_formation_list'
+        pick_file()
+
+    def pick_t_list_func():
+        settings['file_type'] = 'current_team_list'
+        pick_file()
 
     # ========== Action Buttons ==========
     start_btn.x = (win_width - 2*small_button_width - small_button_spacing) / 2
@@ -424,71 +464,118 @@ def open_search_menu(window_x, window_y, db_dict, attr_dict=None, attr_list=None
     p_db_radio_group = RadioGroup(action=get_attribute_p_db_rg)
     f_db_radio_group = RadioGroup(action=get_attribute_f_db_rg)
 
-    db_radio_btn_width = 125
+    db_msg_width = 35
+    db_radio_btn_width = 150
+    db_file_btn_width = 40
     db_radio_btn_space = 5
-    db_msg_width = 70
+    db_file_btn_space = 2
+
+    file_label = Label(text="File:", font=std_tf_font, width=db_msg_width,
+                        height=std_tf_height, color=title_color)
+    file_label.x = (win_search.width - 2*db_radio_btn_width - 2*db_file_btn_width - db_radio_btn_space
+                    - 2*db_file_btn_space - db_msg_width) / 2
+    file_label.y = reset_btn.bottom + db_radio_btn_space
+    view.add(file_label)
 
     # Players DB RG
-    p_db_rg_msg = Label(text="Database:", font=std_tf_font, width=db_msg_width,
-                        height=std_tf_height, color=title_color)
-    p_db_rg_msg.x = (win_search.width - 2*db_radio_btn_width - db_radio_btn_space - db_msg_width) / 2
-    p_db_rg_msg.y = reset_btn.bottom + db_radio_btn_space
-
     player_db_radio_btn = RadioButton(db_dict['player_db'][0])
     player_db_radio_btn.width = db_radio_btn_width
-    player_db_radio_btn.x = p_db_rg_msg.right
-    player_db_radio_btn.y = p_db_rg_msg.top
+    player_db_radio_btn.x = file_label.right
+    player_db_radio_btn.y = file_label.top
     player_db_radio_btn.group = p_db_radio_group
     player_db_radio_btn.value = 'player_db'
 
+    p_db_file_btn = Button("Pick")
+    p_db_file_btn.x = player_db_radio_btn.right + db_file_btn_space
+    p_db_file_btn.y = file_label.top
+    p_db_file_btn.height = std_tf_height
+    p_db_file_btn.width = db_file_btn_width
+    p_db_file_btn.font = small_button_font
+    p_db_file_btn.action = pick_p_db_func
+    p_db_file_btn.style = 'default'
+    p_db_file_btn.color = small_button_color
+    p_db_file_btn.just = 'right'
+
     player_list_radio_btn = RadioButton(db_dict['player_list'][0])
     player_list_radio_btn.width = db_radio_btn_width
-    player_list_radio_btn.x = player_db_radio_btn.right + db_radio_btn_space
-    player_list_radio_btn.y = player_db_radio_btn.top
+    player_list_radio_btn.x = p_db_file_btn.right + db_radio_btn_space
+    player_list_radio_btn.y = file_label.top
     player_list_radio_btn.group = p_db_radio_group
     player_list_radio_btn.value = 'player_list'
+
+    p_list_file_btn = Button("Pick")
+    p_list_file_btn.x = player_list_radio_btn.right + db_file_btn_space
+    p_list_file_btn.y = file_label.top
+    p_list_file_btn.height = std_tf_height
+    p_list_file_btn.width = db_file_btn_width
+    p_list_file_btn.font = small_button_font
+    p_list_file_btn.action = pick_p_list_func
+    p_list_file_btn.style = 'default'
+    p_list_file_btn.color = small_button_color
+    p_list_file_btn.just = 'right'
 
     p_db_radio_group.value = settings['p_db_rg']
 
     # Formations DB RG
-    f_db_rg_msg = Label(text="Database:", font=std_tf_font, width=db_msg_width,
-                        height=std_tf_height, color=title_color)
-    f_db_rg_msg.x = (win_search.width - 2*db_radio_btn_width - db_radio_btn_space - db_msg_width) / 2
-    f_db_rg_msg.y = reset_btn.bottom + db_radio_btn_space
-
     formation_db_radio_btn = RadioButton(db_dict['formation_db'][0])
     formation_db_radio_btn.width = db_radio_btn_width
-    formation_db_radio_btn.x = f_db_rg_msg.right
-    formation_db_radio_btn.y = f_db_rg_msg.top
+    formation_db_radio_btn.x = file_label.right
+    formation_db_radio_btn.y = file_label.top
     formation_db_radio_btn.group = f_db_radio_group
     formation_db_radio_btn.value = 'formation_db'
 
+    f_db_file_btn = Button("Pick")
+    f_db_file_btn.x = formation_db_radio_btn.right + db_file_btn_space
+    f_db_file_btn.y = file_label.top
+    f_db_file_btn.height = std_tf_height
+    f_db_file_btn.width = db_file_btn_width
+    f_db_file_btn.font = small_button_font
+    f_db_file_btn.action = pick_f_db_func
+    f_db_file_btn.style = 'default'
+    f_db_file_btn.color = small_button_color
+    f_db_file_btn.just = 'right'
+
     formation_list_radio_btn = RadioButton(db_dict['formation_list'][0])
     formation_list_radio_btn.width = db_radio_btn_width
-    formation_list_radio_btn.x = formation_db_radio_btn.right + db_radio_btn_space
-    formation_list_radio_btn.y = formation_db_radio_btn.top
+    formation_list_radio_btn.x = f_db_file_btn.right + db_radio_btn_space
+    formation_list_radio_btn.y = file_label.top
     formation_list_radio_btn.group = f_db_radio_group
     formation_list_radio_btn.value = 'formation_list'
 
+    f_list_file_btn = Button("Pick")
+    f_list_file_btn.x = formation_list_radio_btn.right + db_file_btn_space
+    f_list_file_btn.y = file_label.top
+    f_list_file_btn.height = std_tf_height
+    f_list_file_btn.width = db_file_btn_width
+    f_list_file_btn.font = small_button_font
+    f_list_file_btn.action = pick_f_list_func
+    f_list_file_btn.style = 'default'
+    f_list_file_btn.color = small_button_color
+    f_list_file_btn.just = 'right'
+
     f_db_radio_group.value = settings['f_db_rg']
 
-    # Teams DB RG
-    teams_db_msg_width = 250
-    t_db_rg_msg = Label(text=("Team List: " + db_dict['team_list'][0]), font=std_tf_font, width=teams_db_msg_width,
-                        height=std_tf_height, color=title_color)
-    t_db_rg_msg.x = (win_search.width - teams_db_msg_width) / 2
-    t_db_rg_msg.y = reset_btn.bottom + db_radio_btn_space
+    # Teams DB Button
+    teams_db_msg_width = 2*db_radio_btn_width + 2*db_file_btn_width + db_radio_btn_space + 2*db_file_btn_space
+
+    team_list_button = Button(title=db_dict['team_list'][0], font=std_tf_font, just='left',
+                              width=teams_db_msg_width, height=std_tf_height, color=title_color)
+    team_list_button.x = file_label.right
+    team_list_button.y = reset_btn.bottom + db_radio_btn_space
+    team_list_button.action = pick_t_list_func
 
     if settings['mode'] == 'players':
-        view.add(p_db_rg_msg)
         view.add(player_db_radio_btn)
+        view.add(p_db_file_btn)
         view.add(player_list_radio_btn)
+        view.add(p_list_file_btn)
     elif settings['mode'] == 'formations':
-        view.add(f_db_rg_msg)
         view.add(formation_db_radio_btn)
+        view.add(f_db_file_btn)
         view.add(formation_list_radio_btn)
+        view.add(f_list_file_btn)
     elif settings['mode'] == 'teams':
-        view.add(t_db_rg_msg)
+        view.add(team_list_button)
     else:
         print "Error: Invalid mode."
 
