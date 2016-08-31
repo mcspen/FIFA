@@ -1,6 +1,9 @@
+Create Edit function for manage menu for teams.
+
 Add the different team creation types to the Team Window
-Create an option for creating by picking players and then finding the rest.
+
 Create option for specifying players you have and a budget and finding the best team with that.
+
 Add budget to team creation. Might need to change legends default price on PS4. Change to 0 or really high price?
 
 Set the order that players are assigned by on the number of available players for each position or by the ratings of the players.
@@ -24,12 +27,13 @@ Move team creation function to TeamDB?
 
 Add more search/sort options for teams/formations. Ex: total speed of team
 
-Change Edit function for manage menu to have separate windows for players (already implemented), formations, and teams.
-
 Tweak strength eval function. (evaluates each player and the team on stats and strengths)
 
 Add more options to TeamDB search
+
 Add team names?
+
+Add style and description for all formations.
 
 Add option for manager and/or option for team not requiring manager
 
@@ -61,6 +65,6 @@ New player recommendations to improve team
 
 Change how create club/league/nation functions return/assign the teams.
 
-Change nation/league/club name comparisons to id comparisons? (avoid mix ups by clubs with same name)
+Change nation/league/club name comparisons to ID comparisons? (avoid mix ups by clubs with same name)
 
 Can't find:
