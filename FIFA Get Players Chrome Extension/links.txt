@@ -1,0 +1,39 @@
+http://stackoverflow.com/questions/14245334/chrome-extension-sendmessage-from-background-to-content-script-doesnt-work
+https://developer.chrome.com/extensions/samples#search:pageaction
+https://developer.chrome.com/extensions/overview
+
+http://code.tutsplus.com/tutorials/developing-google-chrome-extensions--net-33076
+https://blog.hartleybrody.com/chrome-extension/
+http://lifehacker.com/5857721/how-to-build-a-chrome-extension
+https://developer.chrome.com/extensions/webRequest
+
+
+
+
+{
+  "name": "FIFA Get Players Extension",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "An extension to get a list of the players on your account to then use in the FIFA Ultimate Team App.",
+  "page_action": {
+    "default_icon": "fifa_extension_icon.png",
+	"default_title": "Get Players from FIFA Account",
+	"default_popup": "fifa_extension_popup.html"
+  },
+  "permissions": [
+    "webRequest",
+    "https://www.google.com/",
+    "https://www.easports.com/fifa/ultimate-team/web-app",
+    "http://www.easports.com/fifa/ultimate-team/web-app"
+  ],
+  "background": {
+    "scripts": ["fifa_extension_background.js"],
+	"persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["fifa_extension_content.js"]
+    }
+  ]
+}
