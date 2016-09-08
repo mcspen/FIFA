@@ -54,7 +54,7 @@ function getPlayersList() {
 function outputPlayersList() {
 	// Give user player info in prompt box
 	window.prompt("Copy and save the follwing player information to players.txt file in the FIFA App folder.", playerInfo);
-	
+	console.log("Stuffffff");
 	//var xhr = new XMLHttpRequest();
 	//xhr.open("GET", "https://utas.external.s2.fut.ea.com/ut/game/fifa16/club?count=97&level=10&type=1&start=0", true);
 	//xhr.onreadystatechange = function() {
@@ -66,7 +66,7 @@ function outputPlayersList() {
 	//xhr.send();
 }
 
-//chrome.webRequest.onHeadersReceived.addListener(function(details){
+//chrome.webRequest.onBeforeRequest.addListener(function(details){
   //console.log(details.responseHeaders);
   //window.alert("Background Headers received!");
-//}, {urls: ["http://*/*"]},["responseHeaders"]);
+//}, {urls: ["http://*/*", "https://*/*"]},["requestBody"]);

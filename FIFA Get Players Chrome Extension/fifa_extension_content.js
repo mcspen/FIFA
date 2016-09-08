@@ -22,8 +22,3 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 		chrome.runtime.sendMessage({type: "finish-getPlayersList", playerInfo: players}, function(response) {});
 	}
 });
-
-//chrome.webRequest.onHeadersReceived.addListener(function(details){
-  //console.log(details.responseHeaders);
-  //window.alert("Content Headers received!");
-//}, {urls: ["http://*/*"]},["responseHeaders"]);
