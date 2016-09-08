@@ -33,31 +33,40 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 		case "start-getPlayersList":
 			getPlayersList();
 		break;
+		
+		case "finish-getPlayersList":
+			playerInfo = request.playerInfo;
+			outputPlayersList();
+		break;
 	}
 	return true;
 });
 
-// Listening for long-lived connections
-/*chrome.extension.onConnect.addListener(function (port) {
-	port.onMessage.addListener(function (message) {
-		switch(port.name) {
-			case "start-getPlayersList":
-				getPlayersList();
-			break;
-		}
-	});
-});*/
-
 // Function for getting the list of players
 function getPlayersList() {
-	window.alert("1")
 	// Send message to content script to get player info
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		chrome.tabs.sendMessage(tabs[0].id, {greeting: "get-player-info"}, function(response) {
-			//playerInfo = response.farewell;
-		});
+		chrome.tabs.sendMessage(tabs[0].id, {type: "get-player-info"}, function(response) {});
 	});
-	window.alert("2")
-	// Give user player info in prompt box
-	window.prompt("Copy player info and save to blah file...", playerInfo);
 }
+
+// Function for getting the list of players
+function outputPlayersList() {
+	// Give user player info in prompt box
+	window.prompt("Copy and save the follwing player information to players.txt file in the FIFA App folder.", playerInfo);
+	
+	//var xhr = new XMLHttpRequest();
+	//xhr.open("GET", "https://utas.external.s2.fut.ea.com/ut/game/fifa16/club?count=97&level=10&type=1&start=0", true);
+	//xhr.onreadystatechange = function() {
+	  //if (xhr.readyState == 4) {
+		// test test test
+		//window.alert(xhr.responseText);
+	  //}
+	//}
+	//xhr.send();
+}
+
+//chrome.webRequest.onHeadersReceived.addListener(function(details){
+  //console.log(details.responseHeaders);
+  //window.alert("Background Headers received!");
+//}, {urls: ["http://*/*"]},["responseHeaders"]);
