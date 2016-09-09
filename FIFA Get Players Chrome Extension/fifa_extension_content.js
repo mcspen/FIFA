@@ -18,7 +18,21 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 		//}
 		//xhr.send();
 		
+		//var actualCode = '$(".ng-scope").ajaxSuccess(function(event, xhr, ajaxOptions) {alert("xhr.reponseText")});';
+		var actualCode = '$(document).ajaxSuccess(function(event, xhr, ajaxOptions) {alert("xhr.reponseText")});';
+		//var actualCode = "if(jQuery){alert('True');} else{alert('False');}";
+		var script = document.createElement('script');
+		script.textContent = actualCode;
+		(document.head||document.documentElement).appendChild(script);
+		script.remove();
+		
 		// Send response here
 		chrome.runtime.sendMessage({type: "finish-getPlayersList", playerInfo: players}, function(response) {});
 	}
 });
+
+/*var actualCode = `jQuery.ajaxSuccess(function(event, xhr, ajaxOptions) {ajaxOptions.type})`;
+var script = document.createElement('script');
+script.textContent = actualCode;
+(document.head||document.documentElement).appendChild(script);
+script.remove();*/
