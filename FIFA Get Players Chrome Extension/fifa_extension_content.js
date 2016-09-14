@@ -24,31 +24,31 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 
 		
 		
-		var actualCode = /*(function() {
-    var XHR = XMLHttpRequest.prototype;
-    // Remember references to original methods
-    var open = XHR.open;
-    var send = XHR.send;
+		var actualCode = `(function() {
+			var XHR = XMLHttpRequest.prototype;
+			// Remember references to original methods
+			var open = XHR.open;
+			var send = XHR.send;
 
-    // Overwrite native methods
-    // Collect data: 
-    XHR.open = function(method, url) {
-        this._method = method;
-        this._url = url;
-        return open.apply(this, arguments);
-    };
+			// Overwrite native methods
+			// Collect data: 
+			XHR.open = function(method, url) {
+				this._method = method;
+				this._url = url;
+				return open.apply(this, arguments);
+			};
 
-    // Implement "ajaxSuccess" functionality
-    XHR.send = function(postData) {
-        this.addEventListener('load', function() {
-            this._method // method
-            this._url // url
-            this.responseText // response body
-            postData // request body
-        });
-        return send.apply(this, arguments);
-    };
-})();*/
+			// Implement "ajaxSuccess" functionality
+			XHR.send = function(postData) {
+				this.addEventListener('load', function() {
+					this._method // method
+					this._url // url
+					this.responseText // response body
+					postData // request body
+				});
+				return send.apply(this, arguments);
+			};
+		})();`
 
 
 		

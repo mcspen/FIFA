@@ -1,3 +1,6 @@
+http://stackoverflow.com/questions/13765031/scrape-eavesdrop-ajax-data-using-javascript
+http://stackoverflow.com/questions/9515704/building-a-chrome-extension-inject-code-in-a-page-using-a-content-script/9517879#9517879
+
 http://stackoverflow.com/questions/14245334/chrome-extension-sendmessage-from-background-to-content-script-doesnt-work
 https://developer.chrome.com/extensions/samples#search:pageaction
 https://developer.chrome.com/extensions/overview
