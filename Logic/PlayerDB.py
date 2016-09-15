@@ -25,7 +25,7 @@ class PlayerDB:
             db_input = [db_input]
         self.db = copy.deepcopy(db_input)
 
-    def download(self, queue=None, get_prices=True, console='PS4'):
+    def download(self, queue=None, get_prices=True, console='PLAYSTATION'):
         """
         Download the database from the EA FIFA website
         Input: None
@@ -63,6 +63,10 @@ class PlayerDB:
                     # Get player data and create player
                     player_data = page_data['items'][player_num]
                     temp_player = Player(player_data)
+
+                    # If player is a legend and console is PS4, skip
+                    if console == "PLAYSTATION" and temp_player.playerType.lower() == "legend":
+                        continue
 
                     # Add player to database and avoid duplicates
                     if players_found.count(temp_player.id) == 0:

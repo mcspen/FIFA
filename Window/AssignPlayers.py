@@ -326,7 +326,8 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
             calculate_traits_list()
             calculate_specialities_list()
             calculate_team_league_nation_list()
-            calculate_chemistry_list()
+            if input_formation['name'] != 'Generic':
+                calculate_chemistry_list()
 
             # Remove team info
             hide_team_info_labels()

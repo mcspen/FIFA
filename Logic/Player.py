@@ -94,7 +94,7 @@ class Player:
         self.attributes = input_dict['attributes']
         self.specialities = input_dict['specialities']
 
-    def get_price(self, console='PS4', update_rating=0, update_price=-1):
+    def get_price(self, console='PLAYSTATION', update_rating=0, update_price=-1):
         """
         Get's the price of the player from futbin.com
         Input: None.
@@ -103,7 +103,7 @@ class Player:
 
         # Skip price if player is legend and console is PS4
         # Legends are only on Xbox
-        if console.upper() in ['PS4', 'PLAYSTATION', 'PS'] and self.color == 'legend':
+        if console.upper() in ['PLAYSTATION'] and self.playerType == 'legend':
             self.price = -1
             return self.price
 
