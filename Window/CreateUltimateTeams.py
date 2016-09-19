@@ -298,16 +298,55 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
                                       color=button_color, just='right')
     display_items.append(judging_players_edit_btn)
 
+    # ========== New Player Budget ==========
+    budget_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height_plus)
+
+    def budget_btn_func():
+        if not settings['budget'][0]:
+            settings['budget'][0] = True
+            budget_tf.value = str(settings['budget'][1])
+            budget_tf.enabled = 1
+
+        else:
+            # Get value from text field and assign to settings
+            if str.isdigit(budget_tf.value):
+                settings['budget'][1] = int(budget_tf.value)
+
+            settings['budget'][0] = False
+            budget_tf.value = disabled_msg
+            budget_tf.enabled = 0
+
+        win_ultimate_teams.become_target()
+
+    budget_btn = Button(title="New Player Budget", font=std_tf_font_bold,
+                        width=std_tf_width, height=std_tf_height_plus,
+                        x=settings_indent - std_tf_width,
+                        y=judging_players_label.bottom + title_border*3,
+                        action=budget_btn_func,
+                        color=title_color, just='right')
+    display_items.append(budget_btn)
+
+    budget_tf.x = budget_btn.right + radio_btn_space
+    budget_tf.y = budget_btn.top
+    display_items.append(budget_tf)
+
+    # Disable based on settings
+    if not settings['budget'][0]:
+        budget_tf.value = disabled_msg
+        budget_tf.enabled = 0
+    else:
+        budget_tf.value = str(settings['budget'][1])
+
     # ========== Limits Label ==========
     limits_label = Label(text="Limitations", font=title_font_3,
                          width=std_tf_width, height=title_height-25,
                          x=(win_ultimate_teams.width - std_tf_width)/2,
-                         y=judging_players_label.bottom + title_border*5,
+                         y=budget_tf.bottom + title_border*2,
                          color=title_color, just='center')
     display_items.append(limits_label)
 
     # ========== Players per Position Label ==========
-    players_per_pos_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height + 5)
+    players_per_pos_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height_plus)
 
     def players_per_pos_btn_func():
         if not settings['players_per_position'][0]:
@@ -327,9 +366,9 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         win_ultimate_teams.become_target()
 
     players_per_pos_btn = Button(title="Players per Position", font=std_tf_font_bold,
-                                 width=std_tf_width, height=std_tf_height,
+                                 width=std_tf_width, height=std_tf_height_plus,
                                  x=settings_indent - std_tf_width,
-                                 y=limits_label.bottom + title_border,
+                                 y=limits_label.bottom + 5,
                                  action=players_per_pos_btn_func,
                                  color=title_color, just='right')
     display_items.append(players_per_pos_btn)
@@ -346,7 +385,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         players_per_pos_tf.value = str(settings['players_per_position'][1])
 
     # ========== Max Teams per Formation Label ==========
-    teams_per_formation_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height + 5)
+    teams_per_formation_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height_plus)
 
     def teams_per_formation_btn_func():
         if not settings['teams_per_formation'][0]:
@@ -366,9 +405,9 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         win_ultimate_teams.become_target()
 
     teams_per_formation_btn = Button(title="Max Teams per Formation", font=std_tf_font_bold,
-                                     width=std_tf_width, height=std_tf_height,
+                                     width=std_tf_width, height=std_tf_height_plus,
                                      x=settings_indent - std_tf_width,
-                                     y=players_per_pos_btn.bottom + title_border,
+                                     y=players_per_pos_btn.bottom + 5,
                                      action=teams_per_formation_btn_func,
                                      color=title_color, just='right')
     display_items.append(teams_per_formation_btn)
@@ -385,7 +424,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         teams_per_formation_tf.value = str(settings['teams_per_formation'][1])
 
     # ========== Max Teams to Return Label ==========
-    teams_to_return_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height + 5)
+    teams_to_return_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height_plus)
 
     def teams_to_return_btn_func():
         if not settings['num_teams_returned'][0]:
@@ -405,9 +444,9 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         win_ultimate_teams.become_target()
 
     teams_to_return_btn = Button(title="Max Teams to Return", font=std_tf_font_bold,
-                                 width=std_tf_width, height=std_tf_height,
+                                 width=std_tf_width, height=std_tf_height_plus,
                                  x=settings_indent - std_tf_width,
-                                 y=teams_per_formation_btn.bottom + title_border,
+                                 y=teams_per_formation_btn.bottom + 5,
                                  action=teams_to_return_btn_func,
                                  color=title_color, just='right')
     display_items.append(teams_to_return_btn)
@@ -424,7 +463,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         teams_to_return_tf.value = str(settings['num_teams_returned'][1])
 
     # ========== Time Limit Label ==========
-    time_limit_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height + 5)
+    time_limit_tf = TextField(font=std_tf_font, width=tf_width, height=std_tf_height_plus)
 
     def time_limit_btn_func():
         if not settings['time_limit'][0]:
@@ -468,9 +507,9 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         win_ultimate_teams.become_target()
 
     time_limit_btn = Button(title="Time Limit", font=std_tf_font_bold,
-                            width=std_tf_width, height=std_tf_height,
+                            width=std_tf_width, height=std_tf_height_plus,
                             x=settings_indent - std_tf_width,
-                            y=teams_to_return_btn.bottom + title_border,
+                            y=teams_to_return_btn.bottom + 5,
                             action=time_limit_btn_func,
                             color=title_color, just='right')
     display_items.append(time_limit_btn)
@@ -506,10 +545,10 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
 
     time_limit_radio_group = RadioGroup(action=get_time_limit_rg)
 
-    # Max Teams to Return Radio Buttons
+    # Time Limit Units Radio Buttons
     days_time_limit_radio_btn = RadioButton('Days', width=radio_btn_width,
                                             x=time_limit_btn.right + radio_btn_space,
-                                            y=time_limit_btn.bottom + title_border,
+                                            y=time_limit_btn.bottom + 5,
                                             group=time_limit_radio_group, value='days')
     display_items.append(days_time_limit_radio_btn)
 
@@ -561,6 +600,9 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         """
 
         # Get the values from the text fields
+        # New player budget
+        if str.isdigit(budget_tf.value):
+            settings['budget'][1] = int(budget_tf.value)
         # Players per position
         if str.isdigit(players_per_pos_tf.value):
                 settings['players_per_position'][1] = int(players_per_pos_tf.value)
@@ -611,7 +653,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
 
         # Run team creation here
         team = Team.Team()
-        teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], formations))
+        teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], db_dict['player_db'][1], formations))
 
         if len(teams.db) > 0:
             teams.save(team_list_name_tf.value)

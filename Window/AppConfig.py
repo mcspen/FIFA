@@ -198,3 +198,4 @@ smaller_tf_font = Font("Times", 1.1 * system_font.size)
 smallest_tf_font = Font("Times", 1.0 * system_font.size)
 std_tf_width = 210
 std_tf_height = 20
+std_tf_height_plus = 25

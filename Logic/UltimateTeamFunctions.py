@@ -14,8 +14,8 @@ def recursive_create_tup(tup):
     """
     Wrapper function to all Team.recursive_create_tup to be called by pool
     """
-    return recursive_create_2(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8],
-                              roster=tup[9], base_ids=tup[10], start_roster_num=tup[11], must_have_players=tup[12])
+    return recursive_create_2(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8], tup[9], tup[10],
+                              roster=tup[11], base_ids=tup[12], start_roster_num=tup[13], must_have_players=tup[14])
 
 
 def calculate_dependency_dict_list(dependent_positions, roster):
@@ -323,8 +323,8 @@ def check_current_player_chemistry(player, position, roster):
     return potential_chemistry
 
 
-def recursive_create(players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
-                     team_sort_attributes, player_sort_attributes, num_teams,
+def recursive_create(players, player_db, formation, chemistry_matters, time_limit, budget, players_per_position,
+                     teams_per_formation, team_sort_attributes, player_sort_attributes, num_teams,
                      pos_index=0, roster=None, base_ids=None, team_list=None, team_count=0):
     """
     Recursive function to build all possible team combinations with good chemistry.
@@ -397,9 +397,10 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
     # Check if position is already filled.
     if custom_symbol in roster:
         # Call recursive function
-        results = recursive_create(players, formation, chemistry_matters, time_limit, players_per_position,
-                                   teams_per_formation, team_sort_attributes, player_sort_attributes,
-                                   num_teams, next_index, roster, base_ids, team_list, team_count)
+        results = recursive_create(players, player_db, formation, chemistry_matters, time_limit, budget,
+                                   players_per_position, teams_per_formation, team_sort_attributes,
+                                   player_sort_attributes, num_teams, next_index, roster, base_ids, team_list,
+                                   team_count)
         team_list = results[0]
         team_count = results[1]
 
@@ -431,6 +432,10 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
         # Get all eligible players and create DB
         eligible_players = PlayerDB(players.multi_search(position_tuple_list))
 
+        # If budget is higher than 200 (cheapest player price) add other players
+        if budget >= 200:
+            eligible_players.add(player_db.multi_search(position_tuple_list))
+
     # Add required traits for dependent player(s) to search
     else:
 
@@ -447,6 +452,11 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
 
         # Get all eligible players from smaller pool matching dependency and create DB
         eligible_players = PlayerDB(dependency_match.multi_search(position_tuple_list))
+
+        # If budget is higher than 200 (cheapest player price) add other players
+        if budget >= 200:
+            dependency_match = PlayerDB(player_db.multi_search(dependency_tuple_list))
+            eligible_players.add(dependency_match.multi_search(position_tuple_list))
 
         del position_tuple_list
         del dependency_tuple_list
@@ -505,10 +515,19 @@ def recursive_create(players, formation, chemistry_matters, time_limit, players_
             roster_copy[custom_symbol] = player
             base_ids_copy.append(player['baseId'])
 
+            # If budget is higher than 200, check if player is new and if so subtract the price.
+            if budget >= 200 and player in players.db:
+                remaining_budget = budget - player['price']
+                player_db_copy = PlayerDB(copy.deepcopy(player_db.search({'price': (1, 'higher')})))
+            else:
+                remaining_budget = budget
+                player_db_copy = PlayerDB(copy.deepcopy(player_db.db))
+
             # Call recursive function
-            results = recursive_create(players, formation, chemistry_matters, time_limit, players_per_position,
-                                       teams_per_formation, team_sort_attributes, player_sort_attributes,
-                                       num_teams, next_index, roster_copy, base_ids_copy, team_list, team_count)
+            results = recursive_create(players, player_db_copy, formation, chemistry_matters, time_limit,
+                                       remaining_budget, players_per_position, teams_per_formation,
+                                       team_sort_attributes, player_sort_attributes, num_teams, next_index, roster_copy,
+                                       base_ids_copy, team_list, team_count)
             team_list = results[0]
             team_count = results[1]
 
@@ -555,8 +574,8 @@ def check_linked_players_chemistry(linked_positions, formation, roster):
     return True
 
 
-def recursive_create_2(players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
-                       team_sort_attributes, player_sort_attributes, num_teams,
+def recursive_create_2(players, player_db, formation, chemistry_matters, time_limit, budget, players_per_position,
+                       teams_per_formation, team_sort_attributes, player_sort_attributes, num_teams,
                        pos_index=0, roster=None, base_ids=None, team_list=None, team_count=0,
                        start_roster_num=0, must_have_players=None):
     """
@@ -614,16 +633,17 @@ def recursive_create_2(players, formation, chemistry_matters, time_limit, player
     # Temp path which switches to recursive function 1 when specified players have been assigned.
     if len(roster) >= start_roster_num:
         # Call recursive function 1
-        results = recursive_create(players, formation, chemistry_matters, time_limit, players_per_position,
-                                   teams_per_formation, team_sort_attributes, player_sort_attributes,
-                                   num_teams, pos_index, roster, base_ids, team_list, team_count)
+        results = recursive_create(players, player_db, formation, chemistry_matters, time_limit, budget,
+                                   players_per_position, teams_per_formation, team_sort_attributes,
+                                   player_sort_attributes, num_teams, pos_index, roster, base_ids, team_list,
+                                   team_count)
         team_list = results[0]
         team_count = results[1]
         return [team_list, team_count]
     # ==================================================================================================================
 
     # Sort players by specified attributes
-    # players.sort(player_sort_attributes)
+    # players.sort(player_sort_attributes)     ----  If adding this, implement the budget parameter
     must_have_players.sort(player_sort_attributes)
 
     # Iterate players
@@ -682,10 +702,10 @@ def recursive_create_2(players, formation, chemistry_matters, time_limit, player
             base_ids_copy.append(player['baseId'])
 
             # Call recursive function
-            results = recursive_create_2(players, formation, chemistry_matters, time_limit, players_per_position,
-                                         teams_per_formation, team_sort_attributes, player_sort_attributes,
-                                         num_teams, pos_index, roster_copy, base_ids_copy, team_list, team_count,
-                                         start_roster_num, must_have_players)
+            results = recursive_create_2(players, player_db, formation, chemistry_matters, time_limit, budget,
+                                         players_per_position, teams_per_formation, team_sort_attributes,
+                                         player_sort_attributes, num_teams, pos_index, roster_copy, base_ids_copy,
+                                         team_list, team_count, start_roster_num, must_have_players)
             team_list = results[0]
             team_count = results[1]
 
@@ -728,7 +748,7 @@ def enough_players(players, formation, chemistry_matters):
     return True
 
 
-def find_teams_ultimate(players, formations):
+def find_teams_ultimate(players, player_db, formations):
     """
     Finds the best team using my thorough method from the given players and formations.
     Input: PlayerDB of players, FormationDB of formations, and the process type.
@@ -758,6 +778,13 @@ def find_teams_ultimate(players, formations):
     roster = configs['roster']
 
     # Get optional configuration values or set the defaults
+    if configs['budget'][0] and configs['budget'][1] >= 200:
+        budget = configs['budget'][1]
+        budget_players = PlayerDB(player_db.search({'price': (budget, 'lower')}))
+        budget_players = PlayerDB(budget_players.search({'price': (1, 'higher')}))  # Skip players with incorrect prices
+    else:
+        budget = configs['max_values']['budget']  # Sets budget to -1, so no new players are added
+        budget_players = PlayerDB()
     if configs['players_per_position'][0]:
         players_per_position = configs['players_per_position'][1]
     else:
@@ -804,8 +831,8 @@ def find_teams_ultimate(players, formations):
         for formation in formations.db:
             if enough_players(players, formation, chemistry_matters):
                 input_tuples.append((
-                    players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
-                    team_sort_attributes, player_sort_attributes, num_teams, roster, base_ids,
+                    players, budget_players, formation, chemistry_matters, time_limit, budget, players_per_position,
+                    teams_per_formation, team_sort_attributes, player_sort_attributes, num_teams, roster, base_ids,
                     start_roster_num, must_have_players))
 
         # Temporary Timing Information------------------------------------------------------------------------------
@@ -846,9 +873,9 @@ def find_teams_ultimate(players, formations):
 
                 # Call recursive team building function
                 results_sp = recursive_create_2(
-                        players, formation, chemistry_matters, time_limit, players_per_position, teams_per_formation,
-                        team_sort_attributes, player_sort_attributes, num_teams, roster=roster, base_ids=base_ids,
-                        start_roster_num=start_roster_num, must_have_players=must_have_players)
+                    players, budget_players, formation, chemistry_matters, time_limit, budget, players_per_position,
+                    teams_per_formation, team_sort_attributes, player_sort_attributes, num_teams, roster=roster,
+                    base_ids=base_ids, start_roster_num=start_roster_num, must_have_players=must_have_players)
 
                 team_list_sp += results_sp[0]
                 count_sp += results_sp[1]
@@ -898,7 +925,7 @@ def find_teams_ultimate(players, formations):
     return []
 
 
-def find_team_ultimate(players, formations):
+def find_team_ultimate(players, player_db, formations):
     """
     Calls the find_teams_ultimate function and sorts and returns the results.
     Input: PlayerDB of players and FormationDB of formations.
@@ -906,7 +933,7 @@ def find_team_ultimate(players, formations):
     """
 
     # List of teams returned from find_teams_ultimate
-    team_list = find_teams_ultimate(players, formations)
+    team_list = find_teams_ultimate(players, player_db, formations)
 
     # Pick the top specified number of teams and ties.
     # Sort teams by rating and total individual chemistry
