@@ -474,6 +474,10 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
     # Iterate through eligible players for current position
     for player in eligible_players.db:
 
+        # Check to see if function should return
+        if team_count >= teams_per_formation or time.time() > time_limit:
+            break
+
         # Check if player is already used
         if player['baseId'] in base_ids:
             continue
@@ -516,12 +520,12 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
             base_ids_copy.append(player['baseId'])
 
             # If budget is higher than 200, check if player is new and if so subtract the price.
-            if budget >= 200 and player in players.db:
+            if budget >= 200 and player not in players.db:
                 remaining_budget = budget - player['price']
-                player_db_copy = PlayerDB(copy.deepcopy(player_db.search({'price': (1, 'higher')})))
+                player_db_copy = PlayerDB(copy.deepcopy(player_db.search({'price': (remaining_budget, 'lower')})))
             else:
                 remaining_budget = budget
-                player_db_copy = PlayerDB(copy.deepcopy(player_db.db))
+                player_db_copy = player_db
 
             # Call recursive function
             results = recursive_create(players, player_db_copy, formation, chemistry_matters, time_limit,
@@ -650,6 +654,10 @@ def recursive_create_2(players, player_db, formation, chemistry_matters, time_li
     # for player in players.db:
     for player in must_have_players.db:
 
+        # Check to see if function should return
+        if team_count >= teams_per_formation or time.time() > time_limit:
+            break
+
         # Check if player is already used
         if player['baseId'] in base_ids:
             continue
@@ -668,6 +676,10 @@ def recursive_create_2(players, player_db, formation, chemistry_matters, time_li
 
         # Iterate through positions for player
         for custom_symbol in pos_list:
+
+            # Check to see if function should return
+            if team_count >= teams_per_formation or time.time() > time_limit:
+                break
 
             # Check if position is already filled.
             if custom_symbol in roster:
@@ -708,10 +720,6 @@ def recursive_create_2(players, player_db, formation, chemistry_matters, time_li
                                          team_list, team_count, start_roster_num, must_have_players)
             team_list = results[0]
             team_count = results[1]
-
-        # Check to see if function should return
-        if team_count >= teams_per_formation or time.time() > time_limit:
-            break
 
     return [team_list, team_count]
 

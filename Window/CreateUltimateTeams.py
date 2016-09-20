@@ -5,6 +5,7 @@ import AddAttribute
 import PickFile
 import StartMenu
 from Logic import FormationDB
+from Logic import PlayerDB
 from Logic import Team
 from Logic import TeamDB
 from Logic.HelperFunctions import format_attr_name
@@ -646,6 +647,12 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         else:
             formations = FormationDB.FormationDB(input_formation)
 
+        # If budget is not used, set player DB to an empty object.
+        if budget_btn.enabled:
+            player_db = db_dict['player_db'][1]
+        else:
+            player_db = PlayerDB.PlayerDB()
+
         # Open status page
         """StatusWindow.open_status_window(win_ultimate_teams.x, win_ultimate_teams.y,
                                         db_dict, team_list_name_tf.value, win_ultimate_teams)
@@ -653,7 +660,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
 
         # Run team creation here
         team = Team.Team()
-        teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], db_dict['player_db'][1], formations))
+        teams = TeamDB.TeamDB(team.create_team_ultimate(db_dict['player_list'][1], player_db, formations))
 
         if len(teams.db) > 0:
             teams.save(team_list_name_tf.value)
