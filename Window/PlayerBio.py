@@ -31,7 +31,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
             c.erase_rect(r)
 
             # Background image
-            image_pos = ((player_name_label.left - player_background.width)/2, 0)
+            image_pos = ((player_name_label.left - player_background.width)/2, 5)
             src_rect = player_background.bounds
             dst_rect = Geometry.offset_rect(src_rect, image_pos)
             player_background.draw(c, src_rect, dst_rect)
@@ -100,15 +100,15 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
 
     # Assign positioning for player card based on type
     if player['color'] in ['legend']:
-        player_headshot_pos = (41, 13)
-        club_pos = (51, 75)
+        player_headshot_pos = (43, 15)
+        club_pos = (51, 76)
         nation_spacing = 2
-        coins_pos = (155, 225)
-        stat_line_y = 176
+        coins_pos = (155, 226)
+        stat_line_y = 173
         stat_line_spacing = 21
-        name_y = 135
-        rating_pos = (33, 34)
-        stats_y = 157
+        name_y = 138
+        rating_pos = (33, 35)
+        stats_y = 159
         card_rating_pos_color = black
         card_name_color = black
         card_stat_color = black
@@ -116,15 +116,15 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
         coins_color = black
 
     elif player['color'] in ['green', 'motm', 'pink', 'purple', 'teal']:
-        player_headshot_pos = (41, 13)
-        club_pos = (51, 74)
+        player_headshot_pos = (43, 15)
+        club_pos = (51, 76)
         nation_spacing = 1
-        coins_pos = (155, 225)
-        stat_line_y = 176
+        coins_pos = (155, 226)
+        stat_line_y = 173
         stat_line_spacing = 21
-        name_y = 135
-        rating_pos = (33, 30)
-        stats_y = 157
+        name_y = 138
+        rating_pos = (33, 35)
+        stats_y = 159
         card_rating_pos_color = black
         card_name_color = black
         card_stat_color = black
@@ -132,15 +132,15 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
         coins_color = black
 
     elif player['color'] in ['toty', 'easports']:
-        player_headshot_pos = (41, 13)
-        club_pos = (51, 74)
+        player_headshot_pos = (43, 15)
+        club_pos = (51, 76)
         nation_spacing = 1
-        coins_pos = (158, 223)
-        stat_line_y = 176
+        coins_pos = (155, 226)
+        stat_line_y = 173
         stat_line_spacing = 21
-        name_y = 135
-        rating_pos = (33, 30)
-        stats_y = 157
+        name_y = 138
+        rating_pos = (33, 35)
+        stats_y = 159
         card_rating_pos_color = white
         card_name_color = white
         card_stat_color = white
@@ -148,15 +148,15 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
         coins_color = white
 
     elif player['color'] in ['tots_gold', 'tots_silver', 'tots_bronze']:
-        player_headshot_pos = (41, 13)
-        club_pos = (51, 74)
+        player_headshot_pos = (43, 15)
+        club_pos = (51, 76)
         nation_spacing = 1
-        coins_pos = (158, 223)
-        stat_line_y = 176
+        coins_pos = (155, 226)
+        stat_line_y = 173
         stat_line_spacing = 21
-        name_y = 135
-        rating_pos = (33, 30)
-        stats_y = 157
+        name_y = 138
+        rating_pos = (33, 35)
+        stats_y = 159
         card_rating_pos_color = white
         card_name_color = black
         card_stat_color = white
@@ -164,15 +164,15 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
         coins_color = white
 
     elif player['color'] in ['totw_gold', 'totw_silver', 'totw_bronze']:
-        player_headshot_pos = (41, 13)
-        club_pos = (51, 74)
+        player_headshot_pos = (43, 15)
+        club_pos = (51, 76)
         nation_spacing = 1
-        coins_pos = (155, 225)
-        stat_line_y = 176
+        coins_pos = (155, 226)
+        stat_line_y = 173
         stat_line_spacing = 21
-        name_y = 135
-        rating_pos = (33, 30)
-        stats_y = 157
+        name_y = 138
+        rating_pos = (33, 35)
+        stats_y = 159
         card_rating_pos_color = black
         card_name_color = white
         card_stat_color = white
@@ -180,15 +180,15 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
         coins_color = white
 
     elif player['color'] in ['rare_gold', 'rare_silver', 'rare_bronze']:
-        player_headshot_pos = (41, 13)
-        club_pos = (51, 74)
+        player_headshot_pos = (43, 15)
+        club_pos = (51, 76)
         nation_spacing = 1
-        coins_pos = (155, 225)
-        stat_line_y = 176
+        coins_pos = (155, 226)
+        stat_line_y = 172
         stat_line_spacing = 21
-        name_y = 135
-        rating_pos = (33, 30)
-        stats_y = 157
+        name_y = 138
+        rating_pos = (33, 35)
+        stats_y = 158
         card_rating_pos_color = black
         card_name_color = black
         card_stat_color = black
@@ -196,15 +196,15 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
         coins_color = black
 
     elif player['color'] in ['gold', 'silver', 'bronze']:
-        player_headshot_pos = (41, 13)
-        club_pos = (51, 71)
+        player_headshot_pos = (43, 15)
+        club_pos = (51, 76)
         nation_spacing = 3
-        coins_pos = (155, 225)
-        stat_line_y = 176
+        coins_pos = (155, 226)
+        stat_line_y = 173
         stat_line_spacing = 21
-        name_y = 135
-        rating_pos = (33, 25)
-        stats_y = 157
+        name_y = 138
+        rating_pos = (33, 35)
+        stats_y = 159
         card_rating_pos_color = black
         card_name_color = black
         card_stat_color = black
@@ -212,15 +212,15 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
         coins_color = black
 
     else:
-        player_headshot_pos = (41, 13)
-        club_pos = (51, 74)
+        player_headshot_pos = (43, 15)
+        club_pos = (51, 76)
         nation_spacing = 1
-        coins_pos = (155, 225)
-        stat_line_y = 176
+        coins_pos = (155, 226)
+        stat_line_y = 173
         stat_line_spacing = 21
-        name_y = 135
-        rating_pos = (33, 30)
-        stats_y = 157
+        name_y = 138
+        rating_pos = (33, 35)
+        stats_y = 159
         card_rating_pos_color = black
         card_name_color = black
         card_stat_color = black

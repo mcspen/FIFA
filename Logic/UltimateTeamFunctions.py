@@ -336,9 +336,9 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
     print_formation_name_and_team_count = False
     print_all_team_chemistry = False
     positions_less = 5
-    positions_greater = 9
+    positions_greater = -1
     print_positions_less = False
-    print_positions_greater = False
+    print_positions_greater = True
 
     # Set defaults
     if roster is None:
@@ -478,6 +478,10 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
         if team_count >= teams_per_formation or time.time() > time_limit:
             break
 
+        # Check if player is in budget ---------------------------------------------------------------------------------
+        if player['price'] > budget:
+            continue
+
         # Check if player is already used
         if player['baseId'] in base_ids:
             continue
@@ -522,10 +526,11 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
             # If budget is higher than 200, check if player is new and if so subtract the price.
             if budget >= 200 and player not in players.db:
                 remaining_budget = budget - player['price']
-                player_db_copy = PlayerDB(copy.deepcopy(player_db.search({'price': (remaining_budget, 'lower')})))
+                #player_db_copy = PlayerDB(copy.deepcopy(player_db.search({'price': (remaining_budget, 'lower')})))
             else:
                 remaining_budget = budget
-                player_db_copy = player_db
+                #player_db_copy = player_db
+            player_db_copy = player_db
 
             # Call recursive function
             results = recursive_create(players, player_db_copy, formation, chemistry_matters, time_limit,

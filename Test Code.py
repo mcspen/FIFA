@@ -85,7 +85,7 @@ if __name__ == '__main__':
     import Image
     for image_file_name in image_file_names:
         ratio = 0.85
-        image_file = 'Images/Card Originals/' + image_file_name + '.png'
+        image_file = 'Images/Card Originals/FIFA 17/' + image_file_name + '.png'
         image_info = Image.open(image_file)
         image_info = image_info.resize((int(image_info.size[0]*ratio),
                                         int(image_info.size[1]*ratio)),
