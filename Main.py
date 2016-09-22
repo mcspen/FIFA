@@ -5,6 +5,7 @@ import FifaApp
 from Logic.FormationDB import FormationDB
 from Logic.PlayerDB import PlayerDB
 from Logic.TeamDB import TeamDB
+from Logic.HelperFunctions import delete_all_temp_images
 
 if __name__ == '__main__':
     multiprocessing.freeze_support()
