@@ -56,6 +56,17 @@ if __name__ == '__main__':
     # player_db.load('FIFA 16 - Current', 'db')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
+    # Add price to old DBs
+    """player_db.load('FIFA 15', 'db')
+    for player in player_db.db:
+        player[u'price'] = 0
+    player_db.save('FIFA 15', 'db', True)
+
+    player_db.load('FIFA 16 - Original', 'db')
+    for player in player_db.db:
+        player[u'price'] = 0
+    player_db.save('FIFA 16 - Original', 'db', True)"""
+
     # Save all of a player's images
     """from Logic.HelperFunctions import save_image
     players = PlayerDB()
