@@ -338,7 +338,7 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
     positions_less = 5
     positions_greater = -1
     print_positions_less = False
-    print_positions_greater = True
+    print_positions_greater = False
 
     # Set defaults
     if roster is None:
