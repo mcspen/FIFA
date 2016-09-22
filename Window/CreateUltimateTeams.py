@@ -80,6 +80,16 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
         PickFile.open_pick_file_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, settings)
         win_ultimate_teams.hide()
 
+    def player_db_current_btn_func():
+        save_settings()
+        settings['file_type'] = 'current_player_db'
+        settings['file_changes'] = False
+        settings['prev_window'] = 'team_creation'
+        settings['prev_window_value'] = win_previous
+        settings['create_team_name'] = team_list_name_tf.value
+        PickFile.open_pick_file_window(win_ultimate_teams.x, win_ultimate_teams.y, db_dict, settings)
+        win_ultimate_teams.hide()
+
     def formation_list_current_btn_func():
         save_settings()
         settings['file_type'] = 'current_formation_list'
@@ -103,9 +113,22 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
                                 action=player_list_current_btn_func)
     display_items.append(player_list_button)
 
+    player_db_label = Label(text="Player DB:", font=std_tf_font_bold,
+                            width=file_name_width, height=std_tf_height,
+                            x=player_list_label.left, y=player_list_label.bottom + title_border,
+                            color=title_color, just='right')
+    display_items.append(player_db_label)
+
+    player_db_button = Button(title=db_dict['player_db'][0], font=small_tf_font,
+                              width=file_button_width, height=std_tf_height,
+                              x=player_list_label.right + 5, y=player_db_label.top,
+                              color=title_color, just='center',
+                              action=player_db_current_btn_func)
+    display_items.append(player_db_button)
+
     formation_list_label = Label(text="Formation List:", font=std_tf_font_bold,
                                  width=file_name_width, height=std_tf_height,
-                                 x=player_list_label.left, y=player_list_label.bottom + title_border,
+                                 x=player_list_label.left, y=player_db_label.bottom + title_border,
                                  color=title_color, just='right')
     display_items.append(formation_list_label)
 
@@ -129,7 +152,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
     team_list_name_label = Label(text="Team List Name: ", font=std_tf_font_bold,
                                  width=team_name_label_width, height=std_tf_height,
                                  x=settings_indent - team_name_label_width,
-                                 y=formation_list_label.bottom + title_border*4,
+                                 y=formation_list_label.bottom + title_border*2,
                                  color=title_color, just='right')
     display_items.append(team_list_name_label)
 
@@ -307,6 +330,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
             settings['budget'][0] = True
             budget_tf.value = str(settings['budget'][1])
             budget_tf.enabled = 1
+            player_db_button.enabled = 1
 
         else:
             # Get value from text field and assign to settings
@@ -316,13 +340,14 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
             settings['budget'][0] = False
             budget_tf.value = disabled_msg
             budget_tf.enabled = 0
+            player_db_button.enabled = 0
 
         win_ultimate_teams.become_target()
 
     budget_btn = Button(title="New Player Budget", font=std_tf_font_bold,
                         width=std_tf_width, height=std_tf_height_plus,
                         x=settings_indent - std_tf_width,
-                        y=judging_players_label.bottom + title_border*3,
+                        y=judging_players_label.bottom + title_border*2,
                         action=budget_btn_func,
                         color=title_color, just='right')
     display_items.append(budget_btn)
@@ -335,6 +360,8 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
     if not settings['budget'][0]:
         budget_tf.value = disabled_msg
         budget_tf.enabled = 0
+        player_db_button.enabled = 0
+
     else:
         budget_tf.value = str(settings['budget'][1])
 
