@@ -109,7 +109,7 @@ class Player:
 
         if self.rating >= update_rating and self.price >= update_price:
             price_site_url_search = 'http://www.futbin.com/api/?term='
-            price_site_url_player = 'http://www.futbin.com/16/player'
+            price_site_url_player = 'http://www.futbin.com/17/player'
             player_name = ''
             player_id = ''
 
