@@ -145,7 +145,8 @@ class Player:
 
                 self.price = price
 
+            # Need to add more error handling. Ex: ProtocolError
             except Exception as err:
-                print "Not connected to internet. Cannot get player price.\nOr Error: " + err.message
+                print "Not connected to internet. Cannot get player price.\nOr Error: " + str(err.message)
 
         return self.price
