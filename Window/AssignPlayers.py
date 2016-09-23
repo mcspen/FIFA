@@ -13,6 +13,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
 
     formation = copy.deepcopy(input_formation)
 
+    team_chemistry = [0]
     default_player_value = 0
 
     if roster is not None:
@@ -1080,6 +1081,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
 
     def calculate_chemistry_list():
         del chemistry_list[:]
+        team_chemistry[0] = 0
 
         # Darker box to display stats on and Link Lines
         class ChemistryBoxImageView(View):
@@ -1371,6 +1373,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
             # Total Chemistry Points Stat
             total_chem_width = 30
             total_chem_points = pl_chem_points + manager_points + loyalty_points
+            team_chemistry[0] += total_chem_points
             if total_chem_points > 10:
                 total_chem_points = 10
 
@@ -1601,9 +1604,9 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
 
         # ========== Team Info Labels ==========
         info_title_width = 88
-        info_label_text = "Formation:\nStyle:\nRating:\nAvg Rating:\nPrice:"
+        info_label_text = "Formation:\nStyle:\nRating:\nAvg Rating:\nChemistry:\nPrice:"
         info_title_label = Label(text=info_label_text, font=title_font_7,
-                                 width=info_title_width, height=std_tf_height * 5,
+                                 width=info_title_width, height=std_tf_height * 6,
                                  x=headshot_trait_btn.left - 48, y=info_title.bottom - title_border,
                                  color=title_color, just='right')
         team_info_labels.append(info_title_label)
@@ -1629,9 +1632,9 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
             price_value = price_value[-6:-3] + ',' + price_value[-3:]
 
         info_text = (input_formation['name'] + "\n" + input_formation['style'] + "\n" + team_rating[:7]
-                     + "\n" + avg_rating[:7] + "\n" + price_value)
+                     + "\n" + avg_rating[:7] + "\n" + str(team_chemistry[0]) + "\n" + price_value)
         info_label = Label(text=info_text, font=title_font_7,
-                           width=info_width, height=std_tf_height * 5,
+                           width=info_width, height=std_tf_height * 6,
                            x=info_title_label.right + 10, y=info_title_label.top,
                            color=title_color, just='left')
         team_info_labels.append(info_label)
