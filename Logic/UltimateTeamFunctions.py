@@ -479,8 +479,10 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
             break
 
         # Check if player is in budget ---------------------------------------------------------------------------------
-        if player['price'] > budget:
-            continue
+        if budget >= 200:
+            if player['price'] > budget:
+                if player not in players.db:
+                    continue
 
         # Check if player is already used
         if player['baseId'] in base_ids:
