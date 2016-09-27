@@ -56,6 +56,32 @@ if __name__ == '__main__':
     # player_db.load('FIFA 16 - Current', 'db')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
+    # Get average short passing for all leagues
+    """leagues = {}
+    for player in player_db.db:
+        if player["league"]["name"] not in leagues:
+            leagues[player["league"]["name"]] = {"total_short_passing": player["shortpassing"],
+                                                 "total_players": 1,
+                                                 "avg_short_passing": 0}
+        else:
+            leagues[player["league"]["name"]]["total_short_passing"] += player["shortpassing"]
+            leagues[player["league"]["name"]]["total_players"] += 1
+
+    # Calculate averages
+    for league in leagues.itervalues():
+        league["avg_short_passing"] = float(league["total_short_passing"]) / float(league["total_players"])
+
+    # Create list of tuples of leagues and average short passing and sort
+    leagues_tup = []
+    for league in leagues.iteritems():
+        leagues_tup.append((league[0], league[1]['avg_short_passing']))
+    leagues_tup.sort(key=lambda leagues_tup: leagues_tup[1], reverse=True)
+
+    # Print results
+    from Logic import HelperFunctions
+    for tup in leagues_tup:
+        print HelperFunctions.ascii_text(tup[0]) + ": " + str(tup[1])"""
+
     # Add price to old DBs
     """player_db.load('FIFA 15', 'db')
     for player in player_db.db:
