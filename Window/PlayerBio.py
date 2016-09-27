@@ -50,7 +50,11 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
             player_headshot.draw(c, src_rect, headshot_dst_rect)
 
             # Club
-            image_url = player['club']['imageUrls']['normal']['large']
+            if 'normal' in player['club']['imageUrls']:
+                image_url = player['club']['imageUrls']['normal']['large']
+            # FIFA 15 compatibility
+            elif 'dark' in player['club']['imageUrls']:
+                image_url = player['club']['imageUrls']['dark']['large']
             ratio = 0.75
             image_file_name = 'club_' + str(player['club']['id']) + '_' + str(ratio)
             image_file_name = save_small_image(image_url, image_file_name, ratio)
@@ -61,7 +65,11 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
             club_image.draw(c, club_rect, club_dst_rect)
 
             # Nation
-            image_url = player['nation']['imageUrls']['large']
+            if 'imageUrls' in player['nation']:
+                image_url = player['nation']['imageUrls']['large']
+            # FIFA 15 compatibility
+            elif 'imageUrl' in player['nation']:
+                image_url = player['nation']['imgUrl']
             ratio = 0.75
             image_file_name = 'nation_' + str(player['nation']['id']) + '_' + str(ratio)
             image_file_name = save_small_image(image_url, image_file_name, ratio)
@@ -84,7 +92,12 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
     # ========== Player Headshot ==========
     image_url = player['headshotImgUrl']
     image_file_name = player['id'] + '_full'
-    image_file_name = save_image(image_url, image_file_name)
+    # FIFA 15 compatibility
+    if "130x130" in image_url:
+        ratio = 120.0/130.0
+        image_file_name = save_small_image(image_url, image_file_name, ratio)
+    elif "120x120" in image_url:
+        image_file_name = save_image(image_url, image_file_name)
     player_headshot = Image(file=image_file_name)
 
     # ========== Player Background ==========
