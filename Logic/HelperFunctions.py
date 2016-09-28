@@ -6,6 +6,20 @@ import os
 
 
 def ascii_text(input_text):
+    # Convert input text into a list to be manipulated
+    input_list = list(input_text)
+
+    # Iterate through each character and change to an ASCII reasonable equivalent.
+    """for idx, char in enumerate(input_list):
+        if char == "":
+            input_list[idx] = ""
+        elif char == "":
+            input_list[idx] = ""
+
+    # Convert list back into a string to return
+    return "".join(input_list)"""
+
+    # Old solution that converts strings to ASCII, but some characters are skipped.
     return unicodedata.normalize('NFKD', input_text).encode('ascii', 'ignore')
 
 

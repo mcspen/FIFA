@@ -82,6 +82,18 @@ if __name__ == '__main__':
     for tup in leagues_tup:
         print HelperFunctions.ascii_text(tup[0]) + ": " + str(tup[1])"""
 
+    # Get all characters used in names
+    """characters = []
+    for player in player_db.db:
+        for char in player['firstName']:
+            if char not in characters:
+                characters.append(char)
+        for char in player['lastName']:
+            if char not in characters:
+                characters.append(char)
+
+    print characters"""
+
     # Add price to old DBs
     """player_db.load('FIFA 15', 'db')
     for player in player_db.db:
