@@ -1,4 +1,5 @@
-import unicodedata
+# -*- coding: utf-8 -*-
+
 from PIL import Image
 import urllib2
 import cStringIO
@@ -10,17 +11,182 @@ def ascii_text(input_text):
     input_list = list(input_text)
 
     # Iterate through each character and change to an ASCII reasonable equivalent.
-    """for idx, char in enumerate(input_list):
-        if char == "":
-            input_list[idx] = ""
-        elif char == "":
-            input_list[idx] = ""
+    for idx, char in enumerate(input_list):
+        # u'À' - u'\xc0'
+        # u'Á' - u'\xc1'
+        # u'Â' - u'\xc2'
+        # u'Ä' - u'\xc4'
+        # u'Å' - u'\xc5'
+        if char in [u'\xc0', u'\xc1', u'\xc2', u'\xc4', u'\xc5']:
+            input_list[idx] = "A"
+
+        # u'à' - u'\xe0'
+        # u'á' - u'\xe1'
+        # u'â' - u'\xe2'
+        # u'ã' - u'\xe3'
+        # u'ä' - u'\xe4'
+        # u'å' - u'\xe5'
+        # u'ă' - u'\u0103'
+        # u'ą' - u'\u0105'
+        elif char in [u'\xe0', u'\xe1', u'\xe2', u'\xe3', u'\xe4', u'\xe5', u'\u0103', u'\u0105']:
+            input_list[idx] = "a"
+
+        # u'æ' - u'\xe6'
+        elif char in [u'\xe6']:
+            input_list[idx] = "ae"
+
+        # u'ß' - u'\xdf'
+        elif char in [u'\xdf']:
+            input_list[idx] = "B"
+
+        # u'Ć' - u'\u0106'
+        # u'Č' - u'\u010c'
+        # u'Ç' - u'\xc7'
+        elif char in [u'\u0106', u'\u010c', u'\xc7']:
+            input_list[idx] = "C"
+
+        # u'ć' - u'\u0107'
+        # u'č' - u'\u010d'
+        # u'ç' - u'\xe7'
+        elif char in [u'\u0107', u'\u010d', u'\xe7']:
+            input_list[idx] = "c"
+
+        # u'Đ' - u'\u0110'
+        # u'Ď' - u'\u010e'
+        elif char in [u'\u0110', u'\u010e']:
+            input_list[idx] = "D"
+
+        # u'đ' - u'\u0111'
+        elif char in [u'\u0111']:
+            input_list[idx] = "d"
+
+        # u'É' - u'\xc9'
+        elif char in [u'\xc9']:
+            input_list[idx] = "E"
+
+        # u'ę' - u'\u0119'
+        # u'ě' - u'\u011b'
+        # u'è' - u'\xe8'
+        # u'é' - u'\xe9'
+        # u'ê' - u'\xea'
+        # u'ë' - u'\xeb'
+        elif char in [u'\u0119', u'\u011b', u'\xe8', u'\xe9', u'\xea', u'\xeb']:
+            input_list[idx] = "e"
+
+        # u'ğ' - u'\u011f'
+        elif char in [u'\u011f']:
+            input_list[idx] = "g"
+
+        # u'İ' - u'\u0130'
+        # u'Í' - u'\xcd'
+        elif char in [u'\u0130', u'\xcd']:
+            input_list[idx] = "I"
+
+        # u'ı' - u'\u0131'
+        # u'í' - u'\xed'
+        # u'î' - u'\xee'
+        # u'ï' - u'\xef'
+        elif char in [u'\u0131', u'\xed', u'\xee', u'\xef']:
+            input_list[idx] = "i"
+
+        # u'Ľ' - u'\u013d'
+        # u'Ł' - u'\u0141'
+        elif char in [u'\u013d', u'\u0141']:
+            input_list[idx] = "L"
+
+        # u'ł' - u'\u0142'
+        elif char in [u'\u0142']:
+            input_list[idx] = "l"
+
+        # u'Ñ' - u'\xd1'
+        elif char in [u'\xd1']:
+            input_list[idx] = "N"
+
+        # u'ñ' - u'\xf1'
+        # u'ń' - u'\u0144'
+        # u'ņ' - u'\u0146'
+        # u'ň' - u'\u0148'
+        elif char in [u'\xf1', u'\u0144', u'\u0146', u'\u0148']:
+            input_list[idx] = "n"
+
+        # u'Ó' - u'\xd3'
+        # u'Ö' - u'\xd6'
+        # u'Ø' - u'\xd8'
+        # u'Ō' - u'\u014c'
+        elif char in [u'\xd3', u'\xd6', u'\xd8', u'\u014c']:
+            input_list[idx] = "O"
+
+        # u'ð' - u'\xf0'
+        # u'ò' - u'\xf2'
+        # u'ó' - u'\xf3'
+        # u'ô' - u'\xf4'
+        # u'õ' - u'\xf5'
+        # u'ö' - u'\xf6'
+        # u'ø' - u'\xf8'
+        # u'ō' - u'\u014d'
+        elif char in [u'\xf0', u'\xf2', u'\xf3', u'\xf4', u'\xf5', u'\xf6', u'\xf8', u'\u014d']:
+            input_list[idx] = "o"
+
+        # u'Þ' - u'\xde'
+        elif char in [u'\xde']:
+            input_list[idx] = "P"
+
+        # u'þ' - u'\xfe'
+        elif char in [u'\xfe']:
+            input_list[idx] = "p"
+
+        # u'ř' - u'\u0159'
+        elif char in [u'\u0159']:
+            input_list[idx] = "r"
+
+        # u'Ś' - u'\u015a'
+        # u'Ş' - u'\u015e'
+        # u'Š' - u'\u0160'
+        elif char in [u'\u015a', u'\u015e', u'\u0160']:
+            input_list[idx] = "S"
+
+        # u'ś' - u'\u015b'
+        # u'ş' - u'\u015f'
+        # u'š' - u'\u0161'
+        elif char in [u'\u015b', u'\u015f', u'\u0161']:
+            input_list[idx] = "s"
+
+        # u'ţ' - u'\u0163'
+        elif char in [u'\u0163']:
+            input_list[idx] = "t"
+
+        # u'Ü' - u'\xdc'
+        elif char in [u'\xdc']:
+            input_list[idx] = "U"
+
+        # u'ú' - u'\xfa'
+        # u'ü' - u'\xfc'
+        # u'ū' - u'\u016b'
+        # u'ů' - u'\u016f'
+        elif char in [u'\xfa', u'\xfc', u'\u016b', u'\u016f']:
+            input_list[idx] = "u"
+
+        # u'ý' - u'\xfd'
+        elif char in [u'\xfd']:
+            input_list[idx] = "y"
+
+        # u'Ż' - u'\u017b'
+        # u'Ž' - u'\u017d'
+        elif char in [u'\u017b', u'\u017d']:
+            input_list[idx] = "Z"
+
+        # u'ź' - u'\u017a'
+        # u'ż' - u'\u017c'
+        # u'ž' - u'\u017e'
+        elif char in [u'\u017a', u'\u017c', u'\u017e']:
+            input_list[idx] = "z"
 
     # Convert list back into a string to return
-    return "".join(input_list)"""
+    return "".join(input_list)
 
     # Old solution that converts strings to ASCII, but some characters are skipped.
-    return unicodedata.normalize('NFKD', input_text).encode('ascii', 'ignore')
+    # import unicodedata
+    # return unicodedata.normalize('NFKD', input_text).encode('ascii', 'ignore')
 
 
 def text_add_new_lines(text, max_length):
@@ -434,13 +600,13 @@ def save_image(image_url, image_file_name):
         if not os.path.isfile(image_file_name):
             image_file = cStringIO.StringIO(urllib2.urlopen(image_url).read())
             image_info = Image.open(image_file)
-            image_info.save(image_file_name)
+            image_info.save(image_file_name, quality=90)
             image_file.close()
 
     # In case of no internet connection
     except Exception as err:
         image_file_name = 'Images/no_internet.png'
-        print "Error: " + err.args[0].args[1]
+        print "Error: " + str(err.args)
         print "File: " + image_file_name
         print "URL: " + image_url
 
@@ -461,7 +627,7 @@ def save_small_image(image_url, image_file_name, ratio=0.75):
             image_info = image_info.resize((int(image_info.size[0]*ratio),
                                             int(image_info.size[1]*ratio)),
                                            Image.ANTIALIAS)
-            image_info.save(image_file_name)
+            image_info.save(image_file_name, quality=90)
             image_file.close()
 
     # In case of no internet connection
@@ -475,8 +641,8 @@ def save_small_image(image_url, image_file_name, ratio=0.75):
                 image_info = image_info.resize((int(image_info.size[0]*ratio),
                                                 int(image_info.size[1]*ratio)),
                                                Image.ANTIALIAS)
-                image_info.save(image_file_name)
-        print "Error: " + err.args[0]
+                image_info.save(image_file_name, quality=90)
+        print "Error: " + str(err.args)
         print "File: " + image_file_name
         print "URL: " + image_url
 
