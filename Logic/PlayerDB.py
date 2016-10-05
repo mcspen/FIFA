@@ -442,7 +442,8 @@ class PlayerDB:
                     string_value = string_value.split(',')
                     for idx, item in enumerate(string_value):
                         string_value[idx] = item.strip()
-                    stat = player[attribute]['name'].upper() + ' ' + player[attribute]['abbrName'].upper()
+                    stat = ascii_text(player[attribute]['name'].upper()) + ' ' +\
+                           ascii_text(player[attribute]['abbrName'].upper())
                     partial_match = False
                     for single_value in string_value:
                         if single_value in stat:

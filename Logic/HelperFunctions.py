@@ -181,6 +181,11 @@ def ascii_text(input_text):
         elif char in [u'\u017a', u'\u017c', u'\u017e']:
             input_list[idx] = "z"
 
+        # u'‘' - u'\u2018'
+        # u'’' - u'\u2019'
+        elif char in [u'\u2018', u'\u2019']:
+            input_list[idx] = "'"
+
     # Convert list back into a string to return
     return "".join(input_list)
 
