@@ -90,37 +90,6 @@ class PlayerDB:
 
         return self.db
 
-    def get_players_from_account(self, player_db, browser, email, password):
-        """
-        Get all players from account
-        Input: The player database to use to create the player list after getting the names from the account.
-               The browser to use and the email and password of the account to get the players from.
-        Output: The player database which is also already saved in the object.
-        """
-
-        from selenium import webdriver
-        from selenium.webdriver.common.keys import Keys
-
-        # Open browser window
-        if browser == "firefox":
-            web_page = webdriver.Firefox()
-        else:
-            web_page = webdriver.Firefox()
-        web_page.get("https://www.easports.com/fifa/ultimate-team/web-app")
-
-        # Enter email
-        elem = web_page.find_element_by_name("email")
-        elem.clear()
-        elem.send_keys(email)
-        # Enter password
-        elem = web_page.find_element_by_name("password")
-        elem.clear()
-        elem.send_keys(password)
-        # Log in
-        elem.send_keys(Keys.TAB, Keys.TAB, Keys.RETURN)
-
-        # Navigate to players after successful login
-
     def save(self, file_name, file_type, overwrite=False):
         """
         Save the database to the specified file name and overwrite the data

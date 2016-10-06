@@ -4,6 +4,7 @@ from AppConfig import *
 import AddAttribute
 import PickFile
 import StartMenu
+import StatusWindow
 from Logic import FormationDB
 from Logic import PlayerDB
 from Logic import Team
@@ -682,7 +683,7 @@ def open_create_ultimate_teams_window(window_x, window_y, db_dict, win_previous,
 
         # Open status page
         """StatusWindow.open_status_window(win_ultimate_teams.x, win_ultimate_teams.y,
-                                        db_dict, team_list_name_tf.value, win_ultimate_teams)
+                                        db_dict, file_name=team_list_name_tf.value, win_previous=win_ultimate_teams)
         win_ultimate_teams.hide()"""
 
         # Run team creation here
