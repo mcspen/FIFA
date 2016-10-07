@@ -15,8 +15,12 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
 
     team_chemistry = [0]
     default_player_value = 0
-    default_message = 'Assign Player'
-    empty_player_dict = {'rating': '', 'position': '', 'color': 'none', 'name': unicode(default_message), 'lock': False}
+    assign_player_text = 'Assign Player'
+
+    # Get blank player dict
+    with open(config_filename, 'r') as f:
+        blank_player_dict = json.load(f)['blank_player_dict']
+        f.close()
 
     if roster is not None:
         for pos, player in roster.iteritems():
@@ -39,7 +43,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
 
     # ========== Load Formation Spacing ==========
     # Get attribute lists
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
         team_spacing = json.load(f)['team_coordinates'][formation['name']]
         f.close()
 
@@ -229,7 +233,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                     player = pos['player']
                     box_file_name = 'Images/Cards/' + player['color'] + '_box.png'
                 else:
-                    box_file_name = 'Images/Cards/' + 'no_one' + '_box.png'
+                    box_file_name = 'Images/Cards/' + 'unlocked' + '_box.png'
                 box_image = Image(file=box_file_name)
                 box_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2))
@@ -305,7 +309,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     # Player name button
     def name_btn_func(current_player, symbol):
         # Go to player search page to add player
-        if current_player['name'] == default_message:
+        if current_player['rating'] == 0:
             win_assign_players.become_target()
             PickPlayer.open_pick_player_window(win_assign_players.x, win_assign_players.y, db_dict,
                                                input_formation, win_assign_players, roster, symbol, win_previous)
@@ -342,16 +346,32 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     # Player lock button
     def lock_btn_func(current_player, symbol):
         # If player is locked, unlock.
-        if current_player['lock']:
-            current_player['lock'] = False
+        if 'lock' in current_player:
+            # Remove lock
+            current_player.pop('key')
             roster[symbol] = current_player
             formation['positions'][symbol].pop('player')
 
+            # Remove headshots
+            hide_headshots()
+            # Remove player info from headshots list
+            remove_headshot(symbol)
+            # Display updated headshots
+            display_headshots()
+
         # If player is unlocked, lock.
         else:
+            # Lock player
             current_player['lock'] = True
             roster[symbol] = current_player
             formation['positions'][symbol]['player'] = current_player
+
+            # Remove headshots
+            hide_headshots()
+            # Remove player info from headshots list
+            remove_headshot(symbol)
+            # Display updated headshots
+            display_headshots()
 
         win_assign_players.become_target()
 
@@ -365,12 +385,16 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         if 'player' in position:
             player = position['player']
         else:
-            player = empty_player_dict
+            player = blank_player_dict
         position_coordinates = team_spacing[sym]
         info_color = quality_text_color(player['color'])
 
         # Player rating
-        rating_label = Label(text=str(player['rating']), font=title_font_3,
+        if player['rating'] > 0:
+            rating_text = str(player['rating'])
+        else:
+            rating_text = ''
+        rating_label = Label(text=rating_text, font=title_font_3,
                              width=rating_width, height=title_height,
                              x=int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border),
                              y=int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2)-1,
@@ -404,6 +428,8 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
 
         name_color = darker
         player_name = ascii_text(player['name'])
+        if player_name == 'blank':
+            player_name = assign_player_text
         name_btn = Button(title=player_name, font=title_font_5,
                           width=player_box_width-4*player_border, height=name_height,
                           x=int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border),
@@ -420,9 +446,9 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
             name_btn.font = title_font_10
         player_headshots[sym].append(name_btn)
 
-        if 'lock' in player and input_formation['name'] != 'Generic':
+        '''if input_formation['name'] != 'Generic':
             lock_color = darker
-            if player['lock']:
+            if 'lock' in player:
                 lock_text = "Unlock"
                 lock_width = player_box_width-4*player_border
             else:
@@ -437,7 +463,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                                     - player_box_height / 2) + player_border,
                               color=lock_color, just='center',
                               action=(lock_btn_func, player, sym))
-            player_headshots[sym].append(lock_btn)
+            player_headshots[sym].append(lock_btn)'''
 
     def display_headshots():
         for value in player_headshots.itervalues():
@@ -455,11 +481,16 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         # Rewrite old player data to default unknown player
         for item in player_headshots[position_symbol]:
             if type(item) == Label:
-                if item.text[0] != '/':
+                if len(item.text) > 0 and item.text[0] != '/':
                     item.text = ''
+            # elif item.title == 'Lock':
+                # unknown_player = blank_player_dict
+                # item.title = 'Unlock'
+                # item.font = title_font_13
+                # item.action = (name_btn_func, unknown_player, position_symbol)
             else:
-                unknown_player = empty_player_dict
-                item.title = unknown_player['name']
+                unknown_player = blank_player_dict
+                item.title = assign_player_text
                 item.font = title_font_8
                 item.action = (name_btn_func, unknown_player, position_symbol)
 

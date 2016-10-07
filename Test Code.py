@@ -3,6 +3,7 @@ import multiprocessing
 import time
 
 import FifaApp
+from Window.AppConfig import config_filename
 from Logic.FormationDB import FormationDB
 from Logic.Player import Player
 from Logic.PlayerDB import PlayerDB
@@ -15,7 +16,7 @@ if __name__ == '__main__':
     multiprocessing.freeze_support()
 
     # Load defaults
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
         configs = json.load(f)
         f.close()
     default_dbs = configs['default_databases']

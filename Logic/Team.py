@@ -1172,7 +1172,8 @@ class Team:
         # Get strength config values
         if important_attributes is None:
             # Get important stats from config file
-            with open('configs.json', 'r') as config_file:
+            from Window.AppConfig import config_filename
+            with open(config_filename, 'r') as config_file:
                 strengths_dict = json.load(config_file)['player_attributes']['important_attributes']
                 config_file.close()
 
@@ -1259,7 +1260,8 @@ class Team:
         """
 
         # Get important stats from config file
-        with open('configs.json', 'r') as config_file:
+        from Window.AppConfig import config_filename
+        with open(config_filename, 'r') as config_file:
             strengths_dict = json.load(config_file)['player_attributes']['important_attributes']
             config_file.close()
 

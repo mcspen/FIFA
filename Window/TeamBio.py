@@ -21,7 +21,7 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
     # ========== Load Formation Spacing ==========
     # Get attribute lists
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
         team_spacing = json.load(f)['team_coordinates'][team['formation']['name']]
         f.close()
 

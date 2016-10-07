@@ -15,7 +15,7 @@ def open_files_menu(window_x, window_y, db_dict, settings=None):
     databases_display_list = []
     defaults_display_list = []
 
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
         default_databases = json.load(f)['default_databases']
         f.close()
 

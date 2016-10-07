@@ -2,6 +2,9 @@ from GUI import Font
 from GUI.StdFonts import system_font
 import GUI.StdColors
 
+# ========== Config JSON Location ==========
+config_filename = 'JSONs/configs.json'
+
 # ========== Strings ==========
 # Titles on top of windows
 assign_players_title = 'Assign Players'

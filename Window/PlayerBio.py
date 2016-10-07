@@ -316,7 +316,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
 
             # Load console type
             settings = {'console_type': ''}
-            with open('configs.json', 'r') as f:
+            with open(config_filename, 'r') as f:
                 settings["console_type"] = json.load(f)['console_type']
                 f.close()
 
@@ -410,7 +410,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
 
     # ========== Player Info Labels ==========
     # Get attribute lists
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
         attribute_lists = json.load(f)['player_attributes']
         f.close()
 

@@ -2,6 +2,7 @@
 All of the functions containing the logic to create the ultimate teams.
 """
 
+from Window.AppConfig import config_filename
 from PlayerDB import PlayerDB
 import Team
 import time
@@ -777,7 +778,7 @@ def find_teams_ultimate(players, player_db, formations):
     count_sp = 0  # Count of teams created in single process
 
     # Get configuration values
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
         configs = json.load(f)['ultimate_team_configs']
         f.close()
 
@@ -955,7 +956,7 @@ def find_team_ultimate(players, player_db, formations):
     team_list = sorted(team_list, key=lambda k: (k['rating'], k['total_ic']), reverse=True)
 
     # Get number of teams to return (plus tied teams)
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
         configs = json.load(f)['ultimate_team_configs']
         f.close()
 

@@ -13,7 +13,7 @@ def open_start_menu(window_x, window_y, db_dict):
 
     # Load console type
     settings = {'console_type': ''}
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
         settings["console_type"] = json.load(f)['console_type']
         f.close()
 
@@ -59,7 +59,8 @@ def open_start_menu(window_x, window_y, db_dict):
         """
 
         # Load configurations
-        with open('configs.json', 'r') as config_file:
+        from AppConfig import config_filename
+        with open(config_filename, 'r') as config_file:
             configurations = json.load(config_file)
             config_file.close()
 
@@ -67,7 +68,7 @@ def open_start_menu(window_x, window_y, db_dict):
         configurations['console_type'] = settings["console_type"]
 
         # Save the settings
-        with open('configs.json', 'w') as config_file:
+        with open(config_filename, 'w') as config_file:
             json.dump(configurations, config_file)
             config_file.close()
 

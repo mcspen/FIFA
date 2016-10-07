@@ -17,7 +17,7 @@ def open_formation_bio_window(window_x, window_y, formation, win_previous, file_
 
     # ========== Load Formation Spacing ==========
     # Get attribute lists
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
         formation_spacing = json.load(f)['formation_coordinates'][formation['name']]
         f.close()
 

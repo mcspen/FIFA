@@ -54,7 +54,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     radio_group = RadioGroup(action=selection_made)
     radio_button_list = []
 
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
             attributes_list = json.load(f)['player_attributes']['all']
             f.close()
 

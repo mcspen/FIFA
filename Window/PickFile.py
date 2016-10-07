@@ -103,8 +103,9 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
             # Save new default to config file
             if file_type[:7] == 'default':
                 # Load configs
+                from Window.AppConfig import config_filename
                 configs = {}
-                with open('configs.json', 'r') as config_file:
+                with open(config_filename, 'r') as config_file:
                     configs = json.load(config_file)
                     config_file.close()
 
@@ -112,7 +113,7 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
                 configs['default_databases'][file_type[8:]] = file_name
 
                 # Save configs
-                with open('configs.json', 'w') as config_file:
+                with open(config_file, 'w') as config_file:
                     json.dump(configs, config_file)
                     config_file.close()
 

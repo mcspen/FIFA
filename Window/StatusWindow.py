@@ -24,7 +24,7 @@ def create_teams(db_dict, file_name):
 def download_and_save_player_db(queue, new_db_name, get_prices):
     # Load console type
     settings = {'console_type': ''}
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
         settings["console_type"] = json.load(f)['console_type']
         f.close()
 
@@ -60,7 +60,7 @@ def update_player_prices(queue, file_name, settings):
         object_list = PlayerDB.PlayerDB()
 
     # Load console type
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
         settings["console_type"] = json.load(f)['console_type']
         f.close()
 

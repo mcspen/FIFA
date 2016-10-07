@@ -77,7 +77,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
     else:
         print "Invalid attribute type."
 
-    with open('configs.json', 'r') as f:
+    with open(config_filename, 'r') as f:
             attributes_list = json.load(f)[config_file]['all']
             f.close()
 
