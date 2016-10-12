@@ -61,6 +61,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
         show_attributes(attribute_display_list)
         erase_btn.enabled = 1
+        win_attribute.become_target()
 
     # ========== Attribute Radio Buttons ==========
     radio_group = RadioGroup(action=selection_made)
@@ -308,6 +309,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
         show_attributes(attribute_display_list)
 
+        win_attribute.become_target()
         erase_btn.enabled = 0
 
     def back_btn_func():
@@ -331,6 +333,7 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
         else:
             print "Invalid window setting."
 
+        win_attribute.become_target()
         win_attribute.hide()
 
     def attr_btn_func(attr_to_remove):
@@ -350,6 +353,8 @@ def open_attribute_window(window_x, window_y, db_dict, attr_dict, attr_list, att
 
             if len(attr_list) < 1:
                 erase_btn.enabled = 0
+
+        win_attribute.become_target()
 
     # ========== Buttons ==========
     custom_button_width = 100

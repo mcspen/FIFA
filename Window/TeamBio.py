@@ -236,10 +236,14 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
                 # Headshot
                 image_url = player['headshotImgUrl']
-                ratio = 0.65
-                image_file_name = player['id'] + '_' + str(ratio)
-                image_file_name = save_small_image(image_url, image_file_name, ratio)
-                player_headshot = Image(file=image_file_name)
+                if image_url == 'blank':
+                    image_file_name = 'Images/Cards/locked_box_team_bio.png'
+                    player_headshot = Image(file=image_file_name)
+                else:
+                    ratio = 0.65
+                    image_file_name = player['id'] + '_' + str(ratio)
+                    image_file_name = save_small_image(image_url, image_file_name, ratio)
+                    player_headshot = Image(file=image_file_name)
                 headshot_pos = ((dst_rect[0]+position_coordinates[0]*x_space +
                                  player_box_width/2-player_headshot.size[0]-player_border,
                                  dst_rect[1]+position_coordinates[1]*y_space +

@@ -162,7 +162,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
         stat_line_color = barely_lighter
         coins_color = white
 
-    elif player['color'] in ['toty', 'easports']:
+    elif player['color'] in ['toty', 'easports', 'ones_to_watch']:
         player_headshot_pos = (43, 15)
         club_pos = (51, 76)
         nation_spacing = 1
