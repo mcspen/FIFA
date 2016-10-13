@@ -16,7 +16,6 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
     team_chemistry = [0]
     default_player_value = 0
     assign_player_text = 'Assign Player'
-    lock_dict = {}
 
     # Get blank player dict
     with open(config_filename, 'r') as f:
@@ -31,6 +30,11 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                 print "Invalid position. Position not in formation."
     else:
         roster = {}
+
+    lock_dict = {}
+    for sym, player in roster.iteritems():
+        if player['rating'] == 0:
+            lock_dict[sym] = True
 
     # ========== Window ==========
     win_assign_players = Window()
@@ -193,8 +197,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                     colors = [red, orange, yellow, green]
 
                     if 'player' in pos and 'player' in formation['positions'][link]:
-                        color_num = Team.Team.teammate_chemistry(pos['player'],
-                                                                 formation['positions'][link]['player'])
+                        color_num = Team.Team.teammate_chemistry(pos['player'], formation['positions'][link]['player'])
                     else:
                         color_num = 0
                     c.forecolor = colors[color_num]
@@ -230,9 +233,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
             # Player Card Box Backgrounds
             for sym, pos in formation['positions'].iteritems():
                 position_coordinates = team_spacing[sym]
-                if 'player' in pos:
-                    player = pos['player']
-                    box_file_name = 'Images/Cards/' + player['color'] + '_box.png'
+                if 'player' in pos and pos['player']['rating'] > 0:
+                    box_file_name = 'Images/Cards/' + pos['player']['color'] + '_box.png'
+                elif sym in lock_dict:
+                    box_file_name = 'Images/Cards/' + 'locked' + '_box.png'
                 else:
                     box_file_name = 'Images/Cards/' + 'unlocked' + '_box.png'
                 box_image = Image(file=box_file_name)
@@ -264,7 +268,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+name_height-4))
 
                 # Get player information
-                if 'player' in position:
+                if 'player' in position and position['player']['rating'] > 0:
                     player = position['player']
 
                     # Headshot
@@ -344,6 +348,8 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
             # Display team info
             display_team_info_labels()
 
+        win_assign_players.become_target()
+
     # Player lock button
     def lock_btn_func(current_player, symbol):
         # Lock player
@@ -354,6 +360,13 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         player_headshots[symbol]['lock_btn'].enabled = 0
         player_headshots[symbol]['unlock_btn'].enabled = 1
         player_headshots[symbol]['name_btn'].enabled = 0
+
+        # Remove headshots
+        hide_headshots()
+        # Remove player info from headshots list
+        remove_headshot(symbol)
+        # Display updated headshots
+        display_headshots()
 
         win_assign_players.become_target()
 
@@ -367,6 +380,13 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         player_headshots[symbol]['lock_btn'].enabled = 1
         player_headshots[symbol]['unlock_btn'].enabled = 0
         player_headshots[symbol]['name_btn'].enabled = 1
+
+        # Remove headshots
+        hide_headshots()
+        # Remove player info from headshots list
+        remove_headshot(symbol)
+        # Display updated headshots
+        display_headshots()
 
         win_assign_players.become_target()
 
@@ -547,6 +567,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                 dst_rect = (field_x_offset, field_y_offset, field_x_offset + field_width, field_y_offset + field_length)
 
                 for sym, position in roster.iteritems():
+                    # Skip blank players
+                    if position['rating'] == 0:
+                        continue
+
                     # Get player coordinates
                     position_coordinates = team_spacing[sym]
 
@@ -567,6 +591,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         attribute_x_offset = 30
 
         for sym, player in roster.iteritems():
+            # Skip blank players
+            if player['rating'] == 0:
+                continue
+
             # Get player information
             position_coordinates = team_spacing[sym]
             label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
@@ -703,6 +731,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                 dst_rect = (field_x_offset, field_y_offset, field_x_offset + field_width, field_y_offset + field_length)
 
                 for sym, position in roster.iteritems():
+                    # Skip blank players
+                    if position['rating'] == 0:
+                        continue
+
                     # Get player coordinates
                     position_coordinates = team_spacing[sym]
 
@@ -719,6 +751,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                                                           int(field_y_offset + field_length + 5))))
 
         for sym, player in roster.iteritems():
+            # Skip blank players
+            if player['rating'] == 0:
+                continue
+
             # Get player information
             position_coordinates = team_spacing[sym]
             label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
@@ -824,6 +860,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                 dst_rect = (field_x_offset, field_y_offset, field_x_offset + field_width, field_y_offset + field_length)
 
                 for sym, position in roster.iteritems():
+                    # Skip blank players
+                    if position['rating'] == 0:
+                        continue
+
                     # Get player coordinates
                     position_coordinates = team_spacing[sym]
 
@@ -840,6 +880,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                                                     int(field_y_offset + field_length + 5))))
 
         for sym, player in roster.iteritems():
+            # Skip blank players
+            if player['rating'] == 0:
+                continue
+
             # Get player information
             position_coordinates = team_spacing[sym]
             label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
@@ -932,6 +976,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                 dst_rect = (field_x_offset, field_y_offset, field_x_offset + field_width, field_y_offset + field_length)
 
                 for sym, position in roster.iteritems():
+                    # Skip blank players
+                    if position['rating'] == 0:
+                        continue
+
                     # Get player coordinates
                     position_coordinates = team_spacing[sym]
 
@@ -948,6 +996,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                                                                 int(field_y_offset + field_length + 5))))
 
         for sym, player in roster.iteritems():
+            # Skip blank players
+            if player['rating'] == 0:
+                continue
+
             # Get player information
             position_coordinates = team_spacing[sym]
             label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
@@ -1036,6 +1088,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                 dst_rect = (field_x_offset, field_y_offset, field_x_offset + field_width, field_y_offset + field_length)
 
                 for sym, player in roster.iteritems():
+                    # Skip blank players
+                    if player['rating'] == 0:
+                        continue
+
                     # Get player information
                     position_coordinates = team_spacing[sym]
 
@@ -1077,6 +1133,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                                                                           int(field_y_offset + field_length + 5))))
 
         for sym, player in roster.iteritems():
+            # Skip blank players
+            if player['rating'] == 0:
+                continue
+
             # Get player information
             position_coordinates = team_spacing[sym]
             label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
@@ -1196,6 +1256,9 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                 # Links
                 # Iterate through players on team
                 for sym, player in roster.iteritems():
+                    # Skip blank players
+                    if player['rating'] == 0:
+                        continue
 
                     position_coordinates = team_spacing[sym]
 
@@ -1238,6 +1301,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
 
                 # Draw darker boxes
                 for sym in roster.iterkeys():
+                    # Skip blank players
+                    if roster[sym]['rating'] == 0:
+                        continue
+
                     # Get player information
                     position_coordinates = team_spacing[sym]
 
@@ -1254,6 +1321,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                                                           int(field_y_offset + field_length + 5))))
 
         for sym, player in roster.iteritems():
+            # Skip blank players
+            if player['rating'] == 0:
+                continue
+
             # Get player information
             position_coordinates = team_spacing[sym]
             label_x = int(dst_rect[0] + position_coordinates[0] * x_space - player_box_width / 2 + 2 * player_border)
