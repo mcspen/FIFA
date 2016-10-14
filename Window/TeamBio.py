@@ -161,6 +161,9 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             # Links
             # Iterate through players on team
             for sym, pos in team['formation']['positions'].iteritems():
+                # Skip blank players
+                if pos['player']['rating'] == 0:
+                    continue
 
                 position_coordinates = team_spacing[sym]
 
@@ -203,7 +206,13 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             for sym, pos in team['formation']['positions'].iteritems():
                 position_coordinates = team_spacing[sym]
                 player = pos['player']
-                box_file_name = 'Images/Cards/' + player['color'] + '_box.png'
+
+                # Added code to display custom picture for locked positions
+                if player['rating'] > 0:
+                    box_file_name = 'Images/Cards/' + player['color'] + '_box.png'
+                else:
+                    box_file_name = 'Images/Cards/' + 'locked' + '_box.png'
+
                 box_image = Image(file=box_file_name)
                 box_pos = ((dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2,
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2))
@@ -234,16 +243,16 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                              dst_rect[0]+position_coordinates[0]*x_space+player_box_width/2-player_border,
                              dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+name_height-4))
 
+                # Skip blank player images
+                if player['rating'] == 0:
+                    continue
+
                 # Headshot
                 image_url = player['headshotImgUrl']
-                if image_url == 'blank':
-                    image_file_name = 'Images/Cards/locked_box_team_bio.png'
-                    player_headshot = Image(file=image_file_name)
-                else:
-                    ratio = 0.65
-                    image_file_name = player['id'] + '_' + str(ratio)
-                    image_file_name = save_small_image(image_url, image_file_name, ratio)
-                    player_headshot = Image(file=image_file_name)
+                ratio = 0.65
+                image_file_name = player['id'] + '_' + str(ratio)
+                image_file_name = save_small_image(image_url, image_file_name, ratio)
+                player_headshot = Image(file=image_file_name)
                 headshot_pos = ((dst_rect[0]+position_coordinates[0]*x_space +
                                  player_box_width/2-player_headshot.size[0]-player_border,
                                  dst_rect[1]+position_coordinates[1]*y_space +
@@ -359,6 +368,10 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
 
             for sym, position in team['formation']['positions'].iteritems():
+                # Skip blank players
+                if position['player']['rating'] == 0:
+                    continue
+
                 # Get player coordinates
                 position_coordinates = team_spacing[sym]
 
@@ -379,6 +392,11 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     for sym, position in team['formation']['positions'].iteritems():
         # Get player information
         player = position['player']
+
+        # Skip blank players
+        if player['rating'] == 0:
+            continue
+
         position_coordinates = team_spacing[sym]
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
         label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)
@@ -508,6 +526,10 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
 
             for sym, position in team['formation']['positions'].iteritems():
+                # Skip blank players
+                if position['player']['rating'] == 0:
+                    continue
+
                 # Get player coordinates
                 position_coordinates = team_spacing[sym]
 
@@ -524,6 +546,11 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     for sym, position in team['formation']['positions'].iteritems():
         # Get player information
         player = position['player']
+
+        # Skip blank players
+        if player['rating'] == 0:
+            continue
+
         position_coordinates = team_spacing[sym]
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
         label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)
@@ -620,6 +647,10 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
 
             for sym, position in team['formation']['positions'].iteritems():
+                # Skip blank players
+                if position['player']['rating'] == 0:
+                    continue
+
                 # Get player coordinates
                 position_coordinates = team_spacing[sym]
 
@@ -636,6 +667,11 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     for sym, position in team['formation']['positions'].iteritems():
         # Get player information
         player = position['player']
+
+        # Skip blank players
+        if player['rating'] == 0:
+            continue
+
         position_coordinates = team_spacing[sym]
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
         label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)
@@ -721,6 +757,10 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             dst_rect = (field_x_offset, field_y_offset, field_x_offset+field_width, field_y_offset+field_length)
 
             for sym, position in team['formation']['positions'].iteritems():
+                # Skip blank players
+                if position['player']['rating'] == 0:
+                    continue
+
                 # Get player coordinates
                 position_coordinates = team_spacing[sym]
 
@@ -737,6 +777,11 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     for sym, position in team['formation']['positions'].iteritems():
         # Get player information
         player = position['player']
+
+        # Skip blank players
+        if player['rating'] == 0:
+            continue
+
         position_coordinates = team_spacing[sym]
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
         label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)
@@ -820,6 +865,11 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             for sym, position in team['formation']['positions'].iteritems():
                 # Get player information
                 player = position['player']
+
+                # Skip blank players
+                if player['rating'] == 0:
+                    continue
+
                 position_coordinates = team_spacing[sym]
 
                 # Darker box to display stats
@@ -859,6 +909,11 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     for sym, position in team['formation']['positions'].iteritems():
         # Get player information
         player = position['player']
+
+        # Skip blank players
+        if player['rating'] == 0:
+            continue
+
         position_coordinates = team_spacing[sym]
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
         label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)
@@ -969,6 +1024,9 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
             # Links
             # Iterate through players on team
             for sym, pos in team['formation']['positions'].iteritems():
+                # Skip blank players
+                if pos['player']['rating'] == 0:
+                    continue
 
                 position_coordinates = team_spacing[sym]
 
@@ -1009,6 +1067,10 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
 
             # Draw darker boxes
             for sym, position in team['formation']['positions'].iteritems():
+                # Skip blank players
+                if position['player']['rating'] == 0:
+                    continue
+
                 # Get player information
                 position_coordinates = team_spacing[sym]
 
@@ -1025,6 +1087,11 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
     for sym, position in team['formation']['positions'].iteritems():
         # Get player information
         player = position['player']
+
+        # Skip blank players
+        if player['rating'] == 0:
+            continue
+
         position_coordinates = team_spacing[sym]
         label_x = int(dst_rect[0]+position_coordinates[0]*x_space-player_box_width/2+2*player_border)
         label_y = int(dst_rect[1]+position_coordinates[1]*y_space-player_box_height/2+2*player_border)

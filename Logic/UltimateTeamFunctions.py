@@ -837,6 +837,19 @@ def find_teams_ultimate(players, player_db, formations):
         roster.clear()
         base_ids = []
 
+    # Remove links to locked positions
+    if 0 in base_ids and len(formations.db) == 1:
+        # Get locked positions
+        locked_positions = []
+        for sym, position in roster.iteritems():
+            if position['rating'] == 0:
+                locked_positions.append(sym)
+        # Remove links to locked positions
+        for position in formations.db[0]['positions'].itervalues():
+            for locked_position in locked_positions:
+                if locked_position in position['links']:
+                    position['links'].remove(locked_position)
+
     if process in ['multi', 'both']:
         # Multiprocess Method --------------------------------------------------------------------------------------
         # Create objects for recursive function

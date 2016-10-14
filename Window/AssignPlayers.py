@@ -332,6 +332,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
             # Display updated headshots
             display_headshots()
 
+            # Remove and add lock button to put it in front of the headshots image
+            view.remove(player_headshots[symbol]['lock_btn'])
+            view.add(player_headshots[symbol]['lock_btn'])
+
             # Recalculate all tabs
             calculate_summary_stats()
             calculate_strength_stats()
@@ -351,11 +355,11 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         win_assign_players.become_target()
 
     # Player lock button
-    def lock_btn_func(current_player, symbol):
+    def lock_btn_func(symbol):
         # Lock player
         lock_dict[symbol] = True
-        roster[symbol] = current_player
-        formation['positions'][symbol]['player'] = current_player
+        roster[symbol] = blank_player_dict
+        formation['positions'][symbol]['player'] = blank_player_dict
 
         player_headshots[symbol]['lock_btn'].enabled = 0
         player_headshots[symbol]['unlock_btn'].enabled = 1
@@ -368,10 +372,14 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         # Display updated headshots
         display_headshots()
 
+        # Remove and add unlock button to put it in front of the headshots image
+        view.remove(player_headshots[symbol]['unlock_btn'])
+        view.add(player_headshots[symbol]['unlock_btn'])
+
         win_assign_players.become_target()
 
     # Player unlock button
-    def unlock_btn_func(current_player, symbol):
+    def unlock_btn_func(symbol):
         # Remove lock
         lock_dict.pop(symbol)
         roster.pop(symbol)
@@ -387,6 +395,10 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
         remove_headshot(symbol)
         # Display updated headshots
         display_headshots()
+
+        # Remove and add lock button to put it in front of the headshots image
+        view.remove(player_headshots[symbol]['lock_btn'])
+        view.add(player_headshots[symbol]['lock_btn'])
 
         win_assign_players.become_target()
 
@@ -477,7 +489,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                           y=int(dst_rect[1] + position_coordinates[1] * y_space
                                 - player_box_height / 2) + player_border,
                           color=lock_color, just='center',
-                          action=(lock_btn_func, player, sym))
+                          action=(lock_btn_func, sym))
         player_headshots[sym]['lock_btn'] = lock_btn
 
         unlock_btn = Button(title=unlock_text, font=title_font_13,
@@ -486,7 +498,7 @@ def open_assign_players_window(window_x, window_y, db_dict, input_formation, win
                                   - player_box_width / 2 + 2 * player_border),
                             y=lock_btn.bottom,
                             color=lock_color, just='center',
-                            action=(unlock_btn_func, player, sym))
+                            action=(unlock_btn_func, sym))
         player_headshots[sym]['unlock_btn'] = unlock_btn
 
         # Disabled buttons based on if a player is locked
