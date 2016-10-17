@@ -867,6 +867,8 @@ def find_teams_ultimate(players, player_db, formations):
         # Temporary Timing Information------------------------------------------------------------------------------
         print "Start Multi Process!"
         start_time = time.clock()
+        from time import localtime, strftime
+        print "Start Time: " + strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())
         # ----------------------------------------------------------------------------------------------------------
 
         # Run function for each formation
@@ -889,6 +891,8 @@ def find_teams_ultimate(players, player_db, formations):
         # Temporary Timing Information------------------------------------------------------------------------------
         print "Start Single Process!"
         start_all_time = time.clock()
+        from time import localtime, strftime
+        print "Start Time: " + strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())
         # ----------------------------------------------------------------------------------------------------------
 
         # Iterate through the formations

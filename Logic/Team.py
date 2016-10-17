@@ -767,7 +767,10 @@ class Team:
             sum_links += self.teammate_chemistry(position['player'], self.formation['positions'][symbol]['player'])
 
         # Return the link chemistry as a float
-        return (sum_links + 0.0) / len(position['links'])
+        if len(position['links']) <= 0:
+            return 0
+        else:
+            return (sum_links + 0.0) / len(position['links'])
 
     @staticmethod
     def position_links_chemistry(links_chemistry, position_chemistry):
