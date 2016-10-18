@@ -57,6 +57,54 @@ if __name__ == '__main__':
     # player_db.load('FIFA 16 - Current', 'db')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
+    # Profile Distribution of Levels and Probability of getting an 85+ Player
+    """player_db = PlayerDB()
+    player_db.load('FIFA 17 - Current', 'db')
+    rating_dict = {}
+    for player in player_db.db:
+        if player['rating'] in rating_dict:
+            rating_dict[player['rating']] = rating_dict[player['rating']] + 1
+        else:
+            rating_dict[player['rating']] = 1
+
+    for key, value in rating_dict.iteritems():
+        print "Rating: " + str(key) + "     # Players: " + str(value)
+
+    total_gold = 0
+    total_good = 0
+    for key, value in rating_dict.iteritems():
+        if key > 84:
+            total_good += value
+        if key > 74:
+            total_gold += value
+
+    print "Odds of getting 85+ player:"
+    print str(total_good) + "/" + str(total_gold)
+    print str(float(total_good)/float(total_gold)*100)[:4] + "%"
+
+    rating_dict = {}
+    for player in player_db.db:
+        if player['rating'] >= 75 and 'rare' in player['color']:
+            if player['rating'] in rating_dict:
+                rating_dict[player['rating']] = rating_dict[player['rating']] + 1
+            else:
+                rating_dict[player['rating']] = 1
+
+    for key, value in rating_dict.iteritems():
+        print "Rating: " + str(key) + "     # Players: " + str(value)
+
+    total_gold = 0
+    total_good = 0
+    for key, value in rating_dict.iteritems():
+        if key > 84:
+            total_good += value
+        total_gold += value
+
+    print "Odds of getting 84+ player out of rare_gold players:"
+    print str(total_good) + "/" + str(total_gold)
+    print str(float(total_good) / float(total_gold) * 100)[:4] + "%"
+    """
+
     # Get average short passing for all leagues
     """leagues = {}
     for player in player_db.db:
