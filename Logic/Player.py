@@ -1,5 +1,6 @@
 import json
 import requests
+from Window.AppConfig import futbin_filename
 
 
 class Player:
@@ -101,6 +102,11 @@ class Player:
         Output: The price, and the player's price is set.
         """
 
+        # Load futbin ID dict
+        with open(futbin_filename, 'r') as conf_file:
+            futbin_id_dict = json.load(conf_file)
+            conf_file.close()
+
         # Skip price if player is legend and console is PS4
         # Legends are only on Xbox
         if console.upper() in ['PLAYSTATION'] and self.playerType == 'legend':
@@ -110,25 +116,50 @@ class Player:
         if self.rating >= update_rating and self.price >= update_price:
             price_site_url_search = 'http://www.futbin.com/api/?term='
             price_site_url_player = 'http://www.futbin.com/17/player'
-            player_name = ''
+            # player_name = ''
             player_id = ''
 
             try:
                 # Create session
                 sess = requests.Session()
 
-                # Search for player and get id and name
-                page_data = json.loads(sess.get(price_site_url_search + self.name).content)
-                for player_data in page_data:
-                    if int(player_data['rating']) == self.rating and\
-                       player_data['position'] == self.position:
-                        player_name = player_data['full_name']
-                        player_id = player_data['id']
-                        break
+                # Check if already have and ID
+                if self.id in futbin_id_dict:
+                    player_id = futbin_id_dict[self.id]
 
-                if player_name != '' and player_id != '':
+                else:
+                    # Search for player and get ID and name
+                    page_data = json.loads(sess.get(price_site_url_search + self.name).content)
+                    for player_data in page_data:
+                        if int(player_data['rating']) == self.rating and\
+                           player_data['position'] == self.position:
+                            # player_name = player_data['full_name']
+                            player_id = player_data['id']
+                            break
+
+                    # Set player ID and save ID to futbin_id_dict
+                    if player_id != '':
+                        futbin_id_dict[self.id] = player_id
+
+                        # Load configurations
+                        with open(futbin_filename, 'r') as config_file:
+                            configurations = json.load(config_file)
+                            config_file.close()
+
+                        # Edit configurations
+                        configurations = futbin_id_dict
+
+                        # Save the settings
+                        with open(futbin_filename, 'w') as config_file:
+                            json.dump(configurations, config_file)
+                            config_file.close()
+
+                # if player_name != '' and player_id != '':
+                if player_id != '':
                     # Get page data of player
-                    page_data = sess.get("%s/%s/%s" % (price_site_url_player, player_id, player_name)).content
+                    # page_data = sess.get("%s/%s/%s" % (price_site_url_player, player_id, player_name)).content
+                    # URL doesn't require player name
+                    page_data = sess.get("%s/%s" % (price_site_url_player, player_id)).content
 
                     # Get price
                     page_data = page_data.split()

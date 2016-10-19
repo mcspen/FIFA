@@ -4,6 +4,7 @@ import GUI.StdColors
 
 # ========== Config JSON Location ==========
 config_filename = 'JSONs/configs.json'
+futbin_filename = 'JSONs/futbin_id_dict.json'
 
 # ========== Strings ==========
 # Titles on top of windows
