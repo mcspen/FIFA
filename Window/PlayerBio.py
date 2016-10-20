@@ -102,11 +102,11 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
 
     # ========== Player Background ==========
     # Assign player background card
-    if player['color'] in ['blue_purple', 'bronze', 'easports', 'fut_champions_bronze', 'fut_champions_gold',
+    if player['color'] in ['bronze', 'easports', 'fut_champions_bronze', 'fut_champions_gold',
                            'fut_champions_silver', 'gold', 'green', 'legend', 'motm', 'motm_2', 'ones_to_watch',
                            'pink_gold', 'pink', 'purple', 'rare_bronze', 'rare_gold', 'rare_silver', 'red_blue',
-                           'silver', 'squad_building_challenge', 'teal', 'tots_bronze', 'tots_gold', 'tots_silver',
-                           'totw_bronze', 'totw_gold', 'totw_silver', 'toty']:
+                           'silver', 'sbc_base', 'squad_building_challenge', 'teal', 'tots_bronze', 'tots_gold',
+                           'tots_silver', 'totw_bronze', 'totw_gold', 'totw_silver', 'toty']:
         background_file = 'Images/Cards/' + player['color'] + '.png'
     else:
         background_file = 'Images/Cards/idk.png'
@@ -162,7 +162,7 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
         stat_line_color = barely_lighter
         coins_color = white
 
-    elif player['color'] in ['toty', 'easports', 'ones_to_watch']:
+    elif player['color'] in ['toty', 'easports', 'ones_to_watch', 'sbc_base']:
         player_headshot_pos = (43, 15)
         club_pos = (51, 76)
         nation_spacing = 1
