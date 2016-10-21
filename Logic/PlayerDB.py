@@ -720,3 +720,121 @@ class PlayerDB:
 
         # Assign list of players to PlayerDB
         self.__init__(player_list)
+
+    def profile(self):
+        """
+        Analyzes player database and determines relevant statistics
+        Input: None - uses self
+        Output: dict with profile data
+        """
+        profile = {
+            "highest_rated": [],
+            "ratings": {"total": {}, "gold": {}, "silver": {}, "bronze": {}},
+            "positions": {"total": {}, "gold": {}, "silver": {}, "bronze": {}},
+            "nations": {"total": {}, "gold": {}, "silver": {}, "bronze": {}},
+            "leagues": {"total": {}, "gold": {}, "silver": {}, "bronze": {}},
+            "skills": {
+                "5": {"total": [], "gold": [], "silver": [], "bronze": []},
+                "4": {"total": [], "gold": [], "silver": [], "bronze": []},
+                "3": {"total": [], "gold": [], "silver": [], "bronze": []},
+                "2": {"total": [], "gold": [], "silver": [], "bronze": []},
+                "1": {"total": [], "gold": [], "silver": [], "bronze": []}
+            },
+            "pace": {"total": [], "gold": [], "silver": [], "bronze": []},
+            "long_shots":  {"total": [], "gold": [], "silver": [], "bronze": []},
+            "shot_power":  {"total": [], "gold": [], "silver": [], "bronze": []}
+        }
+
+        num_highest_rated = 20
+
+        # Get highest rated players
+        self.sort(['rating'])
+        if len(self.db) < num_highest_rated:
+            num_highest_rated = len(self.db)
+        else:
+            while (len(self.db)) > num_highest_rated and \
+                  (self.db[num_highest_rated - 1]['rating'] == self.db[num_highest_rated]['rating']):
+                num_highest_rated += 1
+        for player in self.db[:num_highest_rated]:
+            profile['highest_rated'].append((player['rating'], player['id']))
+
+        # Iterate though and profile all players
+        self.sort(['rating'])
+        for player in self.db:
+
+            # Get basic player color
+            if player['rating'] >= 75:
+                color = 'gold'
+            elif player['rating'] >= 65:
+                color = 'silver'
+            else:
+                color = 'bronze'
+
+            # Ratings --------------------------------------------------------------------------------------------------
+            if player['rating'] in profile['ratings'][color]:
+                profile['ratings'][color][player['rating']] += 1
+            else:
+                profile['ratings'][color][player['rating']] = 1
+
+            if player['rating'] in profile['ratings']['total']:
+                profile['ratings']['total'][player['rating']] += 1
+            else:
+                profile['ratings']['total'][player['rating']] = 1
+
+            # Positions ------------------------------------------------------------------------------------------------
+            if player['position'] in profile['positions'][color]:
+                profile['positions'][color][player['position']] += 1
+            else:
+                profile['positions'][color][player['position']] = 1
+
+            if player['position'] in profile['positions']['total']:
+                profile['positions']['total'][player['position']] += 1
+            else:
+                profile['positions']['total'][player['position']] = 1
+
+            # Leagues --------------------------------------------------------------------------------------------------
+            if player['league']['name'] in profile['leagues'][color]:
+                profile['leagues'][color][player['league']['name']] += 1
+            else:
+                profile['leagues'][color][player['league']['name']] = 1
+
+            if player['league']['name'] in profile['leagues']['total']:
+                profile['leagues']['total'][player['league']['name']] += 1
+            else:
+                profile['leagues']['total'][player['league']['name']] = 1
+
+            # Nations --------------------------------------------------------------------------------------------------
+            if player['nation']['name'] in profile['nations'][color]:
+                profile['nations'][color][player['nation']['name']] += 1
+            else:
+                profile['nations'][color][player['nation']['name']] = 1
+
+            if player['nation']['name'] in profile['nations']['total']:
+                profile['nations']['total'][player['nation']['name']] += 1
+            else:
+                profile['nations']['total'][player['nation']['name']] = 1
+
+            # Specialities ---------------------------------------------------------------------------------------------
+            # Skill Moves
+            profile['skills'][str(player['skillMoves'])][color].append((player['rating'], player['id']))
+            profile['skills'][str(player['skillMoves'])]['total'].append((player['rating'], player['id']))
+
+            # Pace
+            if not player['isGK']:
+                pace_tuple = (player['attributes'][0]['value'], player['acceleration'],
+                              player['sprintspeed'], player['id'])
+            else:
+                pace_tuple = (0, player['acceleration'], player['sprintspeed'], player['id'])
+
+            profile['pace'][color].append(pace_tuple)
+            profile['pace']['total'].append(pace_tuple)
+
+            # Long Shots
+            profile['long_shots'][color].append((player['longshots'], player['id']))
+            profile['long_shots']['total'].append((player['longshots'], player['id']))
+
+            # Shot Power
+            profile['shot_power'][color].append((player['shotpower'], player['id']))
+            profile['shot_power']['total'].append((player['shotpower'], player['id']))
+
+        stuff = 0

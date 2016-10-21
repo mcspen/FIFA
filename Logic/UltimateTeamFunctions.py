@@ -245,6 +245,15 @@ def reduce_teams(team_sort_attributes, num_teams, team_list):
                     player_names.append(player['name'] + player['commonName'] +
                                         player['firstName'] + player['lastName'])
                 attribute_tuple += (player_names,)
+            elif attr in ['total_PAC', 'total_SHO', 'total_PAS', 'total_DRI', 'total_DEF', 'total_PHY']:
+                # Calculate total
+                total = 0
+                index = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'].index(attr[6:])
+                for position in current_team['formation']['positions'].itervalues():
+                    player = position['player']
+                    if not player['isGK']:
+                        total += player['attributes'][index]['value']
+                attribute_tuple += (total,)
             elif attr in ['total_skillMoves']:
                 # Calculate total
                 total = 0

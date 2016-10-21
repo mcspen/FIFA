@@ -57,6 +57,11 @@ if __name__ == '__main__':
     # player_db.load('FIFA 16 - Current', 'db')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
+    # Player DB Profile Function
+    player_db = PlayerDB()
+    player_db.load('my_players_17', 'list')
+    player_db.profile()
+
     # Profile Distribution of Levels and Probability of getting an 85+ Player
     """player_db = PlayerDB()
     player_db.load('FIFA 17 - Current', 'db')

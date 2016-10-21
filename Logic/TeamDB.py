@@ -181,10 +181,10 @@ class TeamDB:
                 elif attr in ['total_PAC', 'total_SHO', 'total_PAS', 'total_DRI', 'total_DEF', 'total_PHY']:
                     # Calculate total
                     total = 0
+                    index = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'].index(attr[6:])
                     for position in current_team['formation']['positions'].itervalues():
                         player = position['player']
                         if not player['isGK']:
-                            index = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'].index(attr[6:])
                             total += player['attributes'][index]['value']
                     attribute_tuple += (total,)
                 else:
