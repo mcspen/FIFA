@@ -57,10 +57,178 @@ if __name__ == '__main__':
     # player_db.load('FIFA 16 - Current', 'db')
     # print "Time to load DB: %f" % (time.time()-temp_time)
 
+    # Puzzle Piece Team Creation
+    player_list = PlayerDB()
+    player_list.load('my_players_17', 'list')
+    player_list.sort(['rating'])
+    formation = formation_db.db[18]
+    link_chem_avg = 1
+
+    puzzle_piece_index = ["rating", "position", "nation", "league", "club", "id", "baseId", "chem_needed"]
+    puzzle_piece_bag = []
+    partial_piece_bag = []
+    complete_piece_bag = []
+
+    for player in player_list.db[:25]:
+
+        # Iterate through possible positions
+        positions_list = [player['position']] + Team.related_positions(player['position'], 'yellow')
+        for player_position in positions_list:
+
+            for custom_symbol, formation_position in formation['positions'].iteritems():
+                if player_position == formation_position['symbol']:
+                    # Create small puzzle pieces for each related position
+                    needed_chemistry = link_chem_avg * len(formation_position['links'])
+
+                    puzzle_piece = (player['rating'],
+                                    custom_symbol,
+                                    player['nation']['id'],
+                                    player['league']['id'],
+                                    player['club']['id'],
+                                    player['id'],
+                                    player['baseId'],
+                                    needed_chemistry)
+                    puzzle_piece_bag.append(puzzle_piece)
+
+                    position_index = puzzle_piece_index.index('position')
+                    baseId_index = puzzle_piece_index.index('baseId')
+                    nation_index = puzzle_piece_index.index('nation')
+                    league_index = puzzle_piece_index.index('league')
+                    club_index = puzzle_piece_index.index('club')
+                    chem_index = puzzle_piece_index.index('chem_needed')
+
+                    # Create new combinations with new piece
+                    for old_piece in puzzle_piece_bag:
+                        # Check if piece touches position-wise and isn't the same player
+                        if puzzle_piece[position_index] in formation['positions'][old_piece[position_index]]['links'] \
+                                and puzzle_piece[baseId_index] != old_piece[baseId_index]:
+                            # Check if any chemistry matches up
+                            matches = 0
+                            if puzzle_piece[nation_index] == old_piece[nation_index]:
+                                matches += 1
+                            if puzzle_piece[league_index] == old_piece[league_index]:
+                                matches += 1
+                                if puzzle_piece[club_index] == old_piece[club_index]:
+                                    matches += 1
+                            # If there were chemistry matches, create new piece
+                            if matches > 0:
+
+                                temp_list = list(old_piece)
+                                temp_list[chem_index] -= matches
+                                new_piece_1 = tuple(temp_list)
+
+                                temp_list = list(puzzle_piece)
+                                temp_list[chem_index] -= matches
+                                new_piece_2 = tuple(temp_list)
+
+                                if new_piece_1[chem_index] <= 0 and new_piece_2[chem_index] <= 0:
+                                    complete_piece_bag.append((new_piece_1, new_piece_2))
+                                else:
+                                    partial_piece_bag.append((new_piece_1, new_piece_2))
+
+                    # Create larger combinations with new piece and existing partial piece
+                    for old_block in partial_piece_bag:
+                        positions_filled = []
+                        base_ids = []
+                        for small_piece in old_block:
+                            positions_filled.append(small_piece[position_index])
+                            base_ids.append(small_piece[baseId_index])
+
+                        # Check if player is already used or if position is already filled
+                        if puzzle_piece[baseId_index] in base_ids or puzzle_piece[position_index] in positions_filled:
+                            continue
+
+                        # Check if pieces touches position-wise
+                        adjacent_positions = []
+                        for position in positions_filled:
+                            if position in formation['positions'][puzzle_piece[position_index]]['links']:
+                                adjacent_positions.append(position)
+
+                        if not adjacent_positions:
+                            continue
+
+                        # Iterate through touching pieces and check for matches
+                        total_matches = {}
+
+                        for adjacent_position in adjacent_positions:
+                            # Get piece of old block corresponding to position
+                            for old_block_piece in old_block:
+                                if old_block_piece[position_index] == adjacent_position:
+                                    old_piece = old_block_piece
+                                    break
+
+                            # Check if any chemistry matches up
+                            matches = 0
+                            if puzzle_piece[nation_index] == old_piece[nation_index]:
+                                matches += 1
+                            if puzzle_piece[league_index] == old_piece[league_index]:
+                                matches += 1
+                                if puzzle_piece[club_index] == old_piece[club_index]:
+                                    matches += 1
+
+                            if matches > 0:
+                                total_matches[adjacent_position] = matches
+
+                        # If there were chemistry matches, create new piece
+                        if total_matches:
+                            new_block = []
+
+                            # Add old pieces to new block with updated chemistry
+                            for old_block_piece in old_block:
+                                if old_block_piece[position_index] in total_matches:
+                                    temp_list = list(old_block_piece)
+                                    temp_list[chem_index] -= total_matches[old_block_piece[position_index]]
+                                    new_block.append(tuple(temp_list))
+                                else:
+                                    new_block.append(old_block_piece)
+
+                            # Add new piece to new block with updated chemistry
+                            total_matches_total = 0
+                            for chem_value in total_matches.itervalues():
+                                total_matches_total += chem_value
+
+                            temp_list = list(puzzle_piece)
+                            temp_list[chem_index] -= total_matches_total
+                            new_block.append(tuple(temp_list))
+
+                            new_block_tuple = tuple(new_block)
+
+                            # Determine which bag to add the piece to. Complete requires 0 chem for all pieces.
+                            no_chem_needed = True
+                            for new_block_piece in new_block_tuple:
+                                if new_block_piece[chem_index] > 0:
+                                    no_chem_needed = False
+                                    break
+
+                            if no_chem_needed:
+                                complete_piece_bag.append(new_block_tuple)
+                            else:
+                                partial_piece_bag.append(new_block_tuple)
+
+    puzzle_piece_bag.sort(key=lambda tup: tup[0], reverse=True)
+
+    test = 0
+
+    # Iterative Team Creation
+    """player_list = PlayerDB()
+    player_list.load('my_players_17', 'list')
+    player_list.sort(['rating'])
+    team = Team()
+    teams = TeamDB()
+
+    player_counter = 10
+
+    while len(teams.db) < 50:
+        player_counter += 5
+        teams = TeamDB(team.create_team_ultimate(PlayerDB(player_list.db[:player_counter]), player_db, formation_db))
+    teams.save("Iterative Create Test 3")
+
+    print player_counter"""
+
     # Player DB Profile Function
-    player_db = PlayerDB()
-    player_db.load('my_players_17', 'list')
-    player_db.profile()
+    #player_db = PlayerDB()
+    #player_db.load('my_players_17', 'list')
+    #player_db.profile()
 
     # Profile Distribution of Levels and Probability of getting an 85+ Player
     """player_db = PlayerDB()
