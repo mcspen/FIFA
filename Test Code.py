@@ -68,8 +68,11 @@ if __name__ == '__main__':
     puzzle_piece_bag = []
     partial_piece_bag = []
     complete_piece_bag = []
+    complete_team_bag = []
 
-    for player in player_list.db[:25]:
+    start_time = time.clock()
+
+    for player in player_list.db:#[:75]:
 
         # Iterate through possible positions
         positions_list = [player['position']] + Team.related_positions(player['position'], 'yellow')
@@ -172,6 +175,7 @@ if __name__ == '__main__':
                         # If there were chemistry matches, create new piece
                         if total_matches:
                             new_block = []
+                            positions_filled.append(puzzle_piece[position_index])
 
                             # Add old pieces to new block with updated chemistry
                             for old_block_piece in old_block:
@@ -194,18 +198,47 @@ if __name__ == '__main__':
                             new_block_tuple = tuple(new_block)
 
                             # Determine which bag to add the piece to. Complete requires 0 chem for all pieces.
-                            no_chem_needed = True
+                            # Check if a surrounded piece does not have enough chemistry (and thus the piece is useless)
+                            independent_piece = True
+                            useless_piece = False
+                            # Iterate through each piece in the new block
                             for new_block_piece in new_block_tuple:
+
+                                # Check the chem of the piece. All must be 0 to be independent.
                                 if new_block_piece[chem_index] > 0:
-                                    no_chem_needed = False
-                                    break
+                                    independent_piece = False
 
-                            if no_chem_needed:
-                                complete_piece_bag.append(new_block_tuple)
-                            else:
-                                partial_piece_bag.append(new_block_tuple)
+                                    # Check if piece is surrounded and still needs chemistry.
+                                    piece_surrounded = True
+                                    for piece_link in formation['positions'][new_block_piece[position_index]]['links']:
+                                        if piece_link not in positions_filled:
+                                            piece_surrounded = False
 
-    puzzle_piece_bag.sort(key=lambda tup: tup[0], reverse=True)
+                                    # Piece is surrounded and still needs chemistry. It is useless.
+                                    if piece_surrounded:
+                                        useless_piece = True
+                                        break
+
+                            if not useless_piece:
+                                if independent_piece:
+                                    complete_piece_bag.append(new_block_tuple)
+                                else:
+                                    partial_piece_bag.append(new_block_tuple)
+
+                                if len(new_block_tuple) >= 11:
+                                    complete_team_bag.append(new_block_tuple)
+
+                                    if len(complete_team_bag) % 10000 == 0:
+                                        file_path = 'JSONs/Puzzle/' + str(len(complete_team_bag)) + '.json'
+
+                                        with open(file_path, 'w') as f:
+                                            json.dump(complete_team_bag, f)
+                                            f.close()
+
+    # puzzle_piece_bag.sort(key=lambda tup: tup[0], reverse=True)
+    # partial_piece_bag.sort(key=lambda tup: len(tup), reverse=True)
+
+    print time.clock() - start_time
 
     test = 0
 
