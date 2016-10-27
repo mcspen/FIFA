@@ -93,6 +93,7 @@ if __name__ == '__main__':
                                     needed_chemistry)
                     puzzle_piece_bag.append(puzzle_piece)
 
+                    rating_index = puzzle_piece_index.index('rating')
                     position_index = puzzle_piece_index.index('position')
                     baseId_index = puzzle_piece_index.index('baseId')
                     nation_index = puzzle_piece_index.index('nation')
@@ -124,16 +125,23 @@ if __name__ == '__main__':
                                 temp_list[chem_index] -= matches
                                 new_piece_2 = tuple(temp_list)
 
+                                # Create piece description tuple
+                                new_piece_rating = float(new_piece_1[rating_index] + new_piece_2[rating_index]) / 2.0
+                                new_piece_positions = [new_piece_1[position_index], new_piece_2[position_index]]
+                                new_piece_positions.sort()
+                                new_piece_positions = tuple(new_piece_positions)
+                                piece_description_tuple = (new_piece_rating, new_piece_positions)
+
                                 if new_piece_1[chem_index] <= 0 and new_piece_2[chem_index] <= 0:
-                                    complete_piece_bag.append((new_piece_1, new_piece_2))
+                                    complete_piece_bag.append((piece_description_tuple, new_piece_1, new_piece_2))
                                 else:
-                                    partial_piece_bag.append((new_piece_1, new_piece_2))
+                                    partial_piece_bag.append((piece_description_tuple, new_piece_1, new_piece_2))
 
                     # Create larger combinations with new piece and existing partial piece
                     for old_block in partial_piece_bag:
                         positions_filled = []
                         base_ids = []
-                        for small_piece in old_block:
+                        for small_piece in old_block[1:]:
                             positions_filled.append(small_piece[position_index])
                             base_ids.append(small_piece[baseId_index])
 
@@ -201,8 +209,10 @@ if __name__ == '__main__':
                             # Check if a surrounded piece does not have enough chemistry (and thus the piece is useless)
                             independent_piece = True
                             useless_piece = False
+                            total_rating = 0.0
                             # Iterate through each piece in the new block
                             for new_block_piece in new_block_tuple:
+                                total_rating += new_block_piece[rating_index]
 
                                 # Check the chem of the piece. All must be 0 to be independent.
                                 if new_block_piece[chem_index] > 0:
@@ -220,6 +230,15 @@ if __name__ == '__main__':
                                         break
 
                             if not useless_piece:
+                                # Create block description tuple
+                                new_block_rating = total_rating / len(new_block_tuple)
+                                new_block_positions = positions_filled
+                                new_block_positions.sort()
+                                new_block_positions = tuple(new_block_positions)
+                                block_description_tuple = (new_block_rating, new_block_positions)
+
+                                new_block_tuple = tuple([block_description_tuple] + list(new_block_tuple))
+
                                 if independent_piece:
                                     complete_piece_bag.append(new_block_tuple)
                                 else:
@@ -235,10 +254,21 @@ if __name__ == '__main__':
                                             json.dump(complete_team_bag, f)
                                             f.close()
 
-    # puzzle_piece_bag.sort(key=lambda tup: tup[0], reverse=True)
-    # partial_piece_bag.sort(key=lambda tup: len(tup), reverse=True)
+        puzzle_piece_bag.sort(key=lambda tup: tup[0], reverse=True)
+        partial_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
+        complete_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
+        complete_team_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
 
-    print time.clock() - start_time
+        print ""
+        print "partial_piece_bag length:  " + str(len(partial_piece_bag))
+        print "complete_piece_bag length: " + str(len(complete_piece_bag))
+        print "complete_team_bag length:  " + str(len(complete_team_bag))
+
+        partial_piece_bag = partial_piece_bag[:50000]
+        complete_piece_bag = complete_piece_bag[:5000]
+        complete_team_bag = complete_team_bag[:500]
+
+        print str((time.clock() - start_time) / 60.0) + ' minutes'
 
     test = 0
 
