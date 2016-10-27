@@ -70,6 +70,11 @@ if __name__ == '__main__':
     complete_piece_bag = []
     complete_team_bag = []
 
+    partial_piece_bag_total = 0
+    complete_piece_bag_total = 0
+    complete_team_bag_total = 0
+    save_counter = 1
+
     start_time = time.clock()
 
     for player in player_list.db:#[:75]:
@@ -80,6 +85,8 @@ if __name__ == '__main__':
 
             for custom_symbol, formation_position in formation['positions'].iteritems():
                 if player_position == formation_position['symbol']:
+                    new_piece_bag = []
+
                     # Create small puzzle pieces for each related position
                     needed_chemistry = link_chem_avg * len(formation_position['links'])
 
@@ -134,8 +141,10 @@ if __name__ == '__main__':
 
                                 if new_piece_1[chem_index] <= 0 and new_piece_2[chem_index] <= 0:
                                     complete_piece_bag.append((piece_description_tuple, new_piece_1, new_piece_2))
+                                    partial_piece_bag.append((piece_description_tuple, new_piece_1, new_piece_2))
                                 else:
                                     partial_piece_bag.append((piece_description_tuple, new_piece_1, new_piece_2))
+                                new_piece_bag.append((piece_description_tuple, new_piece_1, new_piece_2))
 
                     # Create larger combinations with new piece and existing partial piece
                     for old_block in partial_piece_bag:
@@ -163,7 +172,7 @@ if __name__ == '__main__':
 
                         for adjacent_position in adjacent_positions:
                             # Get piece of old block corresponding to position
-                            for old_block_piece in old_block:
+                            for old_block_piece in old_block[1:]:
                                 if old_block_piece[position_index] == adjacent_position:
                                     old_piece = old_block_piece
                                     break
@@ -186,7 +195,7 @@ if __name__ == '__main__':
                             positions_filled.append(puzzle_piece[position_index])
 
                             # Add old pieces to new block with updated chemistry
-                            for old_block_piece in old_block:
+                            for old_block_piece in old_block[1:]:
                                 if old_block_piece[position_index] in total_matches:
                                     temp_list = list(old_block_piece)
                                     temp_list[chem_index] -= total_matches[old_block_piece[position_index]]
@@ -240,35 +249,206 @@ if __name__ == '__main__':
                                 new_block_tuple = tuple([block_description_tuple] + list(new_block_tuple))
 
                                 if independent_piece:
-                                    complete_piece_bag.append(new_block_tuple)
+                                    # Complete, independent team
+                                    if len(new_block_tuple) >= 11+1:  # +1 is for the description tup
+                                        complete_team_bag.append(new_block_tuple)
+                                    # Independent piece of a team
+                                    else:
+                                        complete_piece_bag.append(new_block_tuple)
+                                        partial_piece_bag.append(new_block_tuple)
                                 else:
+                                    # Piece of a team with dependencies
+                                    partial_piece_bag.append(new_block_tuple)
+                                new_piece_bag.append(new_block_tuple)
+
+
+
+
+
+
+
+
+
+
+                    """"# Merge recently created blocks into new blocks based on current puzzle piece
+                    for new_combo_piece in new_piece_bag:
+                        positions_filled = []
+                        base_ids = []
+                        for small_piece in old_block[1:]:
+                            positions_filled.append(small_piece[position_index])
+                            base_ids.append(small_piece[baseId_index])
+
+                        # Check if player is already used or if position is already filled
+                        if puzzle_piece[baseId_index] in base_ids or puzzle_piece[
+                            position_index] in positions_filled:
+                            continue
+
+                        # Check if pieces touches position-wise
+                        adjacent_positions = []
+                        for position in positions_filled:
+                            if position in formation['positions'][puzzle_piece[position_index]]['links']:
+                                adjacent_positions.append(position)
+
+                        if not adjacent_positions:
+                            continue
+
+                        # Iterate through touching pieces and check for matches
+                        total_matches = {}
+
+                        for adjacent_position in adjacent_positions:
+                            # Get piece of old block corresponding to position
+                            for old_block_piece in old_block[1:]:
+                                if old_block_piece[position_index] == adjacent_position:
+                                    old_piece = old_block_piece
+                                    break
+
+                            # Check if any chemistry matches up
+                            matches = 0
+                            if puzzle_piece[nation_index] == old_piece[nation_index]:
+                                matches += 1
+                            if puzzle_piece[league_index] == old_piece[league_index]:
+                                matches += 1
+                                if puzzle_piece[club_index] == old_piece[club_index]:
+                                    matches += 1
+
+                            if matches > 0:
+                                total_matches[adjacent_position] = matches
+
+                        # If there were chemistry matches, create new piece
+                        if total_matches:
+                            new_block = []
+                            positions_filled.append(puzzle_piece[position_index])
+
+                            # Add old pieces to new block with updated chemistry
+                            for old_block_piece in old_block[1:]:
+                                if old_block_piece[position_index] in total_matches:
+                                    temp_list = list(old_block_piece)
+                                    temp_list[chem_index] -= total_matches[
+                                        old_block_piece[position_index]]
+                                    new_block.append(tuple(temp_list))
+                                else:
+                                    new_block.append(old_block_piece)
+
+                            # Add new piece to new block with updated chemistry
+                            total_matches_total = 0
+                            for chem_value in total_matches.itervalues():
+                                total_matches_total += chem_value
+
+                            temp_list = list(puzzle_piece)
+                            temp_list[chem_index] -= total_matches_total
+                            new_block.append(tuple(temp_list))
+
+                            new_block_tuple = tuple(new_block)
+
+                            # Determine which bag to add the piece to. Complete requires 0 chem for all pieces.
+                            # Check if a surrounded piece does not have enough chemistry (and thus the piece is useless)
+                            independent_piece = True
+                            useless_piece = False
+                            total_rating = 0.0
+                            # Iterate through each piece in the new block
+                            for new_block_piece in new_block_tuple:
+                                total_rating += new_block_piece[rating_index]
+
+                                # Check the chem of the piece. All must be 0 to be independent.
+                                if new_block_piece[chem_index] > 0:
+                                    independent_piece = False
+
+                                    # Check if piece is surrounded and still needs chemistry.
+                                    piece_surrounded = True
+                                    for piece_link in \
+                                    formation['positions'][new_block_piece[position_index]]['links']:
+                                        if piece_link not in positions_filled:
+                                            piece_surrounded = False
+
+                                    # Piece is surrounded and still needs chemistry. It is useless.
+                                    if piece_surrounded:
+                                        useless_piece = True
+                                        break
+
+                            if not useless_piece:
+                                # Create block description tuple
+                                new_block_rating = total_rating / len(new_block_tuple)
+                                new_block_positions = positions_filled
+                                new_block_positions.sort()
+                                new_block_positions = tuple(new_block_positions)
+                                block_description_tuple = (new_block_rating, new_block_positions)
+
+                                new_block_tuple = tuple(
+                                    [block_description_tuple] + list(new_block_tuple))
+
+                                if independent_piece:
+                                    # Complete, independent team
+                                    if len(new_block_tuple) >= 11 + 1:  # +1 is for the description tup
+                                        complete_team_bag.append(new_block_tuple)
+                                    # Independent piece of a team
+                                    else:
+                                        complete_piece_bag.append(new_block_tuple)
+                                else:
+                                    # Piece of a team with dependencies
                                     partial_piece_bag.append(new_block_tuple)
 
-                                if len(new_block_tuple) >= 11:
-                                    complete_team_bag.append(new_block_tuple)
 
-                                    if len(complete_team_bag) % 10000 == 0:
-                                        file_path = 'JSONs/Puzzle/' + str(len(complete_team_bag)) + '.json'
 
-                                        with open(file_path, 'w') as f:
-                                            json.dump(complete_team_bag, f)
-                                            f.close()
+
+                    # Create larger independent blocks from existing partial piece"""
+
+
+
+
+
+
+
+
 
         puzzle_piece_bag.sort(key=lambda tup: tup[0], reverse=True)
         partial_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
         complete_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
         complete_team_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
 
-        print ""
-        print "partial_piece_bag length:  " + str(len(partial_piece_bag))
-        print "complete_piece_bag length: " + str(len(complete_piece_bag))
-        print "complete_team_bag length:  " + str(len(complete_team_bag))
+        partial_piece_bag_max = 100000
+        complete_piece_bag_max = 10000
+        complete_team_bag_max = 1000
 
-        partial_piece_bag = partial_piece_bag[:50000]
-        complete_piece_bag = complete_piece_bag[:5000]
-        complete_team_bag = complete_team_bag[:500]
+        if partial_piece_bag_total < partial_piece_bag_max:
+            partial_piece_bag_total = len(partial_piece_bag)
+        else:
+            partial_piece_bag_total += (len(partial_piece_bag) - partial_piece_bag_max)
+
+        if complete_piece_bag_total < complete_piece_bag_max:
+            complete_piece_bag_total = len(complete_piece_bag)
+        else:
+            complete_piece_bag_total += (len(complete_piece_bag) - complete_piece_bag_max)
+
+        if complete_team_bag_total < complete_team_bag_max:
+            complete_team_bag_total = len(complete_team_bag)
+        else:
+            complete_team_bag_total += (len(complete_team_bag) - complete_team_bag_max)
+
+        partial_piece_bag = partial_piece_bag[:partial_piece_bag_max]
+        complete_piece_bag = complete_piece_bag[:complete_piece_bag_max]
+        complete_team_bag = complete_team_bag[:complete_team_bag_max]
+
+        print ""
+        print "puzzle_piece_bag total:   " + str(len(puzzle_piece_bag))
+        print "partial_piece_bag total:  " + str(partial_piece_bag_total)
+        print "complete_piece_bag total: " + str(complete_piece_bag_total)
+        print "complete_team_bag total:  " + str(complete_team_bag_total)
 
         print str((time.clock() - start_time) / 60.0) + ' minutes'
+
+        if complete_team_bag_total / 25000 == save_counter:
+            save_counter += 1
+            file_path = 'JSONs/Puzzle/' + str(complete_team_bag_total) + '.json'
+
+            with open(file_path, 'w') as f:
+                json.dump(complete_team_bag, f)
+                f.close()
+
+    file_path = 'JSONs/Puzzle/' + str(complete_team_bag_total) + '.json'
+
+    with open(file_path, 'w') as f:
+        json.dump(complete_team_bag, f)
+        f.close()
 
     test = 0
 
