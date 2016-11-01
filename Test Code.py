@@ -61,7 +61,7 @@ if __name__ == '__main__':
     player_list = PlayerDB()
     player_list.load('my_players_17', 'list')
     player_list.sort(['rating'])
-    formation = formation_db.db[18]
+    formation = formation_db.db[21]
     link_chem_avg = 1
 
     puzzle_piece_index = ["rating", "position", "nation", "league", "club", "id", "baseId", "chem_needed"]
@@ -74,10 +74,11 @@ if __name__ == '__main__':
     complete_piece_bag_total = 0
     complete_team_bag_total = 0
     save_counter = 1
+    total_players = 200
 
     start_time = time.clock()
 
-    for player in player_list.db:#[:75]:
+    for player_idx, player in enumerate(player_list.db[:total_players]):
 
         # Iterate through possible positions
         positions_list = [player['position']] + Team.related_positions(player['position'], 'yellow')
@@ -481,7 +482,7 @@ if __name__ == '__main__':
         puzzle_piece_bag.sort(key=lambda tup: tup[0], reverse=True)
         partial_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
         complete_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
-        complete_team_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
+        complete_team_bag.sort(key=lambda tup: (tup[0][0]), reverse=True)
 
         partial_piece_bag_max = 10000
         complete_piece_bag_max = 1000
@@ -507,14 +508,16 @@ if __name__ == '__main__':
         complete_team_bag = complete_team_bag[:complete_team_bag_max]
 
         print ""
+        print "Player " + str(player_idx) + " of " + str(total_players)
         print "puzzle_piece_bag total:   " + str(len(puzzle_piece_bag))
         print "partial_piece_bag total:  " + str(partial_piece_bag_total)
         print "complete_piece_bag total: " + str(complete_piece_bag_total)
         print "complete_team_bag total:  " + str(complete_team_bag_total)
+        print "Best Team Rating:         " + str(complete_team_bag[0][0][0])
 
         print str((time.clock() - start_time) / 60.0) + ' minutes'
 
-        if complete_team_bag_total / 25000 == save_counter:
+        if complete_team_bag_total / 250 == save_counter:
             save_counter += 1
             file_path = 'JSONs/Puzzle/' + str(complete_team_bag_total) + '.json'
 
@@ -528,7 +531,25 @@ if __name__ == '__main__':
         json.dump(complete_team_bag, f)
         f.close()
 
-    test = 0
+    # Create Team DB from Puzzle Team List
+    '''filename = "7596"
+    file_path = 'JSONs/Puzzle/' + filename + '.json'
+    with open(file_path, 'r') as f:
+        teams_list = json.load(f)
+        f.close()
+
+    puzzle_team_list = TeamDB()
+    formation = formation_db.db[21]
+
+    for team in teams_list:
+        roster = {}
+        for position in team[1:]:
+            roster[position[1]] = player_db.search({'id': (position[5], 'exact')})[0]
+        temp_team = Team()
+        temp_team.set_team(formation, roster)
+        puzzle_team_list.add_team(temp_team)
+
+    puzzle_team_list.save("Puzzle Piece Teams")'''
 
     # Iterative Team Creation
     """player_list = PlayerDB()
