@@ -95,11 +95,17 @@ if __name__ == '__main__':
                 for custom_symbol, formation_position in formation['positions'].iteritems():
                     if player_position == formation_position['symbol']:
                         new_piece_bag = []
+                        new_complete_piece_bag = []
 
                         # Create small puzzle pieces for each related position
                         needed_chemistry = link_chem_avg * len(formation_position['links'])
 
-                        puzzle_piece = (player['rating'],
+                        # TEMP - Testing Coman teams =========================================================================================
+                        player_rating = player['rating']
+                        if player['lastName'] == u'Coman':
+                            player_rating += 15
+
+                        puzzle_piece = (player_rating,
                                         custom_symbol,
                                         player['nation']['id'],
                                         player['league']['id'],
@@ -149,6 +155,8 @@ if __name__ == '__main__':
                                     piece_description_tuple = (new_piece_rating, new_piece_positions)
 
                                     if new_piece_1[chem_index] <= 0 and new_piece_2[chem_index] <= 0:
+                                        new_complete_piece_bag.append((piece_description_tuple,
+                                                                       new_piece_1, new_piece_2))
                                         complete_piece_bag.append((piece_description_tuple, new_piece_1, new_piece_2))
                                         partial_piece_bag.append((piece_description_tuple, new_piece_1, new_piece_2))
                                     else:
@@ -278,6 +286,7 @@ if __name__ == '__main__':
                                                 complete_team_bag.append(new_block_tuple)
                                         # Independent piece of a team
                                         else:
+                                            new_complete_piece_bag.append(new_block_tuple)
                                             complete_piece_bag.append(new_block_tuple)
                                             partial_piece_bag.append(new_block_tuple)
                                     else:
@@ -483,6 +492,7 @@ if __name__ == '__main__':
                                                     complete_team_bag.append(new_block_tuple)
                                             # Independent piece of a team
                                             else:
+                                                new_complete_piece_bag.append(new_block_tuple)
                                                 complete_piece_bag.append(new_block_tuple)
                                                 partial_piece_bag.append(new_block_tuple)
                                         else:
@@ -494,11 +504,15 @@ if __name__ == '__main__':
                         print "new_piece_bag total:   " + str(len(new_piece_bag))
 
                         # Merge complete independent pieces together
-                        for idx, complete_piece_1 in enumerate(complete_piece_bag):
-                            for complete_piece_2 in complete_piece_bag[idx + 1:]:
+                        for complete_piece_1 in new_complete_piece_bag:
+                            for complete_piece_2 in complete_piece_bag:
 
                                 # Check if duplicate players
-                                all_player_ids = list(complete_piece_1[0][2]) + list(complete_piece_2[0][2])
+                                all_player_ids = []
+                                for complete_tup in complete_piece_1[1:]:
+                                    all_player_ids.append(complete_tup[baseId_index])
+                                for complete_tup in complete_piece_2[1:]:
+                                    all_player_ids.append(complete_tup[baseId_index])
                                 if len(all_player_ids) != len(set(all_player_ids)):
                                     continue
 
@@ -519,18 +533,13 @@ if __name__ == '__main__':
                                 new_block_positions = all_positions
                                 new_block_positions.sort()
                                 new_block_positions = tuple(new_block_positions)
-                                new_block_base_ids = all_player_ids
-                                new_block_base_ids.sort()
-                                new_block_base_ids = tuple(new_block_base_ids)
-                                block_description_tuple = (new_block_rating, new_block_positions, new_block_base_ids)
+                                block_description_tuple = (new_block_rating, new_block_positions)
 
                                 new_block_tuple = tuple([block_description_tuple] + list(new_block_tuple))
 
                                 # Complete, independent team
                                 if len(new_block_tuple) >= 11 + 1:  # +1 is for the description tup
                                     base_ids_list = all_player_ids
-                                    for tup in new_block_tuple[1:]:
-                                        base_ids_list.append(tup[baseId_index])
                                     base_ids_list.sort()
                                     base_ids_tup = tuple(base_ids_list)
                                     new_block_tuple = list(new_block_tuple)
@@ -546,6 +555,7 @@ if __name__ == '__main__':
                                         complete_team_bag.append(new_block_tuple)
                                 # Independent piece of a team
                                 else:
+                                    new_complete_piece_bag.append(new_block_tuple)
                                     complete_piece_bag.append(new_block_tuple)
                                     partial_piece_bag.append(new_block_tuple)
 
