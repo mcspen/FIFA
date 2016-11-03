@@ -493,6 +493,62 @@ if __name__ == '__main__':
                             new_piece_bag = new_piece_bag[:new_piece_bag_max]
                         print "new_piece_bag total:   " + str(len(new_piece_bag))
 
+                        # Merge complete independent pieces together
+                        for idx, complete_piece_1 in enumerate(complete_piece_bag):
+                            for complete_piece_2 in complete_piece_bag[idx + 1:]:
+
+                                # Check if duplicate players
+                                all_player_ids = list(complete_piece_1[0][2]) + list(complete_piece_2[0][2])
+                                if len(all_player_ids) != len(set(all_player_ids)):
+                                    continue
+
+                                # Check if duplicate positions
+                                all_positions = list(complete_piece_1[0][1]) + list(complete_piece_2[0][1])
+                                if len(all_positions) != len(set(all_positions)):
+                                    continue
+
+                                # Create new independent block
+                                # Currently ignores additional chemistry connections!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                # Currently seems irrelevant since they are maxed out!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                complete_piece_1_list = list(complete_piece_1)
+                                complete_piece_2_list = list(complete_piece_2)
+                                new_block_tuple = tuple(tuple(complete_piece_1_list[1:] + complete_piece_2_list[1:]))
+                                new_block_rating = ((complete_piece_1[0][0] * len(complete_piece_1[0][1])) +
+                                                    (complete_piece_2[0][0] * len(complete_piece_2[0][1]))) / \
+                                                   len(all_positions)
+                                new_block_positions = all_positions
+                                new_block_positions.sort()
+                                new_block_positions = tuple(new_block_positions)
+                                new_block_base_ids = all_player_ids
+                                new_block_base_ids.sort()
+                                new_block_base_ids = tuple(new_block_base_ids)
+                                block_description_tuple = (new_block_rating, new_block_positions, new_block_base_ids)
+
+                                new_block_tuple = tuple([block_description_tuple] + list(new_block_tuple))
+
+                                # Complete, independent team
+                                if len(new_block_tuple) >= 11 + 1:  # +1 is for the description tup
+                                    base_ids_list = all_player_ids
+                                    for tup in new_block_tuple[1:]:
+                                        base_ids_list.append(tup[baseId_index])
+                                    base_ids_list.sort()
+                                    base_ids_tup = tuple(base_ids_list)
+                                    new_block_tuple = list(new_block_tuple)
+                                    new_block_tuple[0] = list(new_block_tuple[0]) + [base_ids_tup]
+                                    new_block_tuple = tuple(new_block_tuple)
+
+                                    duplicate = False
+                                    for complete_team in complete_team_bag:
+                                        if complete_team[0][2] == base_ids_tup:
+                                            duplicate = True
+                                            break
+                                    if not duplicate:
+                                        complete_team_bag.append(new_block_tuple)
+                                # Independent piece of a team
+                                else:
+                                    complete_piece_bag.append(new_block_tuple)
+                                    partial_piece_bag.append(new_block_tuple)
+
             puzzle_piece_bag.sort(key=lambda tup: tup[0], reverse=True)
             partial_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
             complete_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
