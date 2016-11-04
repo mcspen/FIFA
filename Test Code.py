@@ -64,7 +64,7 @@ if __name__ == '__main__':
     link_chem_avg = 1
 
     start_time = time.clock()
-    for formation_idx, formation in enumerate(formation_db.db):
+    for formation_idx, formation in enumerate(formation_db.db[18:19]):
         puzzle_piece_index = ["rating", "position", "nation", "league", "club", "id", "baseId", "chem_needed"]
         puzzle_piece_bag = []
         partial_piece_bag = []
@@ -102,8 +102,9 @@ if __name__ == '__main__':
 
                         # TEMP - Testing Coman teams =========================================================================================
                         player_rating = player['rating']
-                        if player['lastName'] == u'Coman':
-                            player_rating += 15
+
+                        if player['id'] in ["50508597", "213345"]:
+                            player_rating += 100
 
                         puzzle_piece = (player_rating,
                                         custom_symbol,
@@ -587,6 +588,11 @@ if __name__ == '__main__':
             print "partial_piece_bag total:  " + str(partial_piece_bag_total)
             print "complete_piece_bag total: " + str(complete_piece_bag_total)
             print "complete_team_bag total:  " + str(complete_team_bag_total)
+            print "Best Piece Rating:        " + str(puzzle_piece_bag[0][0])
+            if len(partial_piece_bag) > 0:
+                print "Best Partial Rating:      " + str(partial_piece_bag[0][0][0])
+            if len(complete_piece_bag) > 0:
+                print "Best Complete Rating:     " + str(complete_piece_bag[0][0][0])
             if len(complete_team_bag) > 0:
                 print "Best Team Rating:         " + str(complete_team_bag[0][0][0])
 
@@ -621,14 +627,14 @@ if __name__ == '__main__':
             f.close()
 
     # Create Team DB from Puzzle Team List
-    '''filename = "7596"
+    '''filename = "4-4-2 - 119"
     file_path = 'JSONs/Puzzle/' + filename + '.json'
     with open(file_path, 'r') as f:
         teams_list = json.load(f)
         f.close()
 
     puzzle_team_list = TeamDB()
-    formation = formation_db.db[21]
+    formation = formation_db.db[18]
 
     for team in teams_list:
         roster = {}
@@ -638,7 +644,7 @@ if __name__ == '__main__':
         temp_team.set_team(formation, roster)
         puzzle_team_list.add_team(temp_team)
 
-    puzzle_team_list.save("Puzzle Piece Teams")'''
+    puzzle_team_list.save("Coman Puzzle Piece Teams")'''
 
     # Iterative Team Creation
     """player_list = PlayerDB()
