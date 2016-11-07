@@ -60,11 +60,12 @@ if __name__ == '__main__':
     # Puzzle Piece Team Creation
     player_list = PlayerDB()
     player_list.load('my_players_17', 'list')
-    player_list.sort(['rating'])
+    #player_list.sort(['rating'])
+    player_list.sort(['price', 'rating'], False)
     link_chem_avg = 1
 
     start_time = time.clock()
-    for formation_idx, formation in enumerate(formation_db.db[18:19]):
+    for formation_idx, formation in enumerate(formation_db.db):
         puzzle_piece_index = ["rating", "position", "nation", "league", "club", "id", "baseId", "chem_needed"]
         puzzle_piece_bag = []
         partial_piece_bag = []
@@ -88,6 +89,9 @@ if __name__ == '__main__':
             print "Formation " + str(formation_idx + 1) + " of " + str(len(formation_db.db)) + ' - ' + formation['name']
             iteration_time = time.clock()
 
+            if player['price'] < 100:
+                continue
+
             # Iterate through possible positions
             positions_list = [player['position']] + Team.related_positions(player['position'], 'yellow')
             for player_position in positions_list:
@@ -100,13 +104,7 @@ if __name__ == '__main__':
                         # Create small puzzle pieces for each related position
                         needed_chemistry = link_chem_avg * len(formation_position['links'])
 
-                        # TEMP - Testing Coman teams =========================================================================================
-                        player_rating = player['rating']
-
-                        if player['id'] in ["50508597", "213345"]:
-                            player_rating += 100
-
-                        puzzle_piece = (player_rating,
+                        puzzle_piece = (player['price'],  # player['rating'],
                                         custom_symbol,
                                         player['nation']['id'],
                                         player['league']['id'],
@@ -560,10 +558,10 @@ if __name__ == '__main__':
                                     complete_piece_bag.append(new_block_tuple)
                                     partial_piece_bag.append(new_block_tuple)
 
-            puzzle_piece_bag.sort(key=lambda tup: tup[0], reverse=True)
-            partial_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
-            complete_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=True)
-            complete_team_bag.sort(key=lambda tup: (tup[0][0]), reverse=True)
+            puzzle_piece_bag.sort(key=lambda tup: tup[0], reverse=False)
+            partial_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=False)
+            complete_piece_bag.sort(key=lambda tup: (len(tup[0][1]), tup[0][0]), reverse=False)
+            complete_team_bag.sort(key=lambda tup: (tup[0][0]), reverse=False)
 
             if partial_piece_bag_total < partial_piece_bag_max:
                 partial_piece_bag_total = len(partial_piece_bag)
@@ -588,7 +586,8 @@ if __name__ == '__main__':
             print "partial_piece_bag total:  " + str(partial_piece_bag_total)
             print "complete_piece_bag total: " + str(complete_piece_bag_total)
             print "complete_team_bag total:  " + str(complete_team_bag_total)
-            print "Best Piece Rating:        " + str(puzzle_piece_bag[0][0])
+            if len(puzzle_piece_bag) > 0:
+                print "Best Piece Rating:        " + str(puzzle_piece_bag[0][0])
             if len(partial_piece_bag) > 0:
                 print "Best Partial Rating:      " + str(partial_piece_bag[0][0][0])
             if len(complete_piece_bag) > 0:
@@ -627,24 +626,25 @@ if __name__ == '__main__':
             f.close()
 
     # Create Team DB from Puzzle Team List
-    '''filename = "4-4-2 - 119"
+    '''filename = "3-4-1-2 - 56"
     file_path = 'JSONs/Puzzle/' + filename + '.json'
     with open(file_path, 'r') as f:
         teams_list = json.load(f)
         f.close()
 
+    player_list.load('my_players_17', 'list')
     puzzle_team_list = TeamDB()
-    formation = formation_db.db[18]
+    formation = formation_db.db[0]
 
     for team in teams_list:
         roster = {}
         for position in team[1:]:
-            roster[position[1]] = player_db.search({'id': (position[5], 'exact')})[0]
+            roster[position[1]] = player_list.search({'id': (position[5], 'exact')})[0]
         temp_team = Team()
         temp_team.set_team(formation, roster)
         puzzle_team_list.add_team(temp_team)
 
-    puzzle_team_list.save("Coman Puzzle Piece Teams")'''
+    puzzle_team_list.save("Cheap Teams")'''
 
     # Iterative Team Creation
     """player_list = PlayerDB()
