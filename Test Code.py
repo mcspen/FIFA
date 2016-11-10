@@ -626,7 +626,7 @@ if __name__ == '__main__':
             f.close()
 
     # Create Team DB from Puzzle Team List
-    '''filename = "3-4-1-2 - 56"
+    '''filename = "3-4-1-2 - 6056"
     file_path = 'JSONs/Puzzle/' + filename + '.json'
     with open(file_path, 'r') as f:
         teams_list = json.load(f)
@@ -644,7 +644,7 @@ if __name__ == '__main__':
         temp_team.set_team(formation, roster)
         puzzle_team_list.add_team(temp_team)
 
-    puzzle_team_list.save("Cheap Teams")'''
+    puzzle_team_list.save("Cheap Teams 2")'''
 
     # Iterative Team Creation
     """player_list = PlayerDB()
