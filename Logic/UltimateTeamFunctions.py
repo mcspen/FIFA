@@ -10,6 +10,8 @@ import copy
 import json
 from multiprocessing import Pool
 
+req_link_chem = 0.3
+
 
 def recursive_create_tup(tup):
     """
@@ -308,8 +310,8 @@ def find_dependent_players(position, custom_symbol, formation, roster,):
         recheck_chemistry /= len(formation['positions'][recheck_position]['links'])
 
         # Check if chemistry meets requirements
-        if recheck_chemistry < 1:
-            needed_chem = (1.0 - recheck_chemistry) * len(formation['positions'][recheck_position]['links'])
+        if recheck_chemistry < req_link_chem:
+            needed_chem = (req_link_chem - recheck_chemistry) * len(formation['positions'][recheck_position]['links'])
             dependent_pos.append((recheck_position, needed_chem))
 
     return dependent_pos
@@ -525,7 +527,7 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
             potential_chemistry = check_current_player_chemistry(player, position, roster)
 
         # Check if player meets chemistry requirements (must at least be 1 to reach 10 individual chemistry)
-        if (potential_chemistry >= 1) or not chemistry_matters:
+        if (potential_chemistry >= req_link_chem) or not chemistry_matters:
 
             # Create copy of base IDs list and roster for recursive function
             base_ids_copy = copy.deepcopy(base_ids)
@@ -538,10 +540,10 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
             # If budget is higher than 200, check if player is new and if so subtract the price.
             if budget >= 200 and player not in players.db:
                 remaining_budget = budget - player['price']
-                #player_db_copy = PlayerDB(copy.deepcopy(player_db.search({'price': (remaining_budget, 'lower')})))
+                # player_db_copy = PlayerDB(copy.deepcopy(player_db.search({'price': (remaining_budget, 'lower')})))
             else:
                 remaining_budget = budget
-                #player_db_copy = player_db
+                # player_db_copy = player_db
             player_db_copy = player_db
 
             # Call recursive function
@@ -589,7 +591,7 @@ def check_linked_players_chemistry(linked_positions, formation, roster):
                                                              roster)
 
         # Check if chemistry meets requirements
-        if potential_chemistry < 1:
+        if potential_chemistry < req_link_chem:
             return False
 
     return True
@@ -711,7 +713,7 @@ def recursive_create_2(players, player_db, formation, chemistry_matters, time_li
                 # Calculate current teammate potential chemistry in selected position.
                 potential_chemistry = check_current_player_chemistry(player, position, roster)
                 # If potential chemistry is not high enough, skip to next position or player.
-                if potential_chemistry < 1:
+                if potential_chemistry < req_link_chem:
                     continue
 
                 # Check if the chemistry of linked of teammates is high enough.
