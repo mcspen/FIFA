@@ -717,6 +717,8 @@ def open_team_bio_window(window_x, window_y, team, win_previous, file_name, curr
                     trait_text = 'Tries To Beat Def. Line'
                 elif trait == 'Takes Powerful Driven Free Kicks':
                     trait_text = 'Pwrful Driven Free Kicks'
+                elif trait == 'Takes Finesse Style Free Kicks':
+                    trait_text = 'Finesse Style Free Kicks'
                 elif '-' in trait:
                     hyphen_index = trait.index('-')
                     trait_text = trait[hyphen_index+2:]
