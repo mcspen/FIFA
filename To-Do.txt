@@ -1,3 +1,5 @@
+Need to fix getting player prices to check what type they are in case rating is the same.
+
 Create Edit function for manage menu for teams.
 
 Add the different team creation types to the Team Window
