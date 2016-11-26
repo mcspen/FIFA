@@ -17,7 +17,7 @@ def recursive_create_tup(tup):
     """
     Wrapper function to all Team.recursive_create_tup to be called by pool
     """
-    return recursive_create_2(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8], tup[9], tup[10],
+    return puzzle_piece_create(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8], tup[9], tup[10],
                               roster=tup[11], base_ids=tup[12], start_roster_num=tup[13], must_have_players=tup[14])
 
 
@@ -781,7 +781,7 @@ def puzzle_piece_create(players, player_db, formation, chemistry_matters, time_l
     formation_time = time.clock()
     for player_idx, player in enumerate(players.db[:total_players]):
         # Check to see if function should return
-        if team_count >= teams_per_formation or time.time() > time_limit:
+        if len(complete_team_bag) >= teams_per_formation or time.time() > time_limit:
             break
 
         print "Player " + str(player_idx + 1) + " of " + str(total_players)
@@ -794,7 +794,7 @@ def puzzle_piece_create(players, player_db, formation, chemistry_matters, time_l
             for custom_symbol, formation_position in formation['positions'].iteritems():
 
                 # Check to see if function should return
-                if team_count >= teams_per_formation or time.time() > time_limit:
+                if len(complete_team_bag) >= teams_per_formation or time.time() > time_limit:
                     break
 
                 if player_position == formation_position['symbol']:
@@ -825,7 +825,7 @@ def puzzle_piece_create(players, player_db, formation, chemistry_matters, time_l
                     # Create new combinations with new piece
                     for old_piece in puzzle_piece_bag:
                         # Check to see if function should return
-                        if team_count >= teams_per_formation or time.time() > time_limit:
+                        if len(complete_team_bag) >= teams_per_formation or time.time() > time_limit:
                             break
 
                         # Check if piece touches position-wise and isn't the same player
@@ -870,7 +870,7 @@ def puzzle_piece_create(players, player_db, formation, chemistry_matters, time_l
                     # Create larger combinations with new piece and existing partial piece
                     for old_block in partial_piece_bag:
                         # Check to see if function should return
-                        if team_count >= teams_per_formation or time.time() > time_limit:
+                        if len(complete_team_bag) >= teams_per_formation or time.time() > time_limit:
                             break
 
                         positions_filled = []
@@ -1007,12 +1007,12 @@ def puzzle_piece_create(players, player_db, formation, chemistry_matters, time_l
                     # Merge recently created blocks into new blocks based on current puzzle piece
                     for idx, new_combo_piece_1 in enumerate(new_piece_bag):
                         # Check to see if function should return
-                        if team_count >= teams_per_formation or time.time() > time_limit:
+                        if len(complete_team_bag) >= teams_per_formation or time.time() > time_limit:
                             break
 
                         for new_combo_piece_2 in new_piece_bag[idx + 1:]:
                             # Check to see if function should return
-                            if team_count >= teams_per_formation or time.time() > time_limit:
+                            if len(complete_team_bag) >= teams_per_formation or time.time() > time_limit:
                                 break
 
                             positions_filled = list(new_combo_piece_1[0][1]) + list(new_combo_piece_2[0][1])
@@ -1223,12 +1223,12 @@ def puzzle_piece_create(players, player_db, formation, chemistry_matters, time_l
                     # Merge complete independent pieces together
                     for complete_piece_1 in new_complete_piece_bag:
                         # Check to see if function should return
-                        if team_count >= teams_per_formation or time.time() > time_limit:
+                        if len(complete_team_bag) >= teams_per_formation or time.time() > time_limit:
                             break
 
                         for complete_piece_2 in complete_piece_bag:
                             # Check to see if function should return
-                            if team_count >= teams_per_formation or time.time() > time_limit:
+                            if len(complete_team_bag) >= teams_per_formation or time.time() > time_limit:
                                 break
 
                             # Check if duplicate players
