@@ -475,7 +475,7 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
         del dependency_match
 
     # Sort eligible players
-    eligible_players.sort(player_sort_attributes)
+    eligible_players.sort(player_sort_attributes, descend=False)
     # eligible_players.special_sort(position['symbol'])
 
     # Set variables for controlling the scope of team creation
@@ -489,6 +489,45 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
         # Check to see if function should return
         if team_count >= teams_per_formation or time.time() > time_limit:
             break
+
+
+
+
+
+
+        # Special Checks
+        # Check leagues
+        # Get list of leagues
+        leagues_list = [player['league']['id']]
+        for guy in roster.itervalues():
+            leagues_list.append(guy['league']['id'])
+        leagues_set = set(leagues_list)
+
+        # Check if more than 7 leagues
+        if len(leagues_set) > 7:
+            break
+        # Check if more than 3 from 1 league
+        too_many = False
+        for league_id in leagues_set:
+            if leagues_list.count(league_id) > 3:
+                too_many = True
+        if too_many:
+            break
+
+        # Check rating if full roster
+        if len(roster) >= 10:
+            rating_total = player['rating']
+            for guy in roster.itervalues():
+                rating_total += guy['rating']
+            if rating_total / 11.0 < 77.5:
+                break
+            # Check that there are exactly 7 leagues
+            if len(leagues_set) != 7:
+                break
+
+
+
+
 
         # Check if player is in budget ---------------------------------------------------------------------------------
         if budget >= 200:

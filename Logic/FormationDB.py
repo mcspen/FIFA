@@ -172,8 +172,15 @@ class FormationDB:
 
                 if attribute in ['name', 'style', 'description']:
                     string_value = value.upper()
+                    string_value = string_value.split(',')
+                    for idx, item in enumerate(string_value):
+                        string_value[idx] = item.strip()
                     stat = formation[attribute].upper()
-                    if string_value not in stat:
+                    partial_match = False
+                    for single_value in string_value:
+                        if single_value in stat:
+                            partial_match = True
+                    if not partial_match:
                         match = False
                 elif attribute in ['num_links', 'num_defenders', 'num_midfielders', 'num_attackers']:
                     if compare == 'higher':
@@ -187,21 +194,43 @@ class FormationDB:
                             match = False
                 elif attribute == 'custom_position':
                     string_value = str(value.upper())
-                    if string_value not in formation['positions']:
+                    string_value = string_value.split(',')
+                    for idx, item in enumerate(string_value):
+                        string_value[idx] = item.strip()
+                    partial_match = False
+                    for single_value in string_value:
+                        if single_value in formation['positions']:
+                            partial_match = True
+                    if not partial_match:
                         match = False
                 elif attribute == 'position':
                     string_value = str(value.upper())
+                    string_value = string_value.split(',')
+                    for idx, item in enumerate(string_value):
+                        string_value[idx] = item.strip()
                     symbol_list = []
                     for position in formation['positions'].itervalues():
                         symbol_list.append(position['symbol'])
-                    if string_value not in symbol_list:
+                    partial_match = False
+                    for single_value in string_value:
+                        if single_value in symbol_list:
+                            partial_match = True
+                    if not partial_match:
                         match = False
                 elif attribute == 'position_all':
                     string_value = str(value.upper())
+                    string_value = string_value.split(',')
+                    for idx, item in enumerate(string_value):
+                        string_value[idx] = item.strip()
                     symbol_list = []
                     for position in formation['positions'].itervalues():
                         symbol_list.append(position['symbol'])
-                    if string_value not in (symbol_list + formation['positions'].keys()):
+                    symbol_list += formation['positions'].keys()
+                    partial_match = False
+                    for single_value in string_value:
+                        if single_value in symbol_list:
+                            partial_match = True
+                    if not partial_match:
                         match = False
                 else:
                     print "Invalid Attribute: %s" % attribute
