@@ -496,7 +496,7 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
 
 
         # Special Checks
-        # Check leagues
+        """# Check leagues
         # Get list of leagues
         leagues_list = [player['league']['id']]
         for guy in roster.itervalues():
@@ -523,7 +523,7 @@ def recursive_create(players, player_db, formation, chemistry_matters, time_limi
                 break
             # Check that there are exactly 7 leagues
             if len(leagues_set) != 7:
-                break
+                break"""
 
 
 

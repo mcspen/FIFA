@@ -785,9 +785,7 @@ if __name__ == '__main__':
     save_image(player['club']['imageUrls']['normal']['large'], 'club_normal_large_imgUrl')"""
 
     # Resize player background images
-    """image_file_names = ['blue_purple', 'fut_champions_bronze', 'fut_champions_gold', 'fut_champions_silver', 'motm',
-                        'motm_2', 'ones_to_watch', 'pink', 'pink_2', 'purple', 'squad_building_challenge', 'teal',
-                        'tots_bronze', 'tots_gold', 'tots_silver', 'totw_bronze', 'totw_gold', 'totw_silver', 'toty']
+    """image_file_names = ['award_winner', 'confederation_champions_motm', 'halloween', 'movember', 'tott']
     import Image
     for image_file_name in image_file_names:
         ratio = 0.85
