@@ -70,4 +70,3 @@ Change how create club/league/nation functions return/assign the teams.
 Change nation/league/club name comparisons to ID comparisons? (avoid mix ups by clubs with same name)
 
 Can't find:
-65 Emir LB
