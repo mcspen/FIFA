@@ -96,6 +96,10 @@ def open_player_bio_window(window_x, window_y, player, win_previous, db_dict=Non
     if "130x130" in image_url:
         ratio = 120.0/130.0
         image_file_name = save_small_image(image_url, image_file_name, ratio)
+    # FIFA 18 compatibility
+    elif "134x134" in image_url:
+        ratio = 120.0 / 134.0
+        image_file_name = save_small_image(image_url, image_file_name, ratio)
     elif "120x120" in image_url:
         image_file_name = save_image(image_url, image_file_name)
     player_headshot = Image(file=image_file_name)

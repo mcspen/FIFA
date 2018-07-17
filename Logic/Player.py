@@ -95,7 +95,7 @@ class Player:
         self.attributes = input_dict['attributes']
         self.specialities = input_dict['specialities']
 
-    def get_price(self, console='PLAYSTATION', update_rating=0, update_price=-1):
+    def get_price_old(self, console='PLAYSTATION', update_rating=0, update_price=-1):
         """
         Get's the price of the player from futbin.com
         Input: None.
@@ -114,8 +114,12 @@ class Player:
             return self.price
 
         if self.rating >= update_rating and self.price >= update_price:
+            # new
+            """year = 18
+            price_site_url_search = 'https://www.futbin.com/search?year=' + str(year) + '&extra=1&term='
+            price_site_url_player = 'https://www.futbin.com/' + str(year) + '/playerPrices?player='"""
             price_site_url_search = 'http://www.futbin.com/api/?term='
-            price_site_url_player = 'http://www.futbin.com/17/player'
+            price_site_url_player = 'http://www.futbin.com/17/player/'
             # player_name = ''
             player_id = ''
 
@@ -159,7 +163,7 @@ class Player:
                     # Get page data of player
                     # page_data = sess.get("%s/%s/%s" % (price_site_url_player, player_id, player_name)).content
                     # URL doesn't require player name
-                    page_data = sess.get("%s/%s" % (price_site_url_player, player_id)).content
+                    page_data = sess.get("%s%s" % (price_site_url_player, player_id)).content
 
                     # Get price
                     page_data = page_data.split()
@@ -179,5 +183,43 @@ class Player:
             # Need to add more error handling. Ex: ProtocolError
             except Exception as err:
                 print "Not connected to internet. Cannot get player price.\nOr Error: " + str(err.message)
+
+        return self.price
+
+    def get_price(self, console='PLAYSTATION', update_rating=0, update_price=-1):
+        """
+        Get's the price of the player from futbin.com
+        Input: None.
+        Output: The price, and the player's price is set.
+        """
+
+        if self.rating >= update_rating and self.price >= update_price:
+            year = 18
+            price_site_url_player = 'https://www.futbin.com/' + str(year) + '/playerPrices?player='
+
+            try:
+                # Create session
+                sess = requests.Session()
+
+                # Get player prices
+                page_data = json.loads(sess.get(price_site_url_player + self.id).content)
+
+                if console.upper() in ['PS4', 'PLAYSTATION', 'PS']:
+                    console_code = "ps"
+                elif console.upper() in ['XBOX', 'XBOX1', 'XBOX ONE']:
+                    console_code = "xbox"
+                elif console.upper() in ['PC', 'COMPUTER']:
+                    console_code = "pc"
+                else:
+                    console_code = "ps"
+
+                price = int(page_data[self.id]["prices"][console_code]["LCPrice"])
+
+                self.price = price
+
+            # Need to add more error handling. Ex: ProtocolError
+            except Exception as err:
+                print "Not connected to internet. Cannot get player price.\nOr Error: " + str(err.message)
+                self.price = 0
 
         return self.price

@@ -113,7 +113,7 @@ def open_pick_file_window(window_x, window_y, db_dict, settings):
                 configs['default_databases'][file_type[8:]] = file_name
 
                 # Save configs
-                with open(config_file, 'w') as config_file:
+                with open(config_filename, 'w') as config_file:
                     json.dump(configs, config_file)
                     config_file.close()
 
